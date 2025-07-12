@@ -1,0 +1,2035 @@
+2025-04-04 05:42:53,661 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:53 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:53,667 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:53,699 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+2025-04-04 05:42:53,705 - Standard_checklist_processor - ERROR - Standard Processor LLM Error: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."} with prom
+pt:
+            Analyze the following DRHP section against the standard checklist:
+
+            Heading: HISTORY AND CERTAIN CORPORATE MATTERS
+            Checklist Points: Whether there is any disclosur...
+❌ Error in flag status analysis: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+Created entry with heading: HISTORY AND CERTAIN CORPORATE MATTERS
+
+Processing item #45
+Current item data: {'heading': 'HISTORY AND CERTAIN CORPORATE MATTERS', 'checklist_points': 'Whether there is any disclosure given in offer document in relation to change in  Business', 'remarks': 'Please Cross
+check from the disclosures made in the Chapter - Business of the Company', 'expected_checks': 'Analyze the history and certain corporate matters section and check whether  there is any disclosure given in offer
+document in relation to change in business or activity of the company. Also cross check it from our business section. '}
+this is the collection name for qdrant Section
+qdrant_collection_name os_section
+2025-04-04 05:42:53,769 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/cohere.embed-english-v3/invoke "HTTP/1.1 200 OK"
+05:42:53 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:53,771 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:53,773 - httpx - INFO - HTTP Request: POST http://127.0.0.1:6333/collections/os_section/points/search "HTTP/1.1 200 OK"
+Qdrant search results ✅
+05:42:53 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:53,779 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:53,809 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:53 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:53,815 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:53,838 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:53 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:53,845 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:53,866 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+2025-04-04 05:42:53,872 - Standard_checklist_processor - ERROR - Standard Processor LLM Error: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."} with prom
+pt:
+            Analyze the following DRHP section against the standard checklist:
+
+            Heading: HISTORY AND CERTAIN CORPORATE MATTERS
+            Checklist Points: Whether there is any disclosur...
+❌ Error in flag status analysis: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+Created entry with heading: HISTORY AND CERTAIN CORPORATE MATTERS
+
+Processing item #46
+Current item data: {'heading': 'HISTORY AND CERTAIN CORPORATE MATTERS', 'checklist_points': 'Whether there is any disclosure given in offer document in relation to change in Object clause as given in the Memoran
+dum of Association?', 'remarks': nan, 'expected_checks': 'Analyze the history and certain corporate matters section and check whether  there is any disclosure given in offer document in relation to change in Obj
+aaect clause as given in the Memorandum of Association.'}
+this is the collection name for qdrant Section
+qdrant_collection_name os_section
+2025-04-04 05:42:53,942 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/cohere.embed-english-v3/invoke "HTTP/1.1 200 OK"
+05:42:53 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:53,943 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:53,946 - httpx - INFO - HTTP Request: POST http://127.0.0.1:6333/collections/os_section/points/search "HTTP/1.1 200 OK"
+Qdrant search results ✅
+05:42:53 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:53,951 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:53,977 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:53 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:53,986 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:54,016 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:54 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:54,022 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:54,060 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+2025-04-04 05:42:54,066 - Standard_checklist_processor - ERROR - Standard Processor LLM Error: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."} with prom
+pt:
+            Analyze the following DRHP section against the standard checklist:
+
+            Heading: HISTORY AND CERTAIN CORPORATE MATTERS
+            Checklist Points: Whether there is any disclosur...
+❌ Error in flag status analysis: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+Created entry with heading: HISTORY AND CERTAIN CORPORATE MATTERS
+
+Processing item #47
+Current item data: {'heading': 'HISTORY AND CERTAIN CORPORATE MATTERS', 'checklist_points': 'Whether there is any disclosure given in offer document in relation to change in capital and whether it is equal to or
+ less than the authorised capital of the Company?', 'remarks': nan, 'expected_checks': 'Analyze the history and certain corporate matters section and check Whether there is any disclosure given in offer document
+ in relation to change in capital and whether it is equal to or less than the authorised capital of the Company. Cross check from capital structure section.'}
+this is the collection name for qdrant Section
+qdrant_collection_name os_section
+2025-04-04 05:42:54,137 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/cohere.embed-english-v3/invoke "HTTP/1.1 200 OK"
+05:42:54 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:54,138 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:54,141 - httpx - INFO - HTTP Request: POST http://127.0.0.1:6333/collections/os_section/points/search "HTTP/1.1 200 OK"
+Qdrant search results ✅
+05:42:54 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:54,148 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:54,174 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:54 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:54,180 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:54,202 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:54 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:54,208 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:54,233 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+2025-04-04 05:42:54,238 - Standard_checklist_processor - ERROR - Standard Processor LLM Error: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."} with prom
+pt:
+            Analyze the following DRHP section against the standard checklist:
+
+            Heading: HISTORY AND CERTAIN CORPORATE MATTERS
+            Checklist Points: Whether there is any disclosur...
+❌ Error in flag status analysis: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+Created entry with heading: HISTORY AND CERTAIN CORPORATE MATTERS
+
+Processing item #48
+Current item data: {'heading': 'HISTORY AND CERTAIN CORPORATE MATTERS', 'checklist_points': 'Whether there is any disclosure given in offer document in relation to injunction or restraining orders?', 'remarks':
+'Please Cross check from the disclosures made in the Chapter - Outstanding litigation ', 'expected_checks': 'Analyze the history and certain corporate matters section and check Whether there is any disclosure gi
+ven in offer document in relation to injunction or restraining orders. Cross check from outstanding litigation and material developments section. '}
+this is the collection name for qdrant Section
+qdrant_collection_name os_section
+2025-04-04 05:42:54,306 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/cohere.embed-english-v3/invoke "HTTP/1.1 200 OK"
+05:42:54 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:54,307 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:54,310 - httpx - INFO - HTTP Request: POST http://127.0.0.1:6333/collections/os_section/points/search "HTTP/1.1 200 OK"
+Qdrant search results ✅
+05:42:54 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:54,315 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:54,338 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:54 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:54,346 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:54,394 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:54 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:54,400 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:54,424 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+2025-04-04 05:42:54,429 - Standard_checklist_processor - ERROR - Standard Processor LLM Error: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."} with prom
+pt:
+            Analyze the following DRHP section against the standard checklist:
+
+            Heading: HISTORY AND CERTAIN CORPORATE MATTERS
+            Checklist Points: Whether there is any disclosur...
+❌ Error in flag status analysis: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+Created entry with heading: HISTORY AND CERTAIN CORPORATE MATTERS
+
+Processing item #49
+Current item data: {'heading': 'HISTORY AND CERTAIN CORPORATE MATTERS', 'checklist_points': 'Whether there is any disclosure given in offer document in relation to Shareholders agreement, if yes, please check wh
+ether any restrictive clauses are there in the agreement? ', 'remarks': 'Please Cross check whether the shareholders agreements is disclosed in the Material Contracts and documents for inspection', 'expected_che
+cks': 'Analyze the history and certain corporate matters section and check Whether there is any disclosure given in offer document in relation to Shareholders agreement, if yes, please check whether any restrict
+ive clauses are there in the agreement. Also cross check the details from the shareholders agreements is disclosed in the Material Contracts and documents for inspection section.'}
+this is the collection name for qdrant Section
+qdrant_collection_name os_section
+2025-04-04 05:42:54,502 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/cohere.embed-english-v3/invoke "HTTP/1.1 200 OK"
+05:42:54 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:54,503 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:54,506 - httpx - INFO - HTTP Request: POST http://127.0.0.1:6333/collections/os_section/points/search "HTTP/1.1 200 OK"
+Qdrant search results ✅
+05:42:54 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:54,513 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:54,546 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:54 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:54,552 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:54,577 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:54 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:54,583 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:54,631 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+2025-04-04 05:42:54,637 - Standard_checklist_processor - ERROR - Standard Processor LLM Error: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."} with prom
+pt:
+            Analyze the following DRHP section against the standard checklist:
+
+            Heading: HISTORY AND CERTAIN CORPORATE MATTERS
+            Checklist Points: Whether there is any disclosur...
+❌ Error in flag status analysis: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+Created entry with heading: HISTORY AND CERTAIN CORPORATE MATTERS
+
+Processing item #50
+Current item data: {'heading': 'HISTORY AND CERTAIN CORPORATE MATTERS', 'checklist_points': 'Please check if there is any default or fine imposed by any regulatory authority and flag the same', 'remarks': nan, '
+expected_checks': 'Analyze the history and certain corporate matters section and check  if there is any default or fine imposed by any regulatory authority. Also crosss check from risk factor and other regulator
+y and statutory disclosures.'}
+this is the collection name for qdrant Section
+qdrant_collection_name os_section
+2025-04-04 05:42:54,704 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/cohere.embed-english-v3/invoke "HTTP/1.1 200 OK"
+05:42:54 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:54,706 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:54,708 - httpx - INFO - HTTP Request: POST http://127.0.0.1:6333/collections/os_section/points/search "HTTP/1.1 200 OK"
+Qdrant search results ✅
+05:42:54 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:54,713 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:54,738 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:54 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:54,744 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:54,768 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:54 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:54,775 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:54,800 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+2025-04-04 05:42:54,805 - Standard_checklist_processor - ERROR - Standard Processor LLM Error: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."} with prom
+pt:
+            Analyze the following DRHP section against the standard checklist:
+
+            Heading: HISTORY AND CERTAIN CORPORATE MATTERS
+            Checklist Points: Please check if there is any d...
+❌ Error in flag status analysis: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+Created entry with heading: HISTORY AND CERTAIN CORPORATE MATTERS
+
+Processing item #51
+Current item data: {'heading': 'OUR MANAGEMENT', 'checklist_points': 'Whether there is any disclosure given in offer document in relation to sebi disciplinary action against company, promoters, promoters group,
+group companies and Directors of the issuer company?', 'remarks': 'Please cross check for the disclosures made in the Chapter - Outstanding litigation and flag any discripencies.', 'expected_checks': 'Analyze ou
+r management section and check Whether there is any disclosure given in offer document in relation to sebi disciplinary action against company, promoters, promoters group, group companies and Directors of the is
+suer company. Also Cross check from outstanding litigation and material developments section.'}
+this is the collection name for qdrant Section
+qdrant_collection_name os_section
+2025-04-04 05:42:54,876 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/cohere.embed-english-v3/invoke "HTTP/1.1 200 OK"
+05:42:54 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:54,877 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:54,880 - httpx - INFO - HTTP Request: POST http://127.0.0.1:6333/collections/os_section/points/search "HTTP/1.1 200 OK"
+Qdrant search results ✅
+05:42:54 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:54,886 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:54,910 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:54 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:54,918 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:54,939 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:54 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:54,945 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:54,973 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+2025-04-04 05:42:54,978 - Standard_checklist_processor - ERROR - Standard Processor LLM Error: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."} with prom
+pt:
+            Analyze the following DRHP section against the standard checklist:
+
+            Heading: OUR MANAGEMENT
+            Checklist Points: Whether there is any disclosure given in offer docume...
+❌ Error in flag status analysis: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+Created entry with heading: OUR MANAGEMENT
+
+Processing item #52
+Current item data: {'heading': 'OUR MANAGEMENT', 'checklist_points': 'Whether the disclosures given in offer document in relation to compliance of companies Act,2013, corporate governance requirements like board
+ composition,  committee requirements, women director are in compliance as per the relevent statutory provisions?', 'remarks': '\na) Please flag if no. of independent directors is less than one third of the tota
+l no. of directors\nb)Please flag if there is no woman director on board (check for the salutation)', 'expected_checks': 'Analyze our management section and check Whether there is any disclosure given in offer d
+ocument in relation to compliance of companies Act,2013, corporate governance requirements like board composition,  committee requirements, women director are in compliance as per the relevent statutory provisio
+ns. Also flag if no. of independent directors is less than one third of the total no. of directors and If there is no woman director on board (check for the salutation).'}
+this is the collection name for qdrant Section
+qdrant_collection_name os_section
+2025-04-04 05:42:55,055 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/cohere.embed-english-v3/invoke "HTTP/1.1 200 OK"
+05:42:55 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:55,056 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:55,059 - httpx - INFO - HTTP Request: POST http://127.0.0.1:6333/collections/os_section/points/search "HTTP/1.1 200 OK"
+Qdrant search results ✅
+05:42:55 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:55,066 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:55,090 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:55 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:55,096 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:55,139 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:55 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:55,145 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:55,167 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+2025-04-04 05:42:55,172 - Standard_checklist_processor - ERROR - Standard Processor LLM Error: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."} with prom
+pt:
+            Analyze the following DRHP section against the standard checklist:
+
+            Heading: OUR MANAGEMENT
+            Checklist Points: Whether the disclosures given in offer document in re...
+❌ Error in flag status analysis: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+Created entry with heading: OUR MANAGEMENT
+
+Processing item #53
+Current item data: {'heading': 'OUR MANAGEMENT', 'checklist_points': 'Whether the disclosures given in offer document in relation to educational qualifications of Chief Financial Officer and Company Secretary?',
+ 'remarks': '\na)Please flag if the qualification of CFO is not CA or MBA or MCom\nb) Please flag if the qualification of Company Secretary is not CS', 'expected_checks': 'Analyze our management section and chec
+k Whether there is any disclosure given in offer document in relation to educational qualifications of Chief Financial Officer and Company Secretary. Also  flag if the qualification of CFO is not CA or MBA or Mc
+om and  flag if the qualification of Company Secretary is not CS.'}
+this is the collection name for qdrant Section
+qdrant_collection_name os_section
+2025-04-04 05:42:55,242 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/cohere.embed-english-v3/invoke "HTTP/1.1 200 OK"
+05:42:55 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:55,243 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:55,246 - httpx - INFO - HTTP Request: POST http://127.0.0.1:6333/collections/os_section/points/search "HTTP/1.1 200 OK"
+Qdrant search results ✅
+05:42:55 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:55,251 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:55,277 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:55 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:55,284 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:55,317 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:55 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:55,322 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:55,364 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+2025-04-04 05:42:55,369 - Standard_checklist_processor - ERROR - Standard Processor LLM Error: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."} with prom
+pt:
+            Analyze the following DRHP section against the standard checklist:
+
+            Heading: OUR MANAGEMENT
+            Checklist Points: Whether the disclosures given in offer document in re...
+❌ Error in flag status analysis: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+Created entry with heading: OUR MANAGEMENT
+
+Processing item #54
+Current item data: {'heading': 'GOVERNMENT AND OTHER STATUTORY APPROVALS', 'checklist_points': 'Please Check the validity of the government approvals and red flag if any, of the approvals are already expired.',
+'remarks': 'Please Cross check the status of the approvals discloswd in the offer documents are not expired/ near to expiry as on current date. .', 'expected_checks': 'Analyze GOVERNMENT AND OTHER STATUTORY APPR
+OVALS section and Check the validity of the government approvals. Flag if any, of the approvals are already expired and or going to expire within 6 months.'}
+this is the collection name for qdrant Section
+qdrant_collection_name os_section
+2025-04-04 05:42:55,441 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/cohere.embed-english-v3/invoke "HTTP/1.1 200 OK"
+05:42:55 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:55,442 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:55,445 - httpx - INFO - HTTP Request: POST http://127.0.0.1:6333/collections/os_section/points/search "HTTP/1.1 200 OK"
+Qdrant search results ✅
+05:42:55 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:55,452 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:55,483 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:55 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:55,489 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:55,512 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:55 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:55,518 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:55,539 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+2025-04-04 05:42:55,545 - Standard_checklist_processor - ERROR - Standard Processor LLM Error: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."} with prom
+pt:
+            Analyze the following DRHP section against the standard checklist:
+
+            Heading: GOVERNMENT AND OTHER STATUTORY APPROVALS
+            Checklist Points: Please Check the validity o...
+❌ Error in flag status analysis: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+Created entry with heading: GOVERNMENT AND OTHER STATUTORY APPROVALS
+
+Processing item #55
+Current item data: {'heading': 'ABOUT THE COMPANY', 'checklist_points': 'Please check whether Positioning of the Company and the business has been clearly mentioned in the document and is there any exaggerated c
+laims made in the offer document', 'remarks': nan, 'expected_checks': 'Analyze about our company section and check whether Positioning of the Company and the business has been clearly mentioned in the document a
+nd is there any exaggerated claims made in the offer document. Cross check from our business section and summary of the offer document section.'}
+this is the collection name for qdrant Section
+qdrant_collection_name os_section
+2025-04-04 05:42:55,613 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/cohere.embed-english-v3/invoke "HTTP/1.1 200 OK"
+05:42:55 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:55,614 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:55,617 - httpx - INFO - HTTP Request: POST http://127.0.0.1:6333/collections/os_section/points/search "HTTP/1.1 200 OK"
+Qdrant search results ✅
+05:42:55 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:55,622 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:55,651 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:55 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:55,657 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:55,686 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:55 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:55,693 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:55,719 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+2025-04-04 05:42:55,725 - Standard_checklist_processor - ERROR - Standard Processor LLM Error: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."} with prom
+pt:
+            Analyze the following DRHP section against the standard checklist:
+
+            Heading: ABOUT THE COMPANY
+            Checklist Points: Please check whether Positioning of the Company an...
+❌ Error in flag status analysis: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+Created entry with heading: ABOUT THE COMPANY
+
+Processing item #56
+Current item data: {'heading': 'ABOUT THE COMPANY', 'checklist_points': 'Please check the property details provided in the offer document, whether the properties are rented or leased if yes, the tenure to be hig
+hlighted ', 'remarks': nan, 'expected_checks': 'Analyze about our company section and check whether the property details are  provided in the offer document. Also check whether the properties are rented or lease
+d if yes, the tenure is to be highlighted. Cross check from our business section.'}
+this is the collection name for qdrant Section
+qdrant_collection_name os_section
+2025-04-04 05:42:55,796 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/cohere.embed-english-v3/invoke "HTTP/1.1 200 OK"
+05:42:55 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:55,798 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:55,800 - httpx - INFO - HTTP Request: POST http://127.0.0.1:6333/collections/os_section/points/search "HTTP/1.1 200 OK"
+Qdrant search results ✅
+05:42:55 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:55,806 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:55,832 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:55 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:55,840 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:55,867 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:55 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:55,873 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:55,896 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+2025-04-04 05:42:55,901 - Standard_checklist_processor - ERROR - Standard Processor LLM Error: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."} with prom
+pt:
+            Analyze the following DRHP section against the standard checklist:
+
+            Heading: ABOUT THE COMPANY
+            Checklist Points: Please check the property details provided in the ...
+❌ Error in flag status analysis: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+Created entry with heading: ABOUT THE COMPANY
+
+Processing item #57
+Current item data: {'heading': 'ABOUT THE COMPANY', 'checklist_points': 'Please check if the properties are rented or leased from related parties as mentioned in the section ‘Financial Information’', 'remarks':
+nan, 'expected_checks': 'Analyze about our company section and check whether  the properties are rented or leased from related parties as mentioned in the section ‘Financial Information’.'}
+this is the collection name for qdrant Section
+qdrant_collection_name os_section
+2025-04-04 05:42:55,979 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/cohere.embed-english-v3/invoke "HTTP/1.1 200 OK"
+05:42:55 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:55,980 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:55,983 - httpx - INFO - HTTP Request: POST http://127.0.0.1:6333/collections/os_section/points/search "HTTP/1.1 200 OK"
+Qdrant search results ✅
+05:42:55 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:55,990 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,011 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:56 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,017 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,040 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:56 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,046 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,075 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+2025-04-04 05:42:56,080 - Standard_checklist_processor - ERROR - Standard Processor LLM Error: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."} with prom
+pt:
+            Analyze the following DRHP section against the standard checklist:
+
+            Heading: ABOUT THE COMPANY
+            Checklist Points: Please check if the properties are rented or lease...
+❌ Error in flag status analysis: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+Created entry with heading: ABOUT THE COMPANY
+
+Processing item #58
+Current item data: {'heading': 'ABOUT THE COMPANY', 'checklist_points': 'Please compare number of employees of the Company with the number of employees appointed by the industry peers and highlight the same ', '
+remarks': nan, 'expected_checks': 'remove the observation.'}
+this is the collection name for qdrant Section
+qdrant_collection_name os_section
+2025-04-04 05:42:56,150 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/cohere.embed-english-v3/invoke "HTTP/1.1 200 OK"
+05:42:56 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:56,151 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:56,154 - httpx - INFO - HTTP Request: POST http://127.0.0.1:6333/collections/os_section/points/search "HTTP/1.1 200 OK"
+Qdrant search results ✅
+05:42:56 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,159 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,181 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:56 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,189 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,214 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:56 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,220 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,243 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+2025-04-04 05:42:56,249 - Standard_checklist_processor - ERROR - Standard Processor LLM Error: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."} with prom
+pt:
+            Analyze the following DRHP section against the standard checklist:
+
+            Heading: ABOUT THE COMPANY
+            Checklist Points: Please compare number of employees of the Company ...
+❌ Error in flag status analysis: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+Created entry with heading: ABOUT THE COMPANY
+
+Processing item #59
+Current item data: {'heading': 'FINANCIAL INFORMATION', 'checklist_points': 'Please check if there is any spurt in the revenue of the Company, highlight the same with percentage of such spurt ', 'remarks': nan,
+'expected_checks': 'Analyze restated financial statement section and check if there is any spurt in the revenue of the Company by more than 50%, highlight the same with percentage of such spurt.'}
+this is the collection name for qdrant Section
+qdrant_collection_name os_section
+2025-04-04 05:42:56,322 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/cohere.embed-english-v3/invoke "HTTP/1.1 200 OK"
+05:42:56 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:56,323 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:56,326 - httpx - INFO - HTTP Request: POST http://127.0.0.1:6333/collections/os_section/points/search "HTTP/1.1 200 OK"
+Qdrant search results ✅
+05:42:56 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,334 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,360 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:56 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,366 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,395 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:56 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,401 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,422 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+2025-04-04 05:42:56,427 - Standard_checklist_processor - ERROR - Standard Processor LLM Error: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."} with prom
+pt:
+            Analyze the following DRHP section against the standard checklist:
+
+            Heading: FINANCIAL INFORMATION
+            Checklist Points: Please check if there is any spurt in the reve...
+❌ Error in flag status analysis: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+Created entry with heading: FINANCIAL INFORMATION
+
+Processing item #60
+Current item data: {'heading': 'FINANCIAL INFORMATION', 'checklist_points': 'Please check if the components of expenses mentioned in the Offer Document are consistent across the years, highlight the discrepancy
+', 'remarks': nan, 'expected_checks': 'Analyze restated financial statement section and check if the components of expenses mentioned in the Offer Document are consistent across the years. If there is any major
+change in amount across the years flag the change.'}
+this is the collection name for qdrant Section
+qdrant_collection_name os_section
+2025-04-04 05:42:56,503 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/cohere.embed-english-v3/invoke "HTTP/1.1 200 OK"
+05:42:56 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:56,504 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:56,507 - httpx - INFO - HTTP Request: POST http://127.0.0.1:6333/collections/os_section/points/search "HTTP/1.1 200 OK"
+Qdrant search results ✅
+05:42:56 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,513 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,561 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:56 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,567 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,590 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:56 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,597 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,620 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+2025-04-04 05:42:56,626 - Standard_checklist_processor - ERROR - Standard Processor LLM Error: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."} with prom
+pt:
+            Analyze the following DRHP section against the standard checklist:
+
+            Heading: FINANCIAL INFORMATION
+            Checklist Points: Please check if the components of expenses men...
+❌ Error in flag status analysis: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+Created entry with heading: FINANCIAL INFORMATION
+
+Processing item #61
+Current item data: {'heading': 'FINANCIAL INFORMATION', 'checklist_points': 'Please compare the investments mentioned in the financials with the proposed funds raised from fresh issue as mentioned under Objects
+of the Offer or Issue', 'remarks': nan, 'expected_checks': 'Analyze restated financial statement section and compare the investments mentioned in the financial statements with the proposed funds raised from fres
+h issue as mentioned under Objects of the Offer or Issue.'}
+this is the collection name for qdrant Section
+qdrant_collection_name os_section
+2025-04-04 05:42:56,694 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/cohere.embed-english-v3/invoke "HTTP/1.1 200 OK"
+05:42:56 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:56,695 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:56,698 - httpx - INFO - HTTP Request: POST http://127.0.0.1:6333/collections/os_section/points/search "HTTP/1.1 200 OK"
+Qdrant search results ✅
+05:42:56 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,704 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,729 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:56 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,736 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,759 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:56 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,765 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,793 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+2025-04-04 05:42:56,798 - Standard_checklist_processor - ERROR - Standard Processor LLM Error: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."} with prom
+pt:
+            Analyze the following DRHP section against the standard checklist:
+
+            Heading: FINANCIAL INFORMATION
+            Checklist Points: Please compare the investments mentioned in th...
+❌ Error in flag status analysis: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+Created entry with heading: FINANCIAL INFORMATION
+
+Processing item #62
+Current item data: {'heading': 'FINANCIAL INFORMATION', 'checklist_points': 'Please check the Financial Information and highlight the revenue attributed from Related Parties along with the percentage. Also provi
+de Year wise comparison of the same', 'remarks': 'It has to be checked and compaired : comment found in feedback', 'expected_checks': 'Analyze restated financial statement section and check the Financial Informa
+tion and highlight the revenue attributed from Related Parties along with the percentage. Cross check from notes to financial information and also provide Year wise comparison of the same.'}
+this is the collection name for qdrant Section
+qdrant_collection_name os_section
+2025-04-04 05:42:56,866 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/cohere.embed-english-v3/invoke "HTTP/1.1 200 OK"
+05:42:56 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:56,867 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:56,870 - httpx - INFO - HTTP Request: POST http://127.0.0.1:6333/collections/os_section/points/search "HTTP/1.1 200 OK"
+Qdrant search results ✅
+05:42:56 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,877 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,905 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:56 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,910 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,935 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:56 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,941 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:56,969 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+2025-04-04 05:42:56,975 - Standard_checklist_processor - ERROR - Standard Processor LLM Error: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."} with prom
+pt:
+            Analyze the following DRHP section against the standard checklist:
+
+            Heading: FINANCIAL INFORMATION
+            Checklist Points: Please check the Financial Information and hig...
+❌ Error in flag status analysis: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+Created entry with heading: FINANCIAL INFORMATION
+
+Processing item #63
+Current item data: {'heading': 'FINANCIAL INFORMATION', 'checklist_points': 'Please check any abnormal increase or decrease in the networth of the Company and highlight the same', 'remarks': nan, 'expected_check
+s': 'Analyze restated financial statement section and check if there is any abnormal increase or decrease in the networth of the Company by 20% and flag the same.'}
+this is the collection name for qdrant Section
+qdrant_collection_name os_section
+2025-04-04 05:42:57,052 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/cohere.embed-english-v3/invoke "HTTP/1.1 200 OK"
+05:42:57 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:57,053 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:57,056 - httpx - INFO - HTTP Request: POST http://127.0.0.1:6333/collections/os_section/points/search "HTTP/1.1 200 OK"
+Qdrant search results ✅
+05:42:57 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:57,061 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:57,103 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:57 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:57,111 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:57,136 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:57 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:57,142 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:57,170 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+2025-04-04 05:42:57,176 - Standard_checklist_processor - ERROR - Standard Processor LLM Error: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."} with prom
+pt:
+            Analyze the following DRHP section against the standard checklist:
+
+            Heading: FINANCIAL INFORMATION
+            Checklist Points: Please check any abnormal increase or decrease...
+❌ Error in flag status analysis: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+Created entry with heading: FINANCIAL INFORMATION
+
+Processing item #64
+Current item data: {'heading': 'FINANCIAL INFORMATION', 'checklist_points': 'Please check if the amount raised for long term purpose are being used for short term purposes, also compare the details mentioned in
+Financial Indebtedness section', 'remarks': nan, 'expected_checks': 'Analyze restated financial statement section and check if the amount raised for long term purpose are being used for short term purposes. If y
+es flag and cross check from financial indebtedness section.'}
+this is the collection name for qdrant Section
+qdrant_collection_name os_section
+2025-04-04 05:42:57,242 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/cohere.embed-english-v3/invoke "HTTP/1.1 200 OK"
+05:42:57 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:57,243 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:57,246 - httpx - INFO - HTTP Request: POST http://127.0.0.1:6333/collections/os_section/points/search "HTTP/1.1 200 OK"
+Qdrant search results ✅
+05:42:57 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:57,253 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:57,284 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:57 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:57,290 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:57,333 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:57 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:57,339 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:57,364 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+2025-04-04 05:42:57,370 - Standard_checklist_processor - ERROR - Standard Processor LLM Error: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."} with prom
+pt:
+            Analyze the following DRHP section against the standard checklist:
+
+            Heading: FINANCIAL INFORMATION
+            Checklist Points: Please check if the amount raised for long ter...
+❌ Error in flag status analysis: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+Created entry with heading: FINANCIAL INFORMATION
+
+Processing item #65
+Current item data: {'heading': 'FINANCIAL INFORMATION', 'checklist_points': 'Please check if there are any exports receivables which have not been repatriated within 9 months and highlight the same', 'remarks':
+nan, 'expected_checks': 'Analyze restated financial statement section and check if  there are any exports receivables which have not been repatriated within 9 months. If yes, kindly flag cross check from notes t
+o financial statements.'}
+this is the collection name for qdrant Section
+qdrant_collection_name os_section
+2025-04-04 05:42:57,439 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/cohere.embed-english-v3/invoke "HTTP/1.1 200 OK"
+05:42:57 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:57,440 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:57,445 - httpx - INFO - HTTP Request: POST http://127.0.0.1:6333/collections/os_section/points/search "HTTP/1.1 200 OK"
+Qdrant search results ✅
+05:42:57 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:57,450 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:57,472 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:57 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:57,478 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:57,520 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:57 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:57,526 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:57,551 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+2025-04-04 05:42:57,556 - Standard_checklist_processor - ERROR - Standard Processor LLM Error: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."} with prom
+pt:
+            Analyze the following DRHP section against the standard checklist:
+
+            Heading: FINANCIAL INFORMATION
+            Checklist Points: Please check if there are any exports receivab...
+❌ Error in flag status analysis: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+Created entry with heading: FINANCIAL INFORMATION
+
+Processing item #66
+Current item data: {'heading': 'FINANCIAL INFORMATION', 'checklist_points': 'In case of MSME vendors, please check if the receivables have been paid within 45 days or within 15 days subject to agreement with suc
+h MSME vendors, and highlight the same', 'remarks': nan, 'expected_checks': 'Analyze restated financial statement section and if there are MSME vendors mentioned, please check if the receivables have been paid w
+ithin 45 days or within 15 days subject to agreement with such MSME vendors.'}
+this is the collection name for qdrant Section
+qdrant_collection_name os_section
+2025-04-04 05:42:57,630 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/cohere.embed-english-v3/invoke "HTTP/1.1 200 OK"
+05:42:57 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:57,631 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:57,634 - httpx - INFO - HTTP Request: POST http://127.0.0.1:6333/collections/os_section/points/search "HTTP/1.1 200 OK"
+Qdrant search results ✅
+05:42:57 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:57,640 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:57,665 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:57 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:57,673 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:57,701 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:57 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:57,707 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:57,731 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+2025-04-04 05:42:57,736 - Standard_checklist_processor - ERROR - Standard Processor LLM Error: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."} with prom
+pt:
+            Analyze the following DRHP section against the standard checklist:
+
+            Heading: FINANCIAL INFORMATION
+            Checklist Points: In case of MSME vendors, please check if the r...
+❌ Error in flag status analysis: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+Created entry with heading: FINANCIAL INFORMATION
+
+Processing item #67
+Current item data: {'heading': 'FINANCIAL INFORMATION', 'checklist_points': 'Please check if there is negative cash flows from operations due to change in working capital parameters, and highlight the same. Plea
+se also check if the same is mentioned under top 10 ‘Risk Factor’', 'remarks': nan, 'expected_checks': 'Analyze restated financial statement section and check if there is negative cash flows from operations due
+to change in working capital parameters. Also cross check if the negative cash flow is mentioned in top 10 risk factors under risk factor section. '}
+this is the collection name for qdrant Section
+qdrant_collection_name os_section
+2025-04-04 05:42:57,809 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/cohere.embed-english-v3/invoke "HTTP/1.1 200 OK"
+05:42:57 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:57,810 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:57,813 - httpx - INFO - HTTP Request: POST http://127.0.0.1:6333/collections/os_section/points/search "HTTP/1.1 200 OK"
+Qdrant search results ✅
+05:42:57 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:57,821 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:57,845 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:57 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:57,851 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:57,878 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:57 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:57,884 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:57,905 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+2025-04-04 05:42:57,910 - Standard_checklist_processor - ERROR - Standard Processor LLM Error: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."} with prom
+pt:
+            Analyze the following DRHP section against the standard checklist:
+
+            Heading: FINANCIAL INFORMATION
+            Checklist Points: Please check if there is negative cash flows f...
+❌ Error in flag status analysis: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+Created entry with heading: FINANCIAL INFORMATION
+
+Processing item #68
+Current item data: {'heading': 'FINANCIAL INFORMATION', 'checklist_points': 'Please check and compare the consistency in the rate of interest for various loans raised by the Company and flag the same, also compa
+re the details mentioned in Financial Indebtedness section', 'remarks': nan, 'expected_checks': 'Analyze restated financial statement section, check and compare the consistency in the rate of interest for variou
+s loans raised by the Company. Cross check the details of loans from financial indebtedness section.'}
+this is the collection name for qdrant Section
+qdrant_collection_name os_section
+2025-04-04 05:42:57,985 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/cohere.embed-english-v3/invoke "HTTP/1.1 200 OK"
+05:42:57 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:57,986 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:57,989 - httpx - INFO - HTTP Request: POST http://127.0.0.1:6333/collections/os_section/points/search "HTTP/1.1 200 OK"
+Qdrant search results ✅
+05:42:57 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:57,994 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,018 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:58 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,024 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,049 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:58 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,057 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,079 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+2025-04-04 05:42:58,085 - Standard_checklist_processor - ERROR - Standard Processor LLM Error: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."} with prom
+pt:
+            Analyze the following DRHP section against the standard checklist:
+
+            Heading: FINANCIAL INFORMATION
+            Checklist Points: Please check and compare the consistency in th...
+❌ Error in flag status analysis: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+Created entry with heading: FINANCIAL INFORMATION
+
+Processing item #69
+Current item data: {'heading': 'FINANCIAL INFORMATION', 'checklist_points': 'Please check if any investment is made or loan is provided to any of the subsidiary or group company or any other related parties, and
+ highlight the same ', 'remarks': nan, 'expected_checks': 'Analyze restated financial statement section and check  if any investment is made or loan is provided to any of the subsidiary or group company or any o
+ther related parties. Cross check from notes to financial information.'}
+this is the collection name for qdrant Section
+qdrant_collection_name os_section
+2025-04-04 05:42:58,160 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/cohere.embed-english-v3/invoke "HTTP/1.1 200 OK"
+05:42:58 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:58,161 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:58,164 - httpx - INFO - HTTP Request: POST http://127.0.0.1:6333/collections/os_section/points/search "HTTP/1.1 200 OK"
+Qdrant search results ✅
+05:42:58 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,169 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,199 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:58 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,206 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,242 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:58 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,248 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,272 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+2025-04-04 05:42:58,277 - Standard_checklist_processor - ERROR - Standard Processor LLM Error: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."} with prom
+pt:
+            Analyze the following DRHP section against the standard checklist:
+
+            Heading: FINANCIAL INFORMATION
+            Checklist Points: Please check if any investment is made or loan...
+❌ Error in flag status analysis: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+Created entry with heading: FINANCIAL INFORMATION
+
+Processing item #70
+Current item data: {'heading': 'LEGAL AND OTHER INFORMATION', 'checklist_points': 'Please check if there is any default or fine imposed by any regulatory authority and flag the same', 'remarks': nan, 'expected_c
+hecks': 'Analyze legal and other information section and check if there is any default or fine imposed by any regulatory authority. Also Cross check from risk factors.'}
+this is the collection name for qdrant Section
+qdrant_collection_name os_section
+2025-04-04 05:42:58,360 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/cohere.embed-english-v3/invoke "HTTP/1.1 200 OK"
+05:42:58 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:58,361 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:58,364 - httpx - INFO - HTTP Request: POST http://127.0.0.1:6333/collections/os_section/points/search "HTTP/1.1 200 OK"
+Qdrant search results ✅
+05:42:58 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,371 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,395 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:58 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,401 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,423 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:58 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,429 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,452 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+2025-04-04 05:42:58,458 - Standard_checklist_processor - ERROR - Standard Processor LLM Error: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."} with prom
+pt:
+            Analyze the following DRHP section against the standard checklist:
+
+            Heading: LEGAL AND OTHER INFORMATION
+            Checklist Points: Please check if there is any default or ...
+❌ Error in flag status analysis: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+Created entry with heading: LEGAL AND OTHER INFORMATION
+
+Processing item #71
+Current item data: {'heading': 'GENERAL INFORMATION', 'checklist_points': 'Please check if there are any frequent changes in statutory auditor and highlight the reason for change', 'remarks': nan, 'expected_chec
+ks': 'Analyze general information section and check if there are any frequent changes in statutory auditor and highlight the reason for change.'}
+this is the collection name for qdrant Section
+qdrant_collection_name os_section
+2025-04-04 05:42:58,558 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/cohere.embed-english-v3/invoke "HTTP/1.1 200 OK"
+05:42:58 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:58,559 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:58,562 - httpx - INFO - HTTP Request: POST http://127.0.0.1:6333/collections/os_section/points/search "HTTP/1.1 200 OK"
+Qdrant search results ✅
+05:42:58 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,567 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,593 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:58 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,601 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,624 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:58 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,630 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,656 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+2025-04-04 05:42:58,661 - Standard_checklist_processor - ERROR - Standard Processor LLM Error: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."} with prom
+pt:
+            Analyze the following DRHP section against the standard checklist:
+
+            Heading: GENERAL INFORMATION
+            Checklist Points: Please check if there are any frequent changes i...
+❌ Error in flag status analysis: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+Created entry with heading: GENERAL INFORMATION
+
+Processing item #72
+Current item data: {'heading': 'FINANCIAL INFORMATION', 'checklist_points': 'Please check if any investment is made or loan is provided to any of the subsidiary or group company or any other related parties, and
+ highlight the same ', 'remarks': nan, 'expected_checks': nan}
+this is the collection name for qdrant Section
+qdrant_collection_name os_section
+2025-04-04 05:42:58,730 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/cohere.embed-english-v3/invoke "HTTP/1.1 200 OK"
+05:42:58 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:58,731 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:58,734 - httpx - INFO - HTTP Request: POST http://127.0.0.1:6333/collections/os_section/points/search "HTTP/1.1 200 OK"
+Qdrant search results ✅
+05:42:58 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,741 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,765 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:58 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,771 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,796 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:58 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,802 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,823 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+2025-04-04 05:42:58,828 - Standard_checklist_processor - ERROR - Standard Processor LLM Error: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."} with prom
+pt:
+            Analyze the following DRHP section against the standard checklist:
+
+            Heading: FINANCIAL INFORMATION
+            Checklist Points: Please check if any investment is made or loan...
+❌ Error in flag status analysis: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+Created entry with heading: FINANCIAL INFORMATION
+
+Processing item #73
+Current item data: {'heading': 'LEGAL AND OTHER INFORMATION', 'checklist_points': 'Please check if there is any default or fine imposed by any regulatory authority and flag the same', 'remarks': nan, 'expected_c
+hecks': nan}
+this is the collection name for qdrant Section
+qdrant_collection_name os_section
+2025-04-04 05:42:58,892 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/cohere.embed-english-v3/invoke "HTTP/1.1 200 OK"
+05:42:58 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:58,893 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:58,896 - httpx - INFO - HTTP Request: POST http://127.0.0.1:6333/collections/os_section/points/search "HTTP/1.1 200 OK"
+Qdrant search results ✅
+05:42:58 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,901 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,937 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:58 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,942 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,966 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:58 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,972 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:58,994 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+2025-04-04 05:42:58,999 - Standard_checklist_processor - ERROR - Standard Processor LLM Error: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."} with prom
+pt:
+            Analyze the following DRHP section against the standard checklist:
+
+            Heading: LEGAL AND OTHER INFORMATION
+            Checklist Points: Please check if there is any default or ...
+❌ Error in flag status analysis: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+Created entry with heading: LEGAL AND OTHER INFORMATION
+
+Processing item #74
+Current item data: {'heading': 'GENERAL INFORMATION', 'checklist_points': 'Please check if there are any frequent changes in statutory auditor and highlight the reason for change', 'remarks': nan, 'expected_chec
+ks': nan}
+this is the collection name for qdrant Section
+qdrant_collection_name os_section
+2025-04-04 05:42:59,064 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/cohere.embed-english-v3/invoke "HTTP/1.1 200 OK"
+05:42:59 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:59,065 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:42:59,067 - httpx - INFO - HTTP Request: POST http://127.0.0.1:6333/collections/os_section/points/search "HTTP/1.1 200 OK"
+Qdrant search results ✅
+05:42:59 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:59,072 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:59,095 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:59 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:59,102 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:59,126 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:42:59 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:59,132 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:42:59,152 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+2025-04-04 05:42:59,157 - Standard_checklist_processor - ERROR - Standard Processor LLM Error: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."} with prom
+pt:
+            Analyze the following DRHP section against the standard checklist:
+
+            Heading: GENERAL INFORMATION
+            Checklist Points: Please check if there are any frequent changes i...
+❌ Error in flag status analysis: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+Created entry with heading: GENERAL INFORMATION
+✅ Standard Checklist processed successfully.
+🔄 Processing Litigations...
+🚀 Starting entity: Ms. Surbhi Maloo
+🚀 Starting entity: M/s. Ravi Sharma & Co
+🚀 Starting entity: Srujan Alpha Capital Advisors LLP
+Error fetching content from https://delhihighcourt.nic.in/uploads/causelists/25748742867b878201ae2d.pdf: HTTPSConnectionPool(host='delhihighcourt.nic.in', port=443): Max retries exceeded with url: /uploads/cause
+lists/25748742867b878201ae2d.pdf (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x7c8bd3410e90>, 'Connection to delhihighcourt.nic.in timed out. (connect timeout=5)'))
+Error fetching content from https://nclt.gov.in/case-number-wise: HTTPSConnectionPool(host='nclt.gov.in', port=443): Read timed out. (read timeout=5)
+🔢 Input tokens to Mistral for Ms. Surbhi Maloo: 4036
+05:43:08 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= mistral.mistral-large-2402-v1:0; provider = bedrock
+2025-04-04 05:43:08,846 - LiteLLM - INFO -
+LiteLLM completion() model= mistral.mistral-large-2402-v1:0; provider = bedrock
+🔢 Input tokens to Mistral for Srujan Alpha Capital Advisors LLP: 5260
+05:43:09 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= mistral.mistral-large-2402-v1:0; provider = bedrock
+2025-04-04 05:43:09,245 - LiteLLM - INFO -
+LiteLLM completion() model= mistral.mistral-large-2402-v1:0; provider = bedrock
+Error fetching content from https://www.nclat.gov.in/sites/default/files/2024-07/Causelist_ch_19.07.2024_0.pdf: HTTPSConnectionPool(host='www.nclat.gov.in', port=443): Read timed out. (read timeout=5)
+Error fetching content from https://delhihighcourt.nic.in/uploads/causelists/17256084096703d5ed49bff.pdf: HTTPSConnectionPool(host='delhihighcourt.nic.in', port=443): Max retries exceeded with url: /uploads/caus
+elists/17256084096703d5ed49bff.pdf (Caused by ConnectTimeoutError(<urllib3.connection.HTTPSConnection object at 0x7c8bd34e6650>, 'Connection to delhihighcourt.nic.in timed out. (connect timeout=5)'))
+🔢 Input tokens to Mistral for M/s. Ravi Sharma & Co: 2144
+05:43:18 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= mistral.mistral-large-2402-v1:0; provider = bedrock
+2025-04-04 05:43:18,417 - LiteLLM - INFO -
+LiteLLM completion() model= mistral.mistral-large-2402-v1:0; provider = bedrock
+2025-04-04 05:43:23,373 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/mistral.mistral-large-2402-v1:0/converse "HTTP/1.1 200 OK"
+05:43:23 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:43:23,374 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+✅ Mistral summary completed for Ms. Surbhi Maloo
+05:43:23 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:43:23,378 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:43:23,404 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:43:23 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:43:23,410 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:43:23,443 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:43:23 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:43:23,449 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:43:23,474 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+❌ Error processing entity Ms. Surbhi Maloo: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+🚀 Starting entity: MUFG Intime India Private Limited
+🔢 Input tokens to Mistral for MUFG Intime India Private Limited: 4474
+05:43:25 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= mistral.mistral-large-2402-v1:0; provider = bedrock
+2025-04-04 05:43:25,753 - LiteLLM - INFO -
+LiteLLM completion() model= mistral.mistral-large-2402-v1:0; provider = bedrock
+2025-04-04 05:43:31,232 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/mistral.mistral-large-2402-v1:0/converse "HTTP/1.1 200 OK"
+05:43:31 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:43:31,233 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+✅ Mistral summary completed for Srujan Alpha Capital Advisors LLP
+05:43:31 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:43:31,237 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:43:31,260 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:43:31 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:43:31,267 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:43:31,288 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:43:31 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:43:31,294 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:43:31,323 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+❌ Error processing entity Srujan Alpha Capital Advisors LLP: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+🚀 Starting entity: Mr. Jinesh Doshi
+🔢 Input tokens to Mistral for Mr. Jinesh Doshi: 4525
+05:43:34 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= mistral.mistral-large-2402-v1:0; provider = bedrock
+2025-04-04 05:43:34,712 - LiteLLM - INFO -
+LiteLLM completion() model= mistral.mistral-large-2402-v1:0; provider = bedrock
+2025-04-04 05:43:41,106 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/mistral.mistral-large-2402-v1:0/converse "HTTP/1.1 200 OK"
+05:43:41 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:43:41,106 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+✅ Mistral summary completed for M/s. Ravi Sharma & Co
+05:43:41 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:43:41,111 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:43:41,137 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:43:41 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:43:41,143 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:43:41,168 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:43:41 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:43:41,173 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:43:41,197 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+❌ Error processing entity M/s. Ravi Sharma & Co: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+🚀 Starting entity: Mr. Shanti Gopalkrishnan
+Error fetching content from https://nclt.gov.in/case-number-wise: HTTPSConnectionPool(host='nclt.gov.in', port=443): Read timed out. (read timeout=5)
+🔢 Input tokens to Mistral for Mr. Shanti Gopalkrishnan: 4232
+05:43:48 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= mistral.mistral-large-2402-v1:0; provider = bedrock
+2025-04-04 05:43:48,929 - LiteLLM - INFO -
+LiteLLM completion() model= mistral.mistral-large-2402-v1:0; provider = bedrock
+2025-04-04 05:43:52,831 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/mistral.mistral-large-2402-v1:0/converse "HTTP/1.1 200 OK"
+05:43:52 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:43:52,832 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+✅ Mistral summary completed for MUFG Intime India Private Limited
+05:43:52 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:43:52,836 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:43:52,855 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:43:52 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:43:52,860 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:43:52,883 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:43:52 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:43:52,888 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:43:52,916 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+❌ Error processing entity MUFG Intime India Private Limited: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+2025-04-04 05:44:01,497 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/mistral.mistral-large-2402-v1:0/converse "HTTP/1.1 200 OK"
+05:44:01 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:44:01,498 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+✅ Mistral summary completed for Mr. Jinesh Doshi
+05:44:01 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:44:01,502 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:44:01,531 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:44:01 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:44:01,537 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:44:01,567 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:44:01 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:44:01,572 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:44:01,594 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+❌ Error processing entity Mr. Jinesh Doshi: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+2025-04-04 05:44:06,862 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/mistral.mistral-large-2402-v1:0/converse "HTTP/1.1 200 OK"
+05:44:06 - LiteLLM:INFO: utils.py:1086 - Wrapper: Completed Call, calling success_handler
+2025-04-04 05:44:06,862 - LiteLLM - INFO - Wrapper: Completed Call, calling success_handler
+✅ Mistral summary completed for Mr. Shanti Gopalkrishnan
+05:44:06 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:44:06,868 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:44:06,890 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:44:06 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:44:06,896 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:44:06,920 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+05:44:06 - LiteLLM:INFO: utils.py:2910 -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:44:06,926 - LiteLLM - INFO -
+LiteLLM completion() model= apac.anthropic.claude-3-5-sonnet-20241022-v2:0; provider = bedrock
+2025-04-04 05:44:06,948 - httpx - INFO - HTTP Request: POST https://bedrock-runtime.ap-south-1.amazonaws.com/model/apac.anthropic.claude-3-5-sonnet-20241022-v2:0/converse "HTTP/1.1 429 Too Many Requests"
+
+Give Feedback / Get Help: https://github.com/BerriAI/litellm/issues/new
+LiteLLM.Info: If you need to debug this error, use `litellm._turn_on_debug()'.
+
+
+Provider List: https://docs.litellm.ai/docs/providers
+
+❌ Error processing entity Mr. Shanti Gopalkrishnan: litellm.RateLimitError: BedrockException - {"message":"Too many tokens, please wait before trying again."}
+✅ All people and entities processed successfully!
+✅ Litigations processed successfully.
+✅ Removed processed file: /home/ubuntu/backend/DRHP_crud_backend/app/drhp_queue/U45201RJ1997PLC013937.pdf
+✅ Status updated to COMPLETED for GOEL CONSTRUCTION COMPANY LIMITED
+this is the end time 1743745446.9568093
+this is the total duration for the complete process 486.25
+this is the cost_map id 67ef71a6f1df86aed43f154f
+✅ Process completed at: 2025-04-04 05:44:06
+⏱️  Total Processing Time: 486.26 seconds
+
+added improved checklist criteria ---->> 17-02-2025
+⏳ Sleeping for 3 minutes before next fetch...
+
+⏳ Process started at: 2025-04-04 05:47:06
+⚠️  No pending companies found in MongoDB!
+✅ No pending companies found. Sleeping for 3 minutes...
+✅ Process completed at: 2025-04-04 05:47:06
+⏱️  Total Processing Time: 0.0 seconds
+
+added improved checklist criteria ---->> 17-02-2025
+⏳ Sleeping for 3 minutes before next fetch...
+
+⏳ Process started at: 2025-04-04 05:50:06
+⚠️  No pending companies found in MongoDB!
+✅ No pending companies found. Sleeping for 3 minutes...
+✅ Process completed at: 2025-04-04 05:50:06
+⏱️  Total Processing Time: 0.0 seconds
+
+added improved checklist criteria ---->> 17-02-2025
+⏳ Sleeping for 3 minutes before next fetch...
+
+⏳ Process started at: 2025-04-04 05:53:06
+⚠️  No pending companies found in MongoDB!
+✅ No pending companies found. Sleeping for 3 minutes...
+✅ Process completed at: 2025-04-04 05:53:06
+⏱️  Total Processing Time: 0.0 seconds
+
+added improved checklist criteria ---->> 17-02-2025
+⏳ Sleeping for 3 minutes before next fetch...
+

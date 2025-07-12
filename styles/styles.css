@@ -1,0 +1,161 @@
+@page {
+  size: A4;
+  margin: 20mm 15mm 20mm 15mm;
+
+  @top-center {
+    content: element(page-header);
+  }
+
+  @bottom-center {
+    content: element(page-footer);
+  }
+}
+
+body {
+  font-family: 'Calibri', sans-serif;
+  font-size: 10px;
+  color: #000;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.page {
+  page-break-after: always;
+}
+
+.page-header,
+.page-footer {
+  page-break-inside: avoid;
+}
+
+/* === Header (Used on Every Page) === */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(135deg, #97144D, #a91d42);
+  padding: 6px 16px;
+  height: 50px;
+  position: running(page-header);
+  box-sizing: border-box;
+}
+
+.header-left,
+.header-right {
+  display: flex;
+  align-items: center;
+}
+
+.axis-logo,
+.company-logo-small {
+  max-height: 30px;
+  max-width: 120px;
+  object-fit: contain;
+}
+
+.company-name {
+  font-size: 2.5rem;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin: 20px 0;
+  text-align: center;
+}
+
+.company-logo {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  margin-bottom: 20px;
+}
+
+.front-page {
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Vertically center content */
+  align-items: center;      /* Horizontally center content */
+  text-align: center;
+  height: 100%;
+  background: #fff;
+  padding: 0 20mm;
+  box-sizing: border-box;
+  position: relative;
+}
+
+
+.divider-line {
+  width: 200px;
+  height: 2px;
+  background: #97144D;
+  margin: 20px 0;
+}
+
+.document-title {
+  font-size: 1.6rem;
+  color: #97144D;
+  margin-bottom: 10px;
+}
+
+.document-date {
+  font-size: 1.2rem;
+  color: #333;
+}
+
+.page-content {
+  margin-top: 60px;     /* space for header */
+  margin-bottom: 40px;  /* space for footer */
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* Typography */
+h1, h2, h3, h4, h5, h6 {
+  color: #97144D !important;
+  text-align: center;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 10px 0;
+  page-break-inside: auto;
+}
+
+table th, table td {
+  border: 1px solid #ccc;
+  padding: 5px;
+  text-align: left;
+  font-size: 10px;
+}
+
+tr {
+  page-break-inside: avoid;
+}
+
+blockquote {
+  border-left: 4px solid #97144D;
+  margin: 10px 0;
+  padding: 10px;
+  background: #f9f3f6;
+}
+
+pre {
+  background: #f4f4f4;
+  padding: 10px;
+  overflow-x: auto;
+  font-size: 9px;
+}
+
+.page-break {
+  page-break-before: always;
+}
+
+strong, b {
+  color: #97144D;
+}
+
+/* Optional: If you want a specific class for highlights, add this and use <span class="highlight">text</span> in your markdown/html */
+.highlight {
+  color: #97144D;
+  font-weight: bold;
+}

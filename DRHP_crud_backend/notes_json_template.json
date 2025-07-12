@@ -1,0 +1,309 @@
+{
+  "Company Overview": [
+    {
+      "Topics": "Company Name",
+      "Search Query": "issuer full legal company name corporate information section company overview",
+      "AI Prompts": "Provide the 'Company Name' exactly as stated under the 'Company Overview' section of the DRHP.",
+      "Expected Output": "single_string"
+    },
+    {
+      "Topics": "Incorporation Date",
+      "Search Query": "incorporation date establishment date of incorporation company overview",
+      "AI Prompts": "Provide the 'Incorporation Date' exactly as stated under the 'Company Overview' section of the DRHP.",
+      "Expected Output": "single_string"
+    },
+    {
+      "Topics": "Headquarters",
+      "Search Query": "registered office headquarters address city state company overview",
+      "AI Prompts": "Provide the 'Headquarters' exactly as stated under the 'Company Overview' section of the DRHP.",
+      "Expected Output": "single_string"
+    },
+    {
+      "Topics": "Business Summary",
+      "Search Query": "business summary overview of operations products services company overview section",
+      "AI Prompts": "Provide the 'Business Summary' exactly as stated under the 'Company Overview' section of the DRHP.",
+      "Expected Output": "paragraph"
+    },
+    {
+      "Topics": "Key Milestones",
+      "Search Query": "key milestones achievements timeline company history company overview",
+      "AI Prompts": "Provide the 'Key Milestones' exactly as stated under the 'Company Overview' section of the DRHP.",
+      "Expected Output": "paragraph"
+    },
+    {
+      "Topics": "Industry Position",
+      "Search Query": "industry position market ranking competitive position company overview",
+      "AI Prompts": "Provide the 'Industry Position' exactly as stated under the 'Company Overview' section of the DRHP.",
+      "Expected Output": "paragraph"
+    }
+  ],
+
+  "Issue Highlights": [
+    {
+      "Topics": "Issue Type",
+      "Search Query": "IPO issue type fresh issue offer for sale issue highlights",
+      "AI Prompts": "Provide the 'Issue Type' exactly as stated under the 'Issue Highlights' section of the DRHP.",
+      "Expected Output": "single_string"
+    },
+    {
+      "Topics": "Issue Size (₹ Cr)",
+      "Search Query": "total issue size amount in crore rupees issue highlights",
+      "AI Prompts": "Provide the 'Issue Size (₹ Cr)' exactly as stated under the 'Issue Highlights' section of the DRHP.",
+      "Expected Output": "single_string"
+    },
+    {
+      "Topics": "Price Band (₹)",
+      "Search Query": "price band per equity share issue highlights",
+      "AI Prompts": "Provide the 'Price Band (₹)' exactly as stated under the 'Issue Highlights' section of the DRHP.",
+      "Expected Output": "single_string"
+    },
+    {
+      "Topics": "Face Value (₹)",
+      "Search Query": "face value per equity share issue highlights",
+      "AI Prompts": "Provide the 'Face Value (₹)' exactly as stated under the 'Issue Highlights' section of the DRHP.",
+      "Expected Output": "single_string"
+    },
+    {
+      "Topics": "Lot Size",
+      "Search Query": "minimum bid lot size market lot shares issue highlights",
+      "AI Prompts": "Provide the 'Lot Size' exactly as stated under the 'Issue Highlights' section of the DRHP.",
+      "Expected Output": "single_string"
+    },
+    {
+      "Topics": "Market Cap Post Issue (₹ Cr)",
+      "Search Query": "post issue market capitalization rupees crore issue highlights",
+      "AI Prompts": "Provide the 'Market Cap Post Issue (₹ Cr)' exactly as stated under the 'Issue Highlights' section of the DRHP.",
+      "Expected Output": "single_string"
+    },
+    {
+      "Topics": "Employee Reservation",
+      "Search Query": "employee reservation portion shares reserved for employees issue highlights",
+      "AI Prompts": "Provide the 'Employee Reservation' exactly as stated under the 'Issue Highlights' section of the DRHP.",
+      "Expected Output": "single_string"
+    },
+    {
+      "Topics": "Promoter Sale (OFS)",
+      "Search Query": "promoter sale offer for sale shares by promoters OFS issue highlights",
+      "AI Prompts": "Provide the 'Promoter Sale (OFS)' exactly as stated under the 'Issue Highlights' section of the DRHP.",
+      "Expected Output": "single_string"
+    }
+  ],
+
+  "Financial Summary": [
+    {
+      "Topics": "Financial Summary Table",
+      "Search Query": "financial summary table revenue EBITDA EBIT margin net profit EPS ROE debt equity multiple fiscal years",
+      "AI Prompts": "Extract a table from the DRHP that lists all reported financial years along with the exact values for these columns: 'FY', 'Revenue (₹ Cr)', 'EBITDA (₹ Cr)', 'EBITDA Margin (%)', 'Net Profit/Loss (₹ Cr)', 'Net Margin (%)', 'EPS (₹)', 'ROE (%)', 'Debt to Equity'. Return the data as a JSON array of objects, one object per FY, preserving chronological order.",
+      "Expected Output": {
+        "type": "table",
+        "columns": [
+          "FY",
+          "Revenue (₹ Cr)",
+          "EBITDA (₹ Cr)",
+          "EBITDA Margin (%)",
+          "Net Profit/Loss (₹ Cr)",
+          "Net Margin (%)",
+          "EPS (₹)",
+          "ROE (%)",
+          "Debt to Equity"
+        ]
+      }
+    }
+  ],
+
+  "Promoter & Shareholding": [
+    {
+      "Topics": "Promoter & Shareholding Table",
+      "Search Query": "promoter shareholding pattern table pre issue post issue shareholding percentages weighted average cost of acquisition WACA shares offered OFS",
+      "AI Prompts": "Extract the entire 'Promoter & Shareholding' table with the columns: 'Shareholder', 'Type', 'Pre-Issue Holding (%)', 'Post-Issue Holding (%)', 'Shares Offered (if OFS)', 'WACA (₹)'. Return as a JSON array of objects, one per shareholder.",
+      "Expected Output": {
+        "type": "table",
+        "columns": [
+          "Shareholder",
+          "Type",
+          "Pre-Issue Holding (%)",
+          "Post-Issue Holding (%)",
+          "Shares Offered (if OFS)",
+          "WACA (₹)"
+        ]
+      }
+    }
+  ],
+
+  "Product Portfolio": [
+    {
+      "Topics": "Product Category",
+      "Search Query": "product category classification product portfolio section",
+      "AI Prompts": "Provide the 'Product Category' exactly as stated under the 'Product Portfolio' section of the DRHP.",
+      "Expected Output": "single_string"
+    },
+    {
+      "Topics": "Product Name",
+      "Search Query": "product name model designation product portfolio",
+      "AI Prompts": "Provide the 'Product Name' exactly as stated under the 'Product Portfolio' section of the DRHP.",
+      "Expected Output": "single_string"
+    },
+    {
+      "Topics": "Segment",
+      "Search Query": "segment target market segment product portfolio",
+      "AI Prompts": "Provide the 'Segment' exactly as stated under the 'Product Portfolio' section of the DRHP.",
+      "Expected Output": "single_string"
+    },
+    {
+      "Topics": "Power Rating / Features",
+      "Search Query": "power rating technical features specifications product portfolio",
+      "AI Prompts": "Provide the 'Power Rating / Features' exactly as stated under the 'Product Portfolio' section of the DRHP.",
+      "Expected Output": "paragraph"
+    },
+    {
+      "Topics": "Target Market",
+      "Search Query": "target market customer segment geography product portfolio",
+      "AI Prompts": "Provide the 'Target Market' exactly as stated under the 'Product Portfolio' section of the DRHP.",
+      "Expected Output": "single_string"
+    },
+    {
+      "Topics": "Launch Year",
+      "Search Query": "launch year introduction year product portfolio",
+      "AI Prompts": "Provide the 'Launch Year' exactly as stated under the 'Product Portfolio' section of the DRHP.",
+      "Expected Output": "single_string"
+    }
+  ],
+
+  "Business Model & Strategy": [
+    {
+      "Topics": "Pillar",
+      "Search Query": "strategic pillar key pillar business model strategy section",
+      "AI Prompts": "Provide the 'Pillar' exactly as stated under the 'Business Model & Strategy' section of the DRHP.",
+      "Expected Output": "single_string"
+    },
+    {
+      "Topics": "Description",
+      "Search Query": "description of pillar strategic initiatives business model strategy",
+      "AI Prompts": "Provide the 'Description' exactly as stated under the 'Business Model & Strategy' section of the DRHP.",
+      "Expected Output": "paragraph"
+    },
+    {
+      "Topics": "Competitive Edge",
+      "Search Query": "competitive edge advantage differentiators business model strategy",
+      "AI Prompts": "Provide the 'Competitive Edge' exactly as stated under the 'Business Model & Strategy' section of the DRHP.",
+      "Expected Output": "paragraph"
+    },
+    {
+      "Topics": "Future Plans",
+      "Search Query": "future plans roadmap growth plans business model strategy",
+      "AI Prompts": "Provide the 'Future Plans' exactly as stated under the 'Business Model & Strategy' section of the DRHP.",
+      "Expected Output": "paragraph"
+    }
+  ],
+
+  "Market Opportunity": [
+    {
+      "Topics": "Market Segment",
+      "Search Query": "market segment served industry segment market opportunity",
+      "AI Prompts": "Provide the 'Market Segment' exactly as stated under the 'Market Opportunity' section of the DRHP.",
+      "Expected Output": "single_string"
+    },
+    {
+      "Topics": "Size (units or ₹ Cr)",
+      "Search Query": "market size value units crore rupees market opportunity",
+      "AI Prompts": "Provide the 'Size (units or ₹ Cr)' exactly as stated under the 'Market Opportunity' section of the DRHP.",
+      "Expected Output": "single_string"
+    },
+    {
+      "Topics": "Growth Rate (%)",
+      "Search Query": "market growth rate CAGR percentage market opportunity",
+      "AI Prompts": "Provide the 'Growth Rate (%)' exactly as stated under the 'Market Opportunity' section of the DRHP.",
+      "Expected Output": "single_string"
+    },
+    {
+      "Topics": "Trends",
+      "Search Query": "market trends drivers dynamics market opportunity",
+      "AI Prompts": "Provide the 'Trends' exactly as stated under the 'Market Opportunity' section of the DRHP.",
+      "Expected Output": "paragraph"
+    },
+    {
+      "Topics": "Company Position",
+      "Search Query": "company position within market share ranking market opportunity",
+      "AI Prompts": "Provide the 'Company Position' exactly as stated under the 'Market Opportunity' section of the DRHP.",
+      "Expected Output": "paragraph"
+    }
+  ],
+
+  "Objects of the Issue": [
+    {
+      "Topics": "Use of Proceeds",
+      "Search Query": "use of proceeds object of the issue utilisation of funds",
+      "AI Prompts": "Provide the 'Use of Proceeds' exactly as stated under the 'Objects of the Issue' section of the DRHP.",
+      "Expected Output": "paragraph"
+    },
+    {
+      "Topics": "Amount Allocated (₹ Cr)",
+      "Search Query": "amount allocated proceeds rupees crore objects of the issue",
+      "AI Prompts": "Provide the 'Amount Allocated (₹ Cr)' exactly as stated under the 'Objects of the Issue' section of the DRHP.",
+      "Expected Output": "single_string"
+    },
+    {
+      "Topics": "Purpose",
+      "Search Query": "purpose description project utilisation objects of the issue",
+      "AI Prompts": "Provide the 'Purpose' exactly as stated under the 'Objects of the Issue' section of the DRHP.",
+      "Expected Output": "paragraph"
+    },
+    {
+      "Topics": "Capex/Opex",
+      "Search Query": "capital expenditure operating expenditure allocation objects of the issue",
+      "AI Prompts": "Provide the 'Capex/Opex' exactly as stated under the 'Objects of the Issue' section of the DRHP.",
+      "Expected Output": "single_string"
+    },
+    {
+      "Topics": "Expected Benefit",
+      "Search Query": "expected benefit outcome benefit from proceeds objects of the issue",
+      "AI Prompts": "Provide the 'Expected Benefit' exactly as stated under the 'Objects of the Issue' section of the DRHP.",
+      "Expected Output": "paragraph"
+    }
+  ],
+
+  "Key Management": [
+    {
+      "Topics": "Name",
+      "Search Query": "name of key managerial personnel KMP key management",
+      "AI Prompts": "Provide the 'Name' exactly as stated under the 'Key Management' section of the DRHP.",
+      "Expected Output": "single_string"
+    },
+    {
+      "Topics": "Designation",
+      "Search Query": "designation position title key management",
+      "AI Prompts": "Provide the 'Designation' exactly as stated under the 'Key Management' section of the DRHP.",
+      "Expected Output": "single_string"
+    },
+    {
+      "Topics": "Background",
+      "Search Query": "background experience profile key management personnel",
+      "AI Prompts": "Provide the 'Background' exactly as stated under the 'Key Management' section of the DRHP.",
+      "Expected Output": "paragraph"
+    },
+    {
+      "Topics": "Years of Experience",
+      "Search Query": "years of experience professional experience key management",
+      "AI Prompts": "Provide the 'Years of Experience' exactly as stated under the 'Key Management' section of the DRHP.",
+      "Expected Output": "single_string"
+    },
+    {
+      "Topics": "Role in IPO",
+      "Search Query": "role in IPO responsibility leadership key management",
+      "AI Prompts": "Provide the 'Role in IPO' exactly as stated under the 'Key Management' section of the DRHP.",
+      "Expected Output": "single_string"
+    }
+  ],
+
+  "IPO Timeline": [
+    {
+      "Topics": "IPO Timeline Table",
+      "Search Query": "IPO timeline schedule key events dates bid open close allotment refund listing",
+      "AI Prompts": "Extract a table containing every row under the 'IPO Timeline' section with the columns 'Event', 'Date', 'Details'. Return as a JSON array of objects in chronological order.",
+      "Expected Output": {
+        "type": "table",
+        "columns": ["Event", "Date", "Details"]
+      }
+    }
+  ]
+}

@@ -1,0 +1,2333 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DRHP IPO Notes Generator</title>
+    <!-- Bootstrap for quick styling -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <!-- Favicon: Axis logo -->
+    <link rel="icon" type="image/png"
+        href="https://companieslogo.com/img/orig/AXISBANK.BO.D-df61833f.png?t=1720244490" />
+    <!-- Google Fonts - Calibri fallback -->
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet" />
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Calibri', 'Roboto', sans-serif;
+            line-height: 1.5;
+            margin: 0;
+            padding: 0;
+            font-size: 10px;
+        }
+
+        /* Page container for A4 sizing */
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            max-width: 210mm;
+            max-height: 297mm;
+            height: 297mm;
+            margin: 0 auto 20px;
+            background: white;
+            box-shadow: 0 6px 20px rgba(139, 21, 56, 0.15);
+            position: relative;
+            page-break-after: always;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        /* Prevent responsiveness for .page and its content */
+        @media (max-width: 9999px) {
+
+            .page,
+            .page-content,
+            .page-header,
+            .page-footer {
+                width: 210mm !important;
+                min-width: 210mm !important;
+                max-width: 210mm !important;
+                height: auto;
+            }
+
+            .page-content {
+                min-height: calc(297mm - 28mm) !important;
+                max-height: calc(297mm - 28mm) !important;
+                height: calc(297mm - 28mm) !important;
+                padding: 20mm 20mm !important;
+            }
+        }
+
+        /* Front page styling */
+        .front-page {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 40mm;
+            height: 297mm;
+            box-sizing: border-box;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            position: relative;
+            padding-top: 80px;
+        }
+
+        .front-page .company-logo-container {
+            width: 140px;
+            height: 140px;
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .front-page .company-logo-placeholder {
+            width: 140px;
+            height: 140px;
+            background: linear-gradient(135deg, rgba(139, 21, 56, 0.1), rgba(139, 21, 56, 0.05));
+            border: 3px dashed #97144D;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: #97144D;
+            text-align: center;
+            font-weight: 600;
+            box-shadow: 0 8px 25px rgba(151, 20, 77, 0.1);
+        }
+
+        .front-page .company-logo {
+            max-width: 140px;
+            max-height: 140px;
+            object-fit: contain;
+            scale: 1.5;
+        }
+
+        .front-page .company-name {
+            font-size: 3rem;
+            font-weight: 800;
+            color: #000;
+            margin-bottom: 60px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .front-page .divider-line {
+            width: 250px;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, #97144D, transparent);
+            margin-bottom: 60px;
+            border-radius: 1px;
+        }
+
+        .front-page .document-title {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #97144D;
+            margin-bottom: 30px;
+            text-shadow: 0 2px 4px rgba(151, 20, 77, 0.1);
+        }
+
+        .front-page .document-date {
+            font-size: 1.6rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        /* Front header image styling */
+        .front-header-image-container {
+            position: absolute;
+            top: 0;
+            left: -2px;
+            width: calc(100% + 2px);
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .front-header-image {
+            width: 100%;
+            height: auto;
+            display: block;
+            object-fit: contain;
+            pointer-events: none;
+        }
+
+        /* Regular page header */
+        .page-header {
+            background: linear-gradient(135deg, #97144D, #a91d42);
+            height: 18mm;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20mm;
+            color: white;
+            border-radius: 0;
+            object-fit: contain;
+        }
+
+        .header-left .axis-logo-container {
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-left .axis-logo {
+            max-width: 45px;
+            max-height: 45px;
+            object-fit: contain;
+            border-radius: 0;
+            display: block;
+            scale: 2.5;
+            right: -30px;
+        }
+
+        .header-left .axis-logo-placeholder {
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px dashed rgba(255, 255, 255, 0.4);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.9);
+            text-align: center;
+            font-weight: 600;
+        }
+
+        .header-right .company-logo-small-container {
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-right .company-logo-small {
+            max-width: 45px;
+            max-height: 45px;
+            object-fit: contain;
+            border-radius: 0;
+            display: block;
+            scale: 2.5;
+        }
+
+        .header-right .company-logo-placeholder-small {
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.15);
+            border: 2px dashed rgba(255, 255, 255, 0.4);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 9px;
+            color: rgba(255, 255, 255, 0.9);
+            text-align: center;
+            font-weight: 600;
+        }
+
+        /* Page footer */
+        .page-footer {
+            background: linear-gradient(135deg, #97144D, #a91d42);
+            height: 10mm;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding: 0 20mm;
+            border-radius: 0;
+        }
+
+        .page-number {
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        /* Content area */
+        .page-content {
+            padding: 20mm 20mm;
+            min-height: calc(297mm - 28mm);
+            box-sizing: border-box;
+            font-size: 10px;
+            line-height: 1.6;
+        }
+
+        /* Enhanced headings */
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            color: #97144D;
+            font-family: 'Calibri', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            margin: 20px 0 15px 0;
+            font-weight: 700;
+            padding: 12px 16px;
+            border-left: 6px solid #97144D;
+            border-radius: 0 12px 12px 0;
+            box-shadow: 0 4px 15px rgba(151, 20, 77, 0.1);
+            position: relative;
+            page-break-after: avoid;
+        }
+
+        h1 {
+            font-size: 1.6rem;
+            font-weight: 800;
+            border-left: 8px solid #97144D;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+
+        h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        h4 {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        h5 {
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        h6 {
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Enhanced table styling */
+        .table-container {
+            margin: 18px 0;
+            border-radius: 0;
+            overflow: visible;
+            border: 0.5px solid #bbb;
+            page-break-inside: avoid;
+            width: 100%;
+            max-width: 100%;
+            break-inside: avoid;
+            font-size: 9px;
+        }
+
+        .table {
+            margin-bottom: 0;
+            background: white;
+            color: #000;
+            font-size: 9px;
+            width: 100%;
+            border-collapse: collapse;
+            table-layout: auto;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
+            page-break-inside: avoid;
+            break-inside: avoid;
+            border: 0.5px solid #bbb;
+            table-layout: fixed;
+        }
+
+        .table thead th {
+            background: #97144D;
+            color: white;
+            font-weight: 700;
+            border: 0.5px solid #bbb;
+            padding: 7px 6px;
+            text-align: left;
+            font-size: 9px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            max-width: 200px;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            border-right: 1.5px solid #fff;
+            border-left: none;
+        }
+
+        .table thead th:last-child {
+            border-right: none;
+        }
+
+        .table tbody td {
+            background-color: white;
+            color: #000;
+            border: 0.5px solid #bbb;
+            padding: 6px 6px;
+            font-size: 9px;
+            vertical-align: middle;
+            max-width: 200px;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .table tbody tr:nth-child(even) td {
+            background-color: #f9f3f6;
+        }
+
+        .table tbody tr:hover td {
+            background-color: #f3e9f0;
+        }
+
+        /* Ensure tables and rows don't break awkwardly */
+        .table,
+        .table-container,
+        .table tr {
+            page-break-inside: avoid !important;
+        }
+
+        @media print {
+            .navbar {
+                display: none;
+            }
+
+            .page {
+                box-shadow: none;
+                margin: 0;
+                page-break-after: always;
+                width: 210mm !important;
+                min-width: 210mm !important;
+                max-width: 210mm !important;
+                height: 297mm !important;
+                min-height: 297mm !important;
+                max-height: 297mm !important;
+            }
+
+            body {
+                background: white;
+                font-size: 10px !important;
+            }
+
+            .table-container {
+                overflow: visible;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+
+            .table {
+                width: 100%;
+                table-layout: auto;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+            }
+        }
+
+        /* Navigation bar */
+        .navbar {
+            background: linear-gradient(135deg, #97144D, #a91d42) !important;
+            box-shadow: 0 4px 15px rgba(151, 20, 77, 0.3);
+            position: sticky;
+            top: 0;
+            z-index: 1002;
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: white !important;
+            letter-spacing: 1px;
+        }
+
+        .btn-light {
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            border: none;
+            color: #97144D;
+            font-weight: 700;
+            padding: 12px 30px;
+            border-radius: 30px;
+            transition: all 0.3s ease;
+            font-family: 'Calibri', 'Roboto', sans-serif;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-light:hover {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Enhanced text styling */
+        p,
+        li,
+        td {
+            font-family: 'Calibri', 'Roboto', sans-serif;
+            color: #000;
+            font-size: 10px;
+            line-height: 1.6;
+            margin-bottom: 10px;
+        }
+
+        /* Enhanced blockquotes */
+        blockquote {
+            border-left: 6px solid #97144D;
+            background: linear-gradient(135deg, rgba(139, 21, 56, 0.05), rgba(139, 21, 56, 0.02));
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 0 15px 15px 0;
+            color: #000;
+            font-style: italic;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(151, 20, 77, 0.08);
+        }
+
+        /* Enhanced code blocks */
+        pre {
+            background: linear-gradient(135deg, #f8f9fa, #ffffff);
+            border: 2px solid rgba(151, 20, 77, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            overflow-x: auto;
+            color: #000;
+            font-size: 9px;
+            box-shadow: 0 4px 15px rgba(151, 20, 77, 0.08);
+        }
+
+        code {
+            background: rgba(151, 20, 77, 0.1);
+            color: #97144D;
+            padding: 3px 6px;
+            border-radius: 6px;
+            font-size: 9px;
+            font-weight: 600;
+        }
+
+        /* Lists */
+        ul,
+        ol {
+            padding-left: 18px;
+            margin-bottom: 12px;
+        }
+
+        li {
+            margin-bottom: 6px;
+        }
+
+        /* Strong emphasis */
+        strong,
+        b {
+            font-weight: 700;
+            color: #97144D;
+        }
+
+        /* Page break utilities */
+        .page-break-before {
+            page-break-before: always;
+        }
+
+        .page-break-after {
+            page-break-after: always;
+        }
+
+        .page-break-inside-avoid {
+            page-break-inside: avoid;
+        }
+
+        /* Loading spinner */
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+            color: white;
+        }
+
+        /* Hide scroll for better PDF generation */
+        .preview-container {
+            max-width: none;
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: visible;
+        }
+
+        /* Logo visibility controls */
+        .logo-hidden {
+            display: none !important;
+        }
+
+        .logo-visible {
+            display: flex !important;
+        }
+
+        .page,
+        .page-header,
+        .page-footer {
+            border-radius: 0 !important;
+        }
+
+        .footer-company-name {
+            position: absolute;
+            left: 20mm;
+            top: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            color: rgba(255, 255, 255);
+            font-size: 10px;
+            font-weight: 150;
+            letter-spacing: 1px;
+            z-index: 2;
+            right: -30px;
+            pointer-events: none;
+            user-select: none;
+            height: 100%;
+        }
+
+        @media print {
+            .sticky-qr {
+                display: none !important;
+            }
+
+            .navbar {
+                position: static !important;
+            }
+        }
+
+        .main-split-container {
+            display: flex;
+            width: 100vw;
+            height: calc(100vh - 48px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .left-frame {
+            width: 50%;
+            min-width: 0;
+            height: 100%;
+            background: #fff;
+            border-right: 2px solid #97144D;
+            box-sizing: border-box;
+            overflow: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            justify-content: stretch;
+        }
+
+        .right-frame {
+            width: 50%;
+            min-width: 0;
+            height: 100%;
+            background: #fff;
+            overflow-y: auto;
+            overflow-x: hidden;
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .upload-dashed-box {
+            border: 2.5px dashed #97144D;
+            border-radius: 16px;
+            width: calc(100% - 32px);
+            height: calc(100% - 32px);
+            margin: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #fff6fa 60%, #f9e6f0 100%);
+            box-sizing: border-box;
+            position: relative;
+        }
+
+        .upload-inner-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        .upload-arrow {
+            width: 54px;
+            height: 54px;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        .upload-arrow path {
+            stroke: #97144D;
+            stroke-width: 3.5;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+        }
+
+        .upload-label-text {
+            font-weight: 700;
+            font-size: 1.3rem;
+            color: #97144D;
+            margin-bottom: 6px;
+        }
+
+        .upload-browse-text {
+            font-size: 1rem;
+            color: #97144D;
+            opacity: 0.7;
+            margin-bottom: 0;
+        }
+
+        .upload-browse-text span {
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        .upload-loading-center {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            z-index: 2;
+        }
+
+        #pdf-preview-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            min-height: 400px;
+        }
+
+        @media print {
+
+            .main-split-container,
+            .left-frame,
+            .right-frame {
+                display: block !important;
+                width: 100% !important;
+                height: auto !important;
+            }
+        }
+
+        html,
+        body {
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .left-loading-overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.7);
+            z-index: 20;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .left-loading-overlay.active {
+            display: flex;
+        }
+
+        .left-loading-spinner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bouncing-dots {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 18px;
+        }
+
+        .bouncing-dots span {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            margin: 0 4px;
+            background: #97144D;
+            border-radius: 50%;
+            animation: bounce 0.7s infinite alternate;
+        }
+
+        .bouncing-dots span:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+
+        .bouncing-dots span:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        @keyframes bounce {
+            to {
+                transform: translateY(-13px);
+                opacity: 0.5;
+            }
+        }
+
+        .left-loading-spinner .loading-text {
+            color: #97144D;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .pdf-preview-area {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            justify-content: stretch;
+        }
+
+        .pdf-preview-area.loading #upload-card,
+        .pdf-preview-area.loading #pdf-preview {
+            opacity: 0.4;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+
+        .pdf-preview-area.loading .left-loading-overlay {
+            display: flex;
+        }
+
+        .left-loading-spinner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: none;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 21;
+        }
+
+        .left-frame-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            padding: 10px 16px;
+            background: #fff;
+            border-bottom: 1px solid #97144D;
+        }
+
+        .btn-remove-pdf,
+        .btn-generate-ipo {
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            border: none;
+            color: #97144D;
+            font-weight: 700;
+            padding: 8px 20px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            font-family: 'Calibri', 'Roboto', sans-serif;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            font-size: 0.9rem;
+        }
+
+        .btn-remove-pdf:hover,
+        .btn-generate-ipo:hover {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .generate-ipo-popup {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.18);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .generate-ipo-popup.active {
+            display: flex;
+        }
+
+        .generate-ipo-popup-content {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 32px rgba(151, 20, 77, 0.18);
+            padding: 20px;
+            width: 400px;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .generate-ipo-popup-content h3 {
+            color: #97144D;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+
+        .generate-ipo-popup-content p {
+            font-size: 0.9rem;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        .generate-ipo-popup-content .note {
+            font-size: 0.8rem;
+            color: #97144D;
+            font-style: italic;
+            margin-bottom: 20px;
+        }
+
+        .generate-ipo-popup-content .popup-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .generate-ipo-popup-content .btn {
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .generate-ipo-popup-content .btn-yes {
+            background: #97144D;
+            color: white;
+            border: none;
+        }
+
+        .generate-ipo-popup-content .btn-no {
+            background: #f8f9fa;
+            color: #97144D;
+            border: 1px solid #97144D;
+        }
+
+        .right-frame-content {
+            position: relative;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .no-ipo-message {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            text-align: center;
+            color: #97144D;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        .no-ipo-message svg {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 20px;
+        }
+
+        .no-ipo-message svg path {
+            stroke: #97144D;
+            stroke-width: 2;
+            fill: none;
+        }
+
+        .right-loading-overlay {
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.7);
+            z-index: 20;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .right-loading-overlay.active {
+            display: flex;
+        }
+
+        .right-loading-spinner {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .loading-line {
+            width: 200px;
+            height: 4px;
+            background: #f8f9fa;
+            border-radius: 2px;
+            overflow: hidden;
+            position: relative;
+            margin-bottom: 18px;
+        }
+
+        .loading-line::after {
+            content: '';
+            position: absolute;
+            width: 50%;
+            height: 100%;
+            background: #97144D;
+            animation: slide 1.5s infinite;
+        }
+
+        @keyframes slide {
+            0% {
+                left: -50%;
+            }
+
+            50% {
+                left: 50%;
+            }
+
+            100% {
+                left: 100%;
+            }
+        }
+
+        .right-loading-spinner .loading-text {
+            color: #97144D;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .warning-popup {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.18);
+            z-index: 2100;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .warning-popup.active {
+            display: flex;
+        }
+
+        .warning-popup-content {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 32px rgba(151, 20, 77, 0.18);
+            padding: 24px 32px;
+            width: 340px;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .warning-popup-content h3 {
+            color: #97144D;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .warning-popup-content p {
+            font-size: 0.95rem;
+            color: #333;
+            margin-bottom: 18px;
+        }
+
+        .warning-popup-content .btn-ok {
+            background: #97144D;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .remove-pdf-popup {
+            display: none;
+            position: fixed;
+            left: 0;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.18);
+            z-index: 2100;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .remove-pdf-popup.active {
+            display: flex;
+        }
+
+        .remove-pdf-popup-content {
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 32px rgba(151, 20, 77, 0.18);
+            padding: 24px 32px;
+            width: 360px;
+            max-width: 90%;
+            text-align: center;
+        }
+
+        .remove-pdf-popup-content h3 {
+            color: #97144D;
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+        }
+
+        .remove-pdf-popup-content p {
+            font-size: 0.95rem;
+            color: #333;
+            margin-bottom: 18px;
+        }
+
+        .remove-pdf-popup-content .note {
+            font-size: 0.85rem;
+            color: #97144D;
+            font-style: italic;
+            margin-bottom: 18px;
+        }
+
+        .remove-pdf-popup-content .popup-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .remove-pdf-popup-content .btn-cancel {
+            background: #f8f9fa;
+            color: #97144D;
+            border: 1px solid #97144D;
+            border-radius: 20px;
+            padding: 8px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .remove-pdf-popup-content .btn-continue {
+            background: #97144D;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        /* Status indicator styles */
+        .status-indicator {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            min-width: 250px;
+            display: none;
+        }
+
+        .status-indicator.active {
+            display: block;
+        }
+
+        .status-indicator h4 {
+            margin: 0 0 10px 0;
+            color: #97144D;
+            font-size: 1rem;
+        }
+
+        .status-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .status-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.9rem;
+        }
+
+        .status-icon {
+            width: 16px;
+            height: 16px;
+        }
+
+        .status-icon.complete {
+            color: #28a745;
+        }
+
+        .status-icon.pending {
+            color: #ffc107;
+        }
+
+        .overall-status {
+            font-weight: 600;
+            color: #97144D;
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        /* Company list styles */
+        .company-list {
+            position: fixed;
+            top: 80px;
+            left: 20px;
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            max-width: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .company-list.active {
+            display: block;
+        }
+
+        .company-item {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .company-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .company-item.selected {
+            background-color: #e3f2fd;
+            border-color: #2196f3;
+        }
+
+        .company-name-item {
+            font-weight: 600;
+            color: #97144D;
+        }
+
+        .company-cin {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        /* Existing markdown notification */
+        .existing-markdown-notification {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #28a745;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 10000;
+            font-weight: 600;
+            display: none;
+        }
+
+        .existing-markdown-notification.active {
+            display: block;
+            animation: slideDown 0.3s ease-out;
+        }
+
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1" style="display: flex; align-items: center; gap: 10px;">
+                <img src="https://companieslogo.com/img/orig/AXISBANK.BO.D-df61833f.png?t=1720244490" alt="Axis Logo"
+                    style="height: 36px; width: 36px; object-fit: contain; background: transparent; border-radius: 6px;">
+                DRHP IPO Notes Generator
+            </span>
+            <div class="d-flex gap-2">
+                <input type="file" id="axis-logo-upload" accept="image/*" hidden>
+                <input type="file" id="company-logo-upload" accept="image/*" hidden>
+                <button id="upload-axis-logo" class="btn btn-light" type="button">
+                    <i class="fas fa-image me-2"></i>Upload AXIS CAPITAL Logo
+                </button>
+                <button id="upload-company-logo" class="btn btn-light" type="button">
+                    <i class="fas fa-image me-2"></i>Upload Company Logo
+                </button>
+                <button id="view-companies" class="btn btn-light" type="button">
+                    <i class="fas fa-building me-2"></i>View Companies
+                </button>
+                <button id="download-pdf" class="btn btn-light" type="button">
+                    <i class="fas fa-download me-2"></i>Download as PDF
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Existing Markdown Notification -->
+    <div class="existing-markdown-notification" id="existing-markdown-notification">
+        ✅ Existing markdown found! Loading immediately...
+    </div>
+
+    <!-- Status Indicator -->
+    <div class="status-indicator" id="status-indicator">
+        <h4>Processing Status</h4>
+        <div class="status-grid">
+            <div class="status-item">
+                <span class="status-icon pending" id="pages-status">⏳</span>
+                <span>Pages</span>
+            </div>
+            <div class="status-item">
+                <span class="status-icon pending" id="qdrant-status">⏳</span>
+                <span>Qdrant</span>
+            </div>
+            <div class="status-item">
+                <span class="status-icon pending" id="checklist-status">⏳</span>
+                <span>Checklist</span>
+            </div>
+            <div class="status-item">
+                <span class="status-icon pending" id="markdown-status">⏳</span>
+                <span>Markdown</span>
+            </div>
+        </div>
+        <div class="overall-status" id="overall-status">Not Started</div>
+    </div>
+
+    <!-- Company List -->
+    <div class="company-list" id="company-list">
+        <h4 style="margin-bottom: 15px; color: #97144D;">Companies</h4>
+        <div id="companies-container">
+            <!-- Companies will be loaded here -->
+        </div>
+    </div>
+
+    <div class="main-split-container">
+        <div class="left-frame" id="left-frame-upload">
+            <div class="left-frame-buttons">
+                <button id="remove-pdf" class="btn-remove-pdf" type="button">Remove PDF</button>
+                <button id="generate-ipo" class="btn-generate-ipo" type="button">Generate IPO Notes</button>
+            </div>
+            <div class="pdf-preview-area" id="pdf-preview-area">
+                <div class="left-loading-overlay" id="left-loading-overlay">
+                    <div class="left-loading-spinner">
+                        <div class="bouncing-dots">
+                            <span></span><span></span><span></span>
+                        </div>
+                        <div class="loading-text">Processing PDF…</div>
+                    </div>
+                </div>
+                <div id="upload-card"
+                    style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;">
+                    <div class="upload-dashed-box">
+                        <div class="upload-inner-content" id="upload-inner-content">
+                            <label for="drhp-upload-input"
+                                style="cursor:pointer;display:flex;flex-direction:column;align-items:center;">
+                                <svg class="upload-arrow" viewBox="0 0 48 48" fill="none">
+                                    <path d="M24 34V14" />
+                                    <path d="M16 22l8-8 8 8" />
+                                    <path d="M12 38h24" />
+                                </svg>
+                                <div class="upload-label-text">Upload DRHP document</div>
+                                <div class="upload-browse-text">Drop your PDF here or <span>browse</span></div>
+                                <input id="drhp-upload-input" type="file" accept="application/pdf"
+                                    style="display:none;" />
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div id="pdf-preview" style="display:none;height:100%;width:100%;overflow:auto;padding:0;">
+                    <iframe id="pdf-preview-iframe" style="width:100%;height:100%;border:none;"></iframe>
+                </div>
+            </div>
+        </div>
+        <div class="right-frame">
+            <div class="right-frame-content">
+                <div class="right-loading-overlay" id="right-loading-overlay">
+                    <div class="right-loading-spinner">
+                        <div class="loading-line"></div>
+                        <div class="loading-text">Generating IPO Notes…</div>
+                        <div
+                            style="font-weight: 300; font-style: italic; color: #97144D; font-size: 0.95rem; margin-top: 4px;">
+                            It might take a while</div>
+                    </div>
+                </div>
+                <div class="no-ipo-message" id="no-ipo-message">
+                    <svg viewBox="0 0 48 48" fill="none">
+                        <path
+                            d="M24 44C12.954 44 4 35.046 4 24C4 12.954 12.954 4 24 4C35.046 4 44 12.954 44 24C44 35.046 35.046 44 24 44Z"
+                            stroke-width="2" />
+                        <path d="M24 16V28" stroke-width="2" />
+                        <path d="M24 32H24.01" stroke-width="2" />
+                    </svg>
+                    No IPO Generated
+                </div>
+                <div class="preview-container" id="preview-container" style="display:none;">
+                    <!-- Front Page -->
+                    <div class="page front-page" id="front-page">
+                        <div class="front-header-image-container">
+                            <img src="Notes_Front_Header_PNG.png" alt="Front Header" class="front-header-image" />
+                        </div>
+                        <div class="company-logo-container">
+                            <div class="company-logo-placeholder" id="logo-placeholder">COMPANY<br>LOGO</div>
+                            <img class="company-logo logo-hidden" id="company-logo" alt="Company Logo" />
+                        </div>
+                        <h1 class="company-name" id="company-name">COMPANY NAME</h1>
+                        <div class="divider-line"></div>
+                        <div class="document-title">IPO NOTE - Investor Education Series</div>
+                        <div class="document-date" id="document-date"></div>
+                    </div>
+                    <!-- Content Pages Container -->
+                    <div id="content-pages"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generate IPO Popup -->
+    <div class="generate-ipo-popup" id="generate-ipo-popup">
+        <div class="generate-ipo-popup-content">
+            <h3>Generate IPO Notes</h3>
+            <p>Do you want to continue with generating IPO Notes?</p>
+            <p class="note">NOTE: It will take time to generate IPO Notes. Be patient.</p>
+            <div class="popup-buttons">
+                <button class="btn btn-yes" id="generate-ipo-yes" type="button">Yes</button>
+                <button class="btn btn-no" id="generate-ipo-no" type="button">No</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Warning Popup for no file uploaded -->
+    <div class="warning-popup" id="warning-popup">
+        <div class="warning-popup-content">
+            <h3>Warning</h3>
+            <p id="warning-message">No file uploaded. Please upload a PDF before generating IPO Notes.</p>
+            <button class="btn-ok" id="warning-ok" type="button">OK</button>
+        </div>
+    </div>
+
+    <!-- Warning Popup for no IPO generated -->
+    <div class="warning-popup" id="no-ipo-popup">
+        <div class="warning-popup-content">
+            <h3>Warning</h3>
+            <p>No IPO Note generated.</p>
+            <button class="btn-ok" id="no-ipo-ok" type="button">OK</button>
+        </div>
+    </div>
+
+    <!-- Remove PDF Popup -->
+    <div class="remove-pdf-popup" id="remove-pdf-popup">
+        <div class="remove-pdf-popup-content" id="remove-pdf-popup-content">
+            <!-- Content will be set dynamically -->
+        </div>
+    </div>
+
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Marked.js for client-side Markdown → HTML -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <!-- jsPDF and html2canvas for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- PDF.js for PDF preview -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.2.67/pdf.min.js"></script>
+    <!-- QR Code library -->
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+
+    <script>
+        /* ---------------- CONFIG ---------------- */
+        const API_BASE_URL = 'http://localhost:8000'; // Enhanced FastAPI backend URL
+        const PAGE_HEIGHT_PX = 1122;
+        const HEADER_PX = 68;
+        const FOOTER_PX = 38;
+        const CONTENT_PX = PAGE_HEIGHT_PX - HEADER_PX - FOOTER_PX;
+        const monthYear = new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+
+        /* ---------------- GLOBAL STATE ---------------- */
+        let axisCapitalLogoDataUrl = null;
+        let companyLogoDataUrl = null;
+        let isIpoGenerated = false;
+        let uploadedPdfFile = null;
+        let ipoNotesMarkdown = '';
+        let currentCompanyId = null;
+        let processingInterval = null;
+        let processingStatus = "not_started";
+        let cancelIpoBtn = null;
+
+        /* ---------------- API FUNCTIONS ---------------- */
+        async function apiCall(endpoint, options = {}) {
+            try {
+                const response = await fetch(`${API_BASE_URL}${endpoint}`, {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        ...options.headers
+                    },
+                    ...options
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+                    throw new Error(errorData.error || `HTTP ${response.status}`);
+                }
+
+                return await response.json();
+            } catch (error) {
+                console.error('API call failed:', error);
+                throw error;
+            }
+        }
+
+        async function uploadDRHP(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+
+            const response = await fetch(`${API_BASE_URL}/process-drhp/`, {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+                throw new Error(errorData.error || `HTTP ${response.status}`);
+            }
+
+            return await response.json();
+        }
+
+        async function getCompanies() {
+            return await apiCall('/companies/');
+        }
+
+        async function getCompany(companyId) {
+            return await apiCall(`/company/${companyId}`);
+        }
+
+        async function getProcessingStatus(companyId) {
+            return await apiCall(`/company/${companyId}/status`);
+        }
+
+        async function getMarkdown(companyId) {
+            return await apiCall(`/company/${companyId}/markdown`);
+        }
+
+        async function deleteCompany(companyId) {
+            return await apiCall(`/company/${companyId}`, { method: 'DELETE' });
+        }
+
+        /* ---------------- ENHANCED NOTIFICATION SYSTEM ---------------- */
+        function showExistingMarkdownNotification() {
+            const notification = document.getElementById('existing-markdown-notification');
+            notification.classList.add('active');
+
+            setTimeout(() => {
+                notification.classList.remove('active');
+            }, 3000);
+        }
+
+        function showError(message) {
+            // Create a simple error notification
+            const errorDiv = document.createElement('div');
+            errorDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #ff4444;
+                color: white;
+                padding: 15px 20px;
+                border-radius: 8px;
+                z-index: 10000;
+                max-width: 300px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            `;
+            errorDiv.textContent = message;
+            document.body.appendChild(errorDiv);
+
+            setTimeout(() => {
+                errorDiv.remove();
+            }, 5000);
+        }
+
+        /* ---------------- STATUS MONITORING ---------------- */
+        function updateStatusIndicator(status) {
+            const statusIndicator = document.getElementById('status-indicator');
+            const pagesStatus = document.getElementById('pages-status');
+            const qdrantStatus = document.getElementById('qdrant-status');
+            const checklistStatus = document.getElementById('checklist-status');
+            const markdownStatus = document.getElementById('markdown-status');
+            const overallStatus = document.getElementById('overall-status');
+
+            // Update individual status icons
+            pagesStatus.textContent = status.pages_done ? '✅' : '⏳';
+            pagesStatus.className = `status-icon ${status.pages_done ? 'complete' : 'pending'}`;
+
+            qdrantStatus.textContent = status.qdrant_done ? '✅' : '⏳';
+            qdrantStatus.className = `status-icon ${status.qdrant_done ? 'complete' : 'pending'}`;
+
+            checklistStatus.textContent = status.checklist_done ? '✅' : '⏳';
+            checklistStatus.className = `status-icon ${status.checklist_done ? 'complete' : 'pending'}`;
+
+            markdownStatus.textContent = status.markdown_done ? '✅' : '⏳';
+            markdownStatus.className = `status-icon ${status.markdown_done ? 'complete' : 'pending'}`;
+
+            // Update overall status
+            overallStatus.textContent = status.overall_status;
+
+            // Show status indicator
+            statusIndicator.classList.add('active');
+        }
+
+        function hideStatusIndicator() {
+            document.getElementById('status-indicator').classList.remove('active');
+        }
+
+        async function pollProcessingStatus(companyId) {
+            if (processingInterval) {
+                clearInterval(processingInterval);
+            }
+            processingInterval = setInterval(async () => {
+                try {
+                    const status = await getProcessingStatus(companyId);
+                    updateStatusIndicator(status);
+                    processingStatus = status.processing_status || 'not_started';
+                    if (processingStatus === 'processing') {
+                        generateIpoBtn.disabled = true;
+                        showCancelIpoButton();
+                    } else {
+                        generateIpoBtn.disabled = false;
+                        hideCancelIpoButton();
+                    }
+                    if (status.overall_status === 'Completed') {
+                        clearInterval(processingInterval);
+                        processingInterval = null;
+                        hideCancelIpoButton();
+                        try {
+                            const markdownData = await getMarkdown(companyId);
+                            displayGeneratedIPO(markdownData.markdown, markdownData.company_name);
+                        } catch (error) {
+                            showError('Failed to load generated IPO notes');
+                        }
+                    }
+                } catch (error) {
+                    clearInterval(processingInterval);
+                    processingInterval = null;
+                }
+            }, 5000);
+        }
+
+        /* ---------------- COMPANY MANAGEMENT ---------------- */
+        async function loadCompanies() {
+            try {
+                const companies = await getCompanies();
+                const container = document.getElementById('companies-container');
+
+                if (companies.length === 0) {
+                    container.innerHTML = '<p style="color: #666; text-align: center;">No companies found</p>';
+                    return;
+                }
+
+                container.innerHTML = companies.map(company => `
+                    <div class="company-item" data-company-id="${company.id}">
+                        <div class="company-name-item">${company.name}</div>
+                        <div class="company-cin">CIN: ${company.corporate_identity_number}</div>
+                        <div style="font-size: 0.7rem; color: #999; margin-top: 5px;">
+                            Created: ${new Date(company.created_at).toLocaleDateString()}
+                        </div>
+                    </div>
+                `).join('');
+
+                // Add click handlers
+                container.querySelectorAll('.company-item').forEach(item => {
+                    item.addEventListener('click', () => {
+                        const companyId = item.dataset.companyId;
+                        selectCompany(companyId);
+                    });
+                });
+            } catch (error) {
+                console.error('Error loading companies:', error);
+                document.getElementById('companies-container').innerHTML =
+                    '<p style="color: #ff0000; text-align: center;">Error loading companies</p>';
+            }
+        }
+
+        async function selectCompany(companyId) {
+            try {
+                // Update UI to show selected company
+                document.querySelectorAll('.company-item').forEach(item => {
+                    item.classList.remove('selected');
+                });
+                document.querySelector(`[data-company-id="${companyId}"]`).classList.add('selected');
+
+                // Hide company list
+                document.getElementById('company-list').classList.remove('active');
+
+                // Get company details
+                const company = await getCompany(companyId);
+
+                // Update company name in the UI
+                document.getElementById('company-name').textContent = company.name;
+                currentCompanyId = companyId;
+
+                // Check if markdown exists
+                try {
+                    const markdownData = await getMarkdown(companyId);
+                    showExistingMarkdownNotification();
+                    displayGeneratedIPO(markdownData.markdown, company.name);
+                } catch (error) {
+                    // No markdown yet, check processing status
+                    try {
+                        const status = await getProcessingStatus(companyId);
+                        updateStatusIndicator(status);
+
+                        if (status.overall_status === 'Processing') {
+                            pollProcessingStatus(companyId);
+                        }
+                    } catch (statusError) {
+                        console.error('Error checking status:', statusError);
+                    }
+                }
+            } catch (error) {
+                console.error('Error selecting company:', error);
+                showError('Failed to load company details');
+            }
+        }
+
+        /* ---------------- IPO GENERATION ---------------- */
+        function displayGeneratedIPO(markdown, companyName) {
+            // Hide loading and no-ipo message
+            document.getElementById('right-loading-overlay').classList.remove('active');
+            document.getElementById('no-ipo-message').style.display = 'none';
+
+            // Show preview container
+            document.getElementById('preview-container').style.display = 'block';
+
+            // Update company name
+            document.getElementById('company-name').textContent = companyName;
+
+            // Convert markdown to HTML and create pages
+            const html = marked.parse(markdown, { mangle: false, headerIds: false, breaks: true });
+            createPages(html);
+
+            // Update logo display
+            updateLogoDisplay();
+
+            // Set IPO generated flag
+            isIpoGenerated = true;
+
+            // Hide status indicator
+            hideStatusIndicator();
+        }
+
+        /* ---------------- LOGO UPLOAD / DISPLAY ---------------- */
+        document.getElementById('upload-axis-logo').addEventListener('click', function (e) {
+            if (!isIpoGenerated) {
+                e.preventDefault();
+                document.getElementById('no-ipo-popup').classList.add('active');
+                return false;
+            }
+            document.getElementById('axis-logo-upload').click();
+        });
+
+        document.getElementById('upload-company-logo').addEventListener('click', function (e) {
+            if (!isIpoGenerated) {
+                e.preventDefault();
+                document.getElementById('no-ipo-popup').classList.add('active');
+                return false;
+            }
+            document.getElementById('company-logo-upload').click();
+        });
+
+        document.getElementById('axis-logo-upload').onchange = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                axisCapitalLogoDataUrl = ev.target.result;
+                updateLogoDisplay();
+            };
+            reader.readAsDataURL(file);
+        };
+
+        document.getElementById('company-logo-upload').onchange = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                companyLogoDataUrl = ev.target.result;
+                updateLogoDisplay();
+            };
+            reader.readAsDataURL(file);
+        };
+
+        function updateLogoDisplay() {
+            // Company logo (front page)
+            const ph = document.getElementById('logo-placeholder');
+            const img = document.getElementById('company-logo');
+            if (companyLogoDataUrl) {
+                ph.style.display = 'none';
+                img.src = companyLogoDataUrl;
+                img.classList.replace('logo-hidden', 'logo-visible');
+            } else {
+                ph.style.display = 'flex';
+                img.classList.replace('logo-visible', 'logo-hidden');
+            }
+
+            // Company logo (header small)
+            document.querySelectorAll('.company-logo-small-container').forEach(c => {
+                c.innerHTML = companyLogoDataUrl ? `<img class="company-logo-small" src="${companyLogoDataUrl}">`
+                    : `<div class='company-logo-placeholder-small'>LOGO</div>`;
+            });
+
+            // Axis Capital logo (header left)
+            document.querySelectorAll('.axis-logo-container').forEach(c => {
+                if (axisCapitalLogoDataUrl) {
+                    c.innerHTML = `<img class='axis-logo' src='${axisCapitalLogoDataUrl}' alt='Axis Capital Logo'>`;
+                } else {
+                    c.innerHTML = `<div class='axis-logo-placeholder'>AXIS<br>CAPITAL</div>`;
+                }
+            });
+        }
+
+        /* ---------------- VIEW COMPANIES BUTTON ---------------- */
+        document.getElementById('view-companies').addEventListener('click', async () => {
+            const companyList = document.getElementById('company-list');
+            if (companyList.classList.contains('active')) {
+                companyList.classList.remove('active');
+            } else {
+                await loadCompanies();
+                companyList.classList.add('active');
+            }
+        });
+
+        // Close company list when clicking outside
+        document.addEventListener('click', (e) => {
+            const companyList = document.getElementById('company-list');
+            const viewCompaniesBtn = document.getElementById('view-companies');
+
+            if (!companyList.contains(e.target) && !viewCompaniesBtn.contains(e.target)) {
+                companyList.classList.remove('active');
+            }
+        });
+
+        /* ---------------- INITIALISE ---------------- */
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('document-date').textContent = monthYear;
+            updateLogoDisplay();
+
+            // Initially set state
+            isIpoGenerated = false;
+            document.getElementById('no-ipo-message').style.display = 'flex';
+            document.getElementById('preview-container').style.display = 'none';
+
+            // Disable buttons initially
+            document.getElementById('remove-pdf').disabled = true;
+            document.getElementById('generate-ipo').disabled = true;
+            uploadedPdfFile = null;
+            currentCompanyId = null;
+        });
+
+        /* ---------------- PAGE CREATION ---------------- */
+        function createPages(rawHtml) {
+            const container = document.getElementById('content-pages');
+            container.innerHTML = '';
+
+            const temp = document.createElement('div');
+            temp.innerHTML = rawHtml;
+
+            // wrap <table>
+            temp.querySelectorAll('table').forEach(tbl => {
+                const wrap = document.createElement('div');
+                wrap.className = 'table-container';
+                tbl.parentNode.insertBefore(wrap, tbl);
+                wrap.appendChild(tbl);
+                tbl.classList.add('table');
+                cleanTable(tbl);
+            });
+
+            /* -- split into sections on H1/H2 -- */
+            const sections = [];
+            let current = '';
+            Array.from(temp.children).forEach((el, idx, arr) => {
+                if (/^H[12]$/.test(el.tagName)) {
+                    if (current) sections.push(current);
+                    current = el.outerHTML;
+                } else {
+                    current += el.outerHTML;
+                }
+                if (idx === arr.length - 1 && current) sections.push(current);
+            });
+
+            /* -- measuring div -- */
+            let meas = document.getElementById('meas');
+            if (!meas) {
+                meas = document.createElement('div');
+                meas.id = 'meas';
+                meas.style.cssText = 'position:absolute;visibility:hidden;width:793px;left:-9999px';
+                document.body.appendChild(meas);
+            }
+
+            const pages = [];
+            let chunkList = [];
+            let chunkH = 0;
+
+            const pushChunk = (html, h) => {
+                // oversize element → own page
+                if (h > CONTENT_PX) {
+                    if (chunkList.length) { pages.push(chunkList.join('')); chunkList = []; chunkH = 0; }
+                    pages.push(html);
+                    return;
+                }
+                if (chunkH + h > CONTENT_PX && chunkList.length) {
+                    pages.push(chunkList.join(''));
+                    chunkList = [];
+                    chunkH = 0;
+                }
+                chunkList.push(html);
+                chunkH += h;
+            };
+
+            sections.forEach(sec => {
+                meas.innerHTML = sec;
+                const sH = meas.offsetHeight;
+                if (sH <= CONTENT_PX) { pushChunk(sec, sH); return; }
+
+                // large section → break down by child nodes
+                const holder = document.createElement('div');
+                holder.innerHTML = sec;
+                let sub = '';
+                let subH = 0;
+                Array.from(holder.children).forEach((child, idx, arr) => {
+                    meas.innerHTML = child.outerHTML;
+                    const cH = meas.offsetHeight;
+
+                    if (subH + cH > CONTENT_PX && sub) {
+                        pushChunk(sub, subH);
+                        sub = child.outerHTML;
+                        subH = cH;
+                    } else {
+                        sub += child.outerHTML;
+                        subH += cH;
+                    }
+                    if (idx === arr.length - 1 && sub) pushChunk(sub, subH);
+                });
+            });
+            if (chunkList.length) pages.push(chunkList.join(''));
+
+            /* -- render pages -- */
+            pages.forEach((html, idx) => {
+                const p = document.createElement('div');
+                p.className = 'page';
+                const companyName = document.getElementById('company-name').textContent.trim();
+                p.innerHTML = `
+                    <div class='page-header'>
+                        <div class='header-left'>
+                            <div class="axis-logo-container"></div>
+                        </div>
+                        <div class='header-right'>
+                            <div class='company-logo-small-container'></div>
+                        </div>
+                    </div>
+                    <div class='page-content'>${html}</div>
+                    <div class='page-footer'>
+                        <div class='footer-company-name'>${companyName} | IPO NOTES | AXIS CAPITAL</div>
+                        <div class='page-number'>${idx + 2}</div>
+                    </div>`;
+                container.appendChild(p);
+            });
+        }
+
+        /* ---------------- PDF EXPORT ---------------- */
+        document.getElementById('download-pdf').onclick = async (e) => {
+            if (!isIpoGenerated) {
+                e.preventDefault();
+                document.getElementById('no-ipo-popup').classList.add('active');
+                return;
+            }
+
+            const downloadBtn = document.getElementById('download-pdf');
+            const originalContent = downloadBtn.innerHTML;
+            downloadBtn.disabled = true;
+            downloadBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Generating PDF…';
+
+            try {
+                // Update logos for PDF
+                updateLogoDisplay();
+
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4',
+                    compress: true
+                });
+
+                const pages = document.querySelectorAll('.page');
+
+                for (let i = 0; i < pages.length; i++) {
+                    const page = pages[i];
+
+                    const canvas = await html2canvas(page, {
+                        scale: 2,
+                        useCORS: true,
+                        backgroundColor: '#ffffff',
+                        width: 794,
+                        height: 1122
+                    });
+
+                    const imgData = canvas.toDataURL('image/jpeg', 0.98);
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = pdf.internal.pageSize.getHeight();
+
+                    if (i > 0) pdf.addPage();
+                    pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight, '', 'FAST');
+                }
+
+                let companyName = document.getElementById('company-name').textContent.trim();
+                companyName = companyName.replace(/\s+/g, '_');
+                const filename = `${companyName}_DRHP_IPO_NOTES.pdf`;
+                pdf.save(filename);
+            } catch (err) {
+                console.error('Error generating PDF:', err);
+                showError('Failed to generate PDF. Please try again.');
+            } finally {
+                downloadBtn.disabled = false;
+                downloadBtn.innerHTML = originalContent;
+            }
+        };
+
+        // Remove empty columns and rows from tables
+        function cleanTable(table) {
+            // Remove empty rows
+            Array.from(table.querySelectorAll('tr')).forEach(row => {
+                const cells = Array.from(row.children);
+                if (cells.every(cell => !cell.textContent.trim())) row.remove();
+            });
+
+            // Remove empty columns
+            const rows = Array.from(table.rows);
+            if (!rows.length) return;
+            const colCount = rows[0].cells.length;
+            for (let c = colCount - 1; c >= 0; c--) {
+                let empty = true;
+                for (let r = 0; r < rows.length; r++) {
+                    if (rows[r].cells[c] && rows[r].cells[c].textContent.trim()) {
+                        empty = false;
+                        break;
+                    }
+                }
+                if (empty) {
+                    for (let r = 0; r < rows.length; r++) {
+                        if (rows[r].cells[c]) rows[r].deleteCell(c);
+                    }
+                }
+            }
+        }
+
+        /* ---------------- PDF UPLOAD AND PREVIEW LOGIC ---------------- */
+        const uploadInput = document.getElementById('drhp-upload-input');
+        const uploadCard = document.getElementById('upload-card');
+        const pdfPreview = document.getElementById('pdf-preview');
+        const leftLoadingOverlay = document.getElementById('left-loading-overlay');
+        const pdfPreviewArea = document.getElementById('pdf-preview-area');
+        const removePdfBtn = document.getElementById('remove-pdf');
+        const generateIpoBtn = document.getElementById('generate-ipo');
+        const generateIpoPopup = document.getElementById('generate-ipo-popup');
+        const generateIpoYes = document.getElementById('generate-ipo-yes');
+        const generateIpoNo = document.getElementById('generate-ipo-no');
+        const rightLoadingOverlay = document.getElementById('right-loading-overlay');
+        const noIpoMessage = document.getElementById('no-ipo-message');
+        const previewContainer = document.getElementById('preview-container');
+
+        uploadInput.addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            uploadCard.style.display = 'none';
+            pdfPreview.style.display = 'none';
+            pdfPreviewArea.classList.add('loading');
+
+            setTimeout(async () => {
+                pdfPreviewArea.classList.remove('loading');
+                pdfPreview.style.display = 'block';
+                const url = URL.createObjectURL(file);
+                const iframe = document.getElementById('pdf-preview-iframe');
+                iframe.src = url;
+                uploadedPdfFile = file;
+                removePdfBtn.disabled = false;
+                generateIpoBtn.disabled = false;
+            }, 1200);
+        });
+
+        /* ---------------- REMOVE PDF POPUP LOGIC ---------------- */
+        const removePdfPopup = document.getElementById('remove-pdf-popup');
+        const removePdfPopupContent = document.getElementById('remove-pdf-popup-content');
+        let removePdfContinueHandler = null;
+
+        function showRemovePdfPopup({ title, message, note, showContinue }) {
+            let html = `<h3>${title}</h3><p>${message}</p>`;
+            if (note) html += `<div class="note">${note}</div>`;
+            if (showContinue) {
+                html += `<div class="popup-buttons">
+                    <button class="btn-cancel" id="remove-pdf-cancel">Cancel</button>
+                    <button class="btn-continue" id="remove-pdf-continue">Continue</button>
+                </div>`;
+            } else {
+                html += `<div class="popup-buttons">
+                    <button class="btn-cancel" id="remove-pdf-cancel">OK</button>
+                </div>`;
+            }
+            removePdfPopupContent.innerHTML = html;
+            removePdfPopup.classList.add('active');
+
+            // Attach handlers
+            document.getElementById('remove-pdf-cancel').onclick = () => {
+                removePdfPopup.classList.remove('active');
+                removePdfContinueHandler = null;
+            };
+            if (showContinue) {
+                document.getElementById('remove-pdf-continue').onclick = () => {
+                    removePdfPopup.classList.remove('active');
+                    if (removePdfContinueHandler) removePdfContinueHandler();
+                    removePdfContinueHandler = null;
+                };
+            }
+        }
+
+        removePdfPopup.addEventListener('mousedown', (e) => {
+            if (e.target === removePdfPopup) removePdfPopup.classList.remove('active');
+        });
+
+        /* ---------------- REMOVE PDF LOGIC ---------------- */
+        removePdfBtn.addEventListener('click', () => {
+            if (!uploadedPdfFile) {
+                warningMessage.textContent = 'Please Upload DRHP PDF';
+                warningPopup.classList.add('active');
+                return;
+            }
+            if (processingStatus === 'processing') {
+                showRemovePdfPopup({
+                    title: 'Remove PDF',
+                    message: 'IPO Generation will stop. Do you want to continue?',
+                    note: 'This will cancel IPO Note generation and rollback all changes.',
+                    showContinue: true
+                });
+                removePdfContinueHandler = async () => {
+                    if (currentCompanyId) await cancelIpoGeneration(currentCompanyId);
+                    resetToInitialState();
+                };
+                return;
+            }
+            if (!isIpoGenerated) {
+                showRemovePdfPopup({
+                    title: 'Remove PDF',
+                    message: 'Are you sure you want to remove the PDF?',
+                    note: '',
+                    showContinue: true
+                });
+                removePdfContinueHandler = () => {
+                    resetToInitialState();
+                };
+                return;
+            }
+            // If IPO note is generated
+            showRemovePdfPopup({
+                title: 'Remove PDF',
+                message: 'Are you sure you want to remove the PDF? This will remove the generated IPO notes too.',
+                note: 'Note: Download generated IPO note PDF before removing.',
+                showContinue: true
+            });
+            removePdfContinueHandler = () => {
+                resetToInitialState();
+            };
+        });
+
+        function resetToInitialState() {
+            uploadCard.style.display = 'flex';
+            pdfPreview.style.display = 'none';
+            document.getElementById('pdf-preview-iframe').src = '';
+            uploadInput.value = '';
+            uploadedPdfFile = null;
+            noIpoMessage.style.display = 'flex';
+            previewContainer.style.display = 'none';
+            document.getElementById('content-pages').innerHTML = '';
+            removePdfBtn.disabled = true;
+            generateIpoBtn.disabled = true;
+            isIpoGenerated = false;
+            currentCompanyId = null;
+            processingStatus = 'not_started';
+            hideCancelIpoButton();
+            if (processingInterval) {
+                clearInterval(processingInterval);
+                processingInterval = null;
+            }
+            hideStatusIndicator();
+        }
+
+        /* ---------------- WARNING POPUP LOGIC ---------------- */
+        const warningPopup = document.getElementById('warning-popup');
+        const warningOk = document.getElementById('warning-ok');
+        const warningMessage = document.getElementById('warning-message');
+        warningOk.addEventListener('click', () => {
+            warningPopup.classList.remove('active');
+        });
+        warningPopup.addEventListener('mousedown', (e) => {
+            if (e.target === warningPopup) warningPopup.classList.remove('active');
+        });
+
+        // No IPO Note generated popup logic
+        const noIpoPopup = document.getElementById('no-ipo-popup');
+        const noIpoOk = document.getElementById('no-ipo-ok');
+        noIpoOk.addEventListener('click', () => {
+            noIpoPopup.classList.remove('active');
+        });
+        noIpoPopup.addEventListener('mousedown', (e) => {
+            if (e.target === noIpoPopup) noIpoPopup.classList.remove('active');
+        });
+
+        /* ---------------- ENHANCED GENERATE IPO NOTES LOGIC ---------------- */
+        generateIpoBtn.addEventListener('click', async () => {
+            if (!uploadedPdfFile) {
+                warningMessage.textContent = 'Please Upload DRHP PDF';
+                warningPopup.classList.add('active');
+                return;
+            }
+            if (processingStatus === 'processing') {
+                warningMessage.textContent = 'Cannot generate IPO Note, already in process.';
+                warningPopup.classList.add('active');
+                return;
+            }
+            generateIpoPopup.classList.add('active');
+        });
+
+        generateIpoNo.addEventListener('click', () => {
+            generateIpoPopup.classList.remove('active');
+        });
+
+        generateIpoYes.addEventListener('click', async () => {
+            generateIpoPopup.classList.remove('active');
+            noIpoMessage.style.display = 'none';
+            previewContainer.style.display = 'none';
+            rightLoadingOverlay.classList.add('active');
+            generateIpoBtn.disabled = true;
+            showCancelIpoButton();
+            try {
+                // Serial company lookup: extract company details first
+                const formData = new FormData();
+                formData.append('file', uploadedPdfFile);
+                // Call backend to process DRHP
+                const response = await fetch(`${API_BASE_URL}/process-drhp/`, { method: 'POST', body: formData });
+                const result = await response.json();
+                currentCompanyId = result.company_id;
+                if (result.message && result.message.includes('already in progress')) {
+                    processingStatus = 'processing';
+                    rightLoadingOverlay.classList.remove('active');
+                    warningMessage.textContent = 'Cannot generate IPO Note, already in process.';
+                    warningPopup.classList.add('active');
+                    return;
+                }
+                if (result.existing_markdown) {
+                    rightLoadingOverlay.classList.remove('active');
+                    try {
+                        const markdownData = await getMarkdown(currentCompanyId);
+                        displayGeneratedIPO(markdownData.markdown, markdownData.company_name);
+                    } catch (error) {
+                        showError('Failed to load existing markdown');
+                        noIpoMessage.style.display = 'flex';
+                    }
+                    return;
+                }
+                // Start polling for status
+                pollProcessingStatus(currentCompanyId);
+            } catch (error) {
+                rightLoadingOverlay.classList.remove('active');
+                noIpoMessage.style.display = 'flex';
+                showError('Failed to process DRHP document: ' + error.message);
+            }
+        });
+
+        // Modal click outside content closes
+        generateIpoPopup.addEventListener('mousedown', (e) => {
+            if (e.target === generateIpoPopup) {
+                generateIpoPopup.classList.remove('active');
+            }
+        });
+
+        // Add Cancel IPO button dynamically
+        function showCancelIpoButton() {
+            if (!cancelIpoBtn) {
+                cancelIpoBtn = document.createElement('button');
+                cancelIpoBtn.id = 'cancel-ipo';
+                cancelIpoBtn.className = 'btn btn-danger';
+                cancelIpoBtn.textContent = 'Cancel IPO Generation';
+                cancelIpoBtn.style.marginLeft = '10px';
+                document.querySelector('.left-frame-buttons').appendChild(cancelIpoBtn);
+                cancelIpoBtn.onclick = async () => {
+                    if (!currentCompanyId) return;
+                    if (!confirm('Are you sure you want to cancel IPO Note generation? This will rollback all changes.')) return;
+                    await cancelIpoGeneration(currentCompanyId);
+                    resetToInitialState();
+                };
+            }
+            cancelIpoBtn.style.display = 'inline-block';
+        }
+        function hideCancelIpoButton() {
+            if (cancelIpoBtn) cancelIpoBtn.style.display = 'none';
+        }
+        async function cancelIpoGeneration(companyId) {
+            try {
+                await fetch(`${API_BASE_URL}/company/${companyId}/cancel-processing`, { method: 'POST' });
+            } catch (e) { showError('Failed to cancel IPO generation.'); }
+        }
+    </script>
+</body>
+
+</html>

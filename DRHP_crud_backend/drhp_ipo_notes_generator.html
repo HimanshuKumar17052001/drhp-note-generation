@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DRHP IPO Notes Generator</title>
+
+  <!-- Bootstrap for quick styling -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+
+  <style>
+    /* Reset & base */
+    body {
+      background-color: #f8f9fa;
+      font-family: 'Calibri', 'Roboto', sans-serif;
+      line-height: 1.5;
+      margin: 0;
+      padding: 0;
+      font-size: 10px;
+    }
+    /* Page container for A4 sizing */
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      max-width: 210mm;
+      max-height: 297mm;
+      height: 297mm;
+      margin: 0 auto 20px;
+      background: white;
+      box-shadow: 0 6px 20px rgba(139, 21, 56, 0.15);
+      position: relative;
+      page-break-after: always;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    /* Prevent responsiveness for page containers */
+    @media (max-width: 9999px) {
+      .page, .page-content, .page-header, .page-footer {
+        width: 210mm !important;
+        min-width: 210mm !important;
+        max-width: 210mm !important;
+        height: auto;
+      }
+      .page-content {
+        padding: 20mm 20mm !important;
+        min-height: calc(297mm - 28mm) !important;
+        max-height: calc(297mm - 28mm) !important;
+        height: calc(297mm - 28mm) !important;
+      }
+    }
+    /* Front page styling */
+    .front-page {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 40mm;
+      height: 297mm;
+      box-sizing: border-box;
+      background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+      position: relative;
+      padding-top: 80px;
+    }
+    .front-page .company-logo-container {
+      width: 140px; height: 140px; margin-bottom: 40px;
+      display: flex; align-items: center; justify-content: center; position: relative;
+    }
+    .front-page .company-logo-placeholder {
+      width: 140px; height: 140px;
+      background: linear-gradient(135deg, rgba(139,21,56,0.1), rgba(139,21,56,0.05));
+      border: 3px dashed #97144D; border-radius: 20px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; color: #97144D; text-align: center; font-weight: 600;
+      box-shadow: 0 8px 25px rgba(151,20,77,0.1);
+    }
+    .front-page .company-logo {
+      max-width: 140px; max-height: 140px; object-fit: contain; scale: 1.5;
+    }
+    .front-page .company-name {
+      font-size: 3rem; font-weight: 800; color: #000;
+      margin-bottom: 60px; text-transform: uppercase;
+      letter-spacing: 3px; text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .front-page .divider-line {
+      width: 250px; height: 2px;
+      background: linear-gradient(90deg, transparent, #97144D, transparent);
+      margin-bottom: 60px; border-radius: 1px;
+    }
+    .front-page .document-title {
+      font-size: 2rem; font-weight: 700; color: #97144D;
+      margin-bottom: 30px; text-shadow: 0 2px 4px rgba(151,20,77,0.1);
+    }
+    .front-page .document-date {
+      font-size: 1.6rem; font-weight: 600; color: #333;
+    }
+    .front-header-image-container {
+      position: absolute; top: 0; left: -2px;
+      width: calc(100% + 2px); z-index: 2; pointer-events: none;
+    }
+    .front-header-image {
+      width: 100%; height: auto; display: block;
+      object-fit: contain; pointer-events: none;
+    }
+    .page-header {
+      background: linear-gradient(135deg, #97144D, #a91d42);
+      height: 18mm; display: flex; align-items: center;
+      justify-content: space-between; padding: 0 20mm;
+      color: white; border-radius: 0; object-fit: contain;
+    }
+    .header-left .axis-logo-container {
+      width: 45px; height: 45px; display: flex;
+      align-items: center; justify-content: center;
+    }
+    .header-left .axis-logo {
+      max-width: 45px; max-height: 45px; object-fit: contain;
+      display: block; scale: 2.5; right: -30px;
+    }
+    .header-left .axis-logo-placeholder {
+      width: 45px; height: 45px; background: rgba(255,255,255,0.15);
+      border: 2px dashed rgba(255,255,255,0.4); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9px; color: rgba(255,255,255,0.9); text-align: center;
+      font-weight: 600;
+    }
+    .header-right .company-logo-small-container {
+      width: 45px; height: 45px; display: flex;
+      align-items: center; justify-content: center;
+    }
+    .header-right .company-logo-small {
+      max-width: 45px; max-height: 45px; object-fit: contain;
+      display: block; scale: 2.5;
+    }
+    .header-right .company-logo-placeholder-small {
+      width: 45px; height: 45px; background: rgba(255,255,255,0.15);
+      border: 2px dashed rgba(255,255,255,0.4); border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 9px; color: rgba(255,255,255,0.9); text-align: center;
+      font-weight: 600;
+    }
+    .page-footer {
+      background: linear-gradient(135deg, #97144D, #a91d42);
+      height: 10mm; position: absolute; bottom: 0; left: 0; right: 0;
+      display: flex; align-items: center; justify-content: flex-end;
+      padding: 0 20mm; border-radius: 0;
+    }
+    .page-number {
+      color: white; font-size: 14px; font-weight: 700;
+    }
+    .page-content {
+      padding: 20mm 20mm; min-height: calc(297mm - 28mm);
+      box-sizing: border-box; font-size: 10px; line-height: 1.6;
+    }
+    h1,h2,h3,h4,h5,h6 {
+      color: #97144D; font-family: 'Calibri','Roboto',sans-serif;
+      background: linear-gradient(135deg, #ffffff, #f8f9fa);
+      margin: 20px 0 15px 0; font-weight: 700; padding: 12px 16px;
+      border-left: 6px solid #97144D; border-radius: 0 12px 12px 0;
+      box-shadow: 0 4px 15px rgba(151,20,77,0.1); position: relative;
+      page-break-after: avoid;
+    }
+    h1 { font-size: 1.6rem; font-weight: 800; border-left: 8px solid #97144D; text-transform: uppercase; letter-spacing: 1px; }
+    h2 { font-size: 1.3rem; font-weight: 700; }
+    h3 { font-size: 1.1rem; font-weight: 700; }
+    h4 { font-size: 1rem; font-weight: 600; }
+    h5 { font-size: 0.9rem; font-weight: 600; }
+    h6 { font-size: 0.8rem; font-weight: 600; }
+    .table-container { margin: 18px 0; overflow: visible; border: 0.5px solid #bbb; page-break-inside: avoid; width: 100%; max-width: 100%; }
+    .table { margin-bottom: 0; background: white; color: #000; font-size: 9px; width: 100%; border-collapse: collapse; table-layout: fixed; word-break: break-word; overflow-wrap: break-word; page-break-inside: avoid; }
+    .table thead th { background: #97144D; color: white; font-weight: 700; border: 0.5px solid #bbb; padding: 7px 6px; text-align: left; font-size: 9px; letter-spacing: 0.5px; text-transform: uppercase; max-width: 200px; word-break: break-word; overflow-wrap: break-word; border-right: 1.5px solid #fff; }
+    .table thead th:last-child { border-right: none; }
+    .table tbody td { background-color: white; color: #000; border: 0.5px solid #bbb; padding: 6px 6px; font-size: 9px; vertical-align: middle; max-width: 200px; word-break: break-word; overflow-wrap: break-word; }
+    .table tbody tr:nth-child(even) td { background-color: #f9f3f6; }
+    .table tbody tr:hover td { background-color: #f3e9f0; }
+    blockquote { border-left: 6px solid #97144D; background: linear-gradient(135deg, rgba(139,21,56,0.05), rgba(139,21,56,0.02)); padding: 15px 20px; margin: 20px 0; border-radius: 0 15px 15px 0; font-style: italic; }    
+    pre { background: linear-gradient(135deg, #f8f9fa, #ffffff); border: 2px solid rgba(151,20,77,0.1); border-radius: 12px; padding: 15px; overflow-x: auto; color: #000; font-size: 9px; box-shadow: 0 4px 15px rgba(151,20,77,0.08); }
+    code { background: rgba(151,20,77,0.1); color: #97144D; padding: 3px 6px; border-radius: 6px; font-size: 9px; font-weight: 600; }
+    p, li, td { font-family: 'Calibri','Roboto',sans-serif; color: #000; font-size: 10px; line-height: 1.6; margin-bottom: 10px; }
+    ul, ol { padding-left: 18px; margin-bottom: 12px; }
+    li { margin-bottom: 6px; }
+    strong, b { font-weight: 700; color: #97144D; }
+    /* Upload UI, frames, spinners, popups CSS omitted for brevity */
+    /* ... (include all your upload/popups styles here) ... */
+
+    /* ---------- print-to-PDF overrides ---------- */
+    @media print {
+      nav,
+      .main-split-container,
+      .left-frame,
+      .left-loading-overlay,
+      .btn,
+      .generate-ipo-popup,
+      .warning-popup,
+      .remove-pdf-popup {
+        display: none !important;
+      }
+      @page {
+        size: A4 portrait;
+        margin: 20mm 15mm;
+      }
+      body, html {
+        margin: 0; padding: 0; overflow: visible !important; background: white !important;
+      }
+      .preview-container {
+        display: block !important; width: auto !important; height: auto !important; box-shadow: none !important;
+      }
+      .page, .page-header, .page-footer, .table-container, h1, h2 {
+        page-break-inside: avoid !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
+    <div class="container-fluid">
+      <span class="navbar-brand mb-0 h1" style="display:flex;align-items:center;gap:10px;">
+        <img src="https://companieslogo.com/img/orig/AXISBANK.BO.D-df61833f.png?t=1720244490" alt="Axis Logo" style="height:36px;width:36px;object-fit:contain;border-radius:6px;background:transparent;">
+        DRHP IPO Notes Generator
+      </span>
+      <div class="d-flex gap-2">
+        <input type="file" id="axis-logo-upload" accept="image/*" hidden>
+        <input type="file" id="company-logo-upload" accept="image/*" hidden>
+        <button id="upload-axis-logo" class="btn btn-light"><i class="fas fa-image me-2"></i>Upload AXIS CAPITAL Logo</button>
+        <button id="upload-company-logo" class="btn btn-light"><i class="fas fa-image me-2"></i>Upload Company Logo</button>
+        <button id="download-pdf" class="btn btn-light" onclick="window.print()"><i class="fas fa-download me-2"></i>Download as PDF</button>
+      </div>
+    </div>
+  </nav>
+  <div class="main-split-container">
+    <!-- left-frame, upload UI, preview iframe -->
+    <!-- right-frame, preview-container -->
+  </div>
+  <!-- popups and modals here -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    /* your JS logic (logo upload, createPages, generate IPO, etc.) unchanged except removal of html2canvas/jsPDF */
+  </script>
+</body>
+</html>

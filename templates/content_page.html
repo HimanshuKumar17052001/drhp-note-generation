@@ -1,0 +1,23 @@
+<div class="page">
+  <!-- Header (appears on every page) -->
+  <header class="page-header" id="page-header">
+    <div class="header-left">
+      <img src="{{ axis_logo_data }}" class="axis-logo" />
+    </div>
+    <div class="header-right">
+      <img src="{{ company_logo_data }}" class="company-logo-small" />
+    </div>
+  </header>
+
+  <!-- Main content -->
+  <main class="page-content">
+    {{ content | safe }}
+  </main>
+
+  <!-- Footer (appears on every page) -->
+  <footer class="page-footer" id="page-footer">
+    <div class="footer-company-name">
+      {{ company_name }} | IPO NOTES | AXIS CAPITAL
+    </div>
+  </footer>
+</div>

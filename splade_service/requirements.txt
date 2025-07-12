@@ -1,0 +1,7 @@
+fastapi==0.111.*
+uvicorn==0.34.0
+gunicorn==22.*
+torch>=2.3
+transformers==4.41.*
+sentencepiece   # needed by many HF BERT-like models
+sacremoses      # tokenizer helper

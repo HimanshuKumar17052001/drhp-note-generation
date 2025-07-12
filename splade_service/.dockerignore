@@ -1,0 +1,13 @@
+# Ignore everything outside the splade_service directory
+../*
+
+# Ignore common development files
+.git
+.gitignore
+.env
+*.pyc
+__pycache__
+.pytest_cache
+.coverage
+htmlcov
+.DS_Store
