@@ -180,7 +180,7 @@ class ChecklistOutput(Document):
 
 class FinalMarkdown(Document):
     meta = {"db_alias": "core", "collection": "final_markdown"}
-    company_id = ReferenceField(Company, required=True)
+    company_id = StringField(required=True)
     company_name = StringField(required=True)
     markdown = StringField(required=True)
 
@@ -287,9 +287,11 @@ def checklist_exists(company_id, checklist_name):
 
 def markdown_exists(company_id):
     """Check if markdown exists for a company."""
-    if not isinstance(company_id, Company):
-        raise ValueError("company_id must be a Company instance, not a string.")
-    return FinalMarkdown.objects(company_id=company_id).first() is not None
+    try:
+        company_id_str = str(company_id)
+        return FinalMarkdown.objects(company_id=company_id_str).first() is not None
+    except Exception:
+        return False
 
 
 def generate_markdown_for_company(company_id, company_name):
@@ -319,13 +321,14 @@ def generate_markdown_for_company(company_id, company_name):
 
 def save_final_markdown(company_id, company_name, markdown):
     """Save final markdown to database."""
-    if not isinstance(company_id, Company):
-        raise ValueError("company_id must be a Company instance, not a string.")
-    FinalMarkdown.objects(company_id=company_id).update_one(
+    company_id_str = str(
+        company_id.id if isinstance(company_id, Company) else company_id
+    )
+    FinalMarkdown.objects(company_id=company_id_str).update_one(
         set__company_name=company_name, set__markdown=markdown, upsert=True
     )
     logger.info(
-        f"Saved markdown for {company_name} ({company_id}) to final_markdown collection."
+        f"Saved markdown for {company_name} ({company_id_str}) to final_markdown collection."
     )
 
 
@@ -689,10 +692,13 @@ def get_all_companies_with_status():
 def get_final_markdown(company_id):
     """Get final markdown for a company."""
     try:
-        company = Company.objects.get(id=company_id)
-        markdown_doc = FinalMarkdown.objects(company_id=company).first()
-        return markdown_doc.markdown if markdown_doc else None
-    except DoesNotExist:
+        company_id_str = str(company_id)
+        markdown_doc = FinalMarkdown.objects(company_id=company_id_str).first()
+        if markdown_doc:
+            return markdown_doc.markdown
+        return None
+    except Exception as e:
+        logger.error(f"Error in get_final_markdown: {e}")
         return None
 
 
@@ -790,6 +796,28 @@ def get_company_markdown(
         return JSONResponse(content={"markdown": markdown_content})
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to get markdown: {e}")
+
+
+@app.get(
+    "/companies/{company_id}", response_model=CompanyModel, summary="Get Company by ID"
+)
+def get_company_by_id(company_id: str):
+    """Get a specific company by its MongoDB ID."""
+    try:
+        company = Company.objects.get(id=company_id)
+        markdown_done = markdown_exists(company)
+        return CompanyModel(
+            id=str(company.id),
+            name=company.name,
+            uin=company.corporate_identity_number,
+            uploadDate=company.created_at.isoformat(),
+            status="completed" if markdown_done else "processing",
+            hasMarkdown=markdown_done,
+        )
+    except DoesNotExist:
+        raise HTTPException(status_code=404, detail="Company not found")
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to get company: {e}")
 
 
 @app.post(
