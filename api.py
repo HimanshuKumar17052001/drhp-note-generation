@@ -785,6 +785,75 @@ async def get_company_markdown(company_id: str):
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
+@app.get("/company/{company_id}/report-html")
+async def get_company_report_html(company_id: str):
+    """Get the rendered HTML report for a company using Jinja templates."""
+    try:
+        company = get_company_by_id(company_id)
+        markdown_doc = FinalMarkdown.objects(company_id=company).first()
+
+        if not markdown_doc:
+            raise HTTPException(
+                status_code=404, detail="No report found for this company"
+            )
+
+        # Convert markdown to HTML
+        html_body = markdown.markdown(
+            markdown_doc.markdown, extensions=["tables", "fenced_code"]
+        )
+
+        # Load images
+        def load_image_base64(path):
+            try:
+                with open(path, "rb") as f:
+                    return (
+                        f"data:image/png;base64,{base64.b64encode(f.read()).decode()}"
+                    )
+            except Exception as e:
+                logger.warning(f"Failed to load image {path}: {e}")
+                return None
+
+        axis_logo_data = load_image_base64("assets/axis_logo.png")
+        company_logo_data = load_image_base64("assets/Pine Labs_logo.png")  # Default
+        front_header_data = load_image_base64("assets/front_header.png")
+
+        # Try to load company-specific logo
+        company_logo_path = f"assets/{company.name.replace(' ', '_')}_logo.png"
+        if os.path.exists(company_logo_path):
+            company_logo_data = load_image_base64(company_logo_path)
+
+        # Setup Jinja2 environment
+        env = Environment(loader=FileSystemLoader("templates"))
+
+        # Prepare context
+        context = {
+            "company_name": company.name.upper(),
+            "document_date": datetime.today().strftime("%B %Y"),
+            "company_logo_data": company_logo_data,
+            "axis_logo_data": axis_logo_data,
+            "front_header_data": front_header_data,
+            "content": html_body,
+        }
+
+        # Render HTML
+        front_html = env.get_template("front_page.html").render(context)
+        content_html = env.get_template("content_page.html").render(context)
+        full_html = front_html + content_html
+
+        return {
+            "company_id": str(company.id),
+            "company_name": company.name,
+            "html": full_html,
+            "generated_at": markdown_doc.generated_at,
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error generating HTML report: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+
 @app.delete("/companies/{company_id}")
 async def delete_company(company_id: str):
     """Delete a company and all its associated data."""
@@ -844,6 +913,105 @@ async def get_company_report(company_id: str):
         raise
     except Exception as e:
         logger.error(f"Error fetching company report: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+
+@app.get("/companies/{company_id}/markdown")
+async def get_company_markdown_companies(company_id: str):
+    """Get raw markdown content for a company."""
+    try:
+        company = get_company_by_id(company_id)
+        markdown_doc = FinalMarkdown.objects(company_id=company).first()
+
+        if not markdown_doc:
+            raise HTTPException(
+                status_code=404, detail="No markdown found for this company"
+            )
+
+        return {
+            "company_id": str(company.id),
+            "company_name": company.name,
+            "markdown": markdown_doc.markdown,
+            "generated_at": markdown_doc.generated_at,
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching company markdown: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+
+@app.get("/companies/{company_id}/report-html")
+async def get_company_report_html_companies(company_id: str):
+    """
+    Renders markdown content using HTML templates with CSS styling.
+    Returns complete HTML document with embedded CSS for web display.
+    Called by frontend when user selects a company to view the report.
+    """
+    try:
+        company = get_company_by_id(company_id)
+        markdown_doc = FinalMarkdown.objects(company_id=company).first()
+
+        if not markdown_doc:
+            raise HTTPException(
+                status_code=404, detail="No report found for this company"
+            )
+
+        # Convert markdown to HTML
+        html_body = markdown.markdown(
+            markdown_doc.markdown, extensions=["tables", "fenced_code"]
+        )
+
+        # Load images
+        def load_image_base64(path):
+            try:
+                with open(path, "rb") as f:
+                    return (
+                        f"data:image/png;base64,{base64.b64encode(f.read()).decode()}"
+                    )
+            except Exception as e:
+                logger.warning(f"Failed to load image {path}: {e}")
+                return None
+
+        axis_logo_data = load_image_base64("assets/axis_logo.png")
+        company_logo_data = load_image_base64("assets/Pine Labs_logo.png")  # Default
+        front_header_data = load_image_base64("assets/front_header.png")
+
+        # Try to load company-specific logo
+        company_logo_path = f"assets/{company.name.replace(' ', '_')}_logo.png"
+        if os.path.exists(company_logo_path):
+            company_logo_data = load_image_base64(company_logo_path)
+
+        # Setup Jinja2 environment
+        env = Environment(loader=FileSystemLoader("templates"))
+
+        # Prepare context
+        context = {
+            "company_name": company.name.upper(),
+            "document_date": datetime.today().strftime("%B %Y"),
+            "company_logo_data": company_logo_data,
+            "axis_logo_data": axis_logo_data,
+            "front_header_data": front_header_data,
+            "content": html_body,
+        }
+
+        # Render HTML
+        front_html = env.get_template("front_page.html").render(context)
+        content_html = env.get_template("content_page.html").render(context)
+        full_html = front_html + content_html
+
+        return {
+            "company_id": str(company.id),
+            "company_name": company.name,
+            "html": full_html,
+            "generated_at": markdown_doc.generated_at,
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error generating HTML report: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
@@ -989,6 +1157,81 @@ async def regenerate_company_report(company_id: str):
 @app.post("/reports/generate-pdf")
 async def generate_pdf_report(request: PDFGenerationRequest):
     """Convert markdown content to PDF with company branding."""
+    try:
+        # Create output directory
+        output_dir = "output"
+        os.makedirs(output_dir, exist_ok=True)
+
+        # Setup Jinja2 environment
+        env = Environment(loader=FileSystemLoader("templates"))
+
+        # Convert markdown to HTML
+        html_body = markdown.markdown(
+            request.markdown_content, extensions=["tables", "fenced_code"]
+        )
+
+        # Load images
+        def load_image_base64(path):
+            try:
+                with open(path, "rb") as f:
+                    return (
+                        f"data:image/png;base64,{base64.b64encode(f.read()).decode()}"
+                    )
+            except Exception as e:
+                logger.warning(f"Failed to load image {path}: {e}")
+                return None
+
+        axis_logo_data = load_image_base64("assets/axis_logo.png")
+        company_logo_data = load_image_base64("assets/Pine Labs_logo.png")  # Default
+        front_header_data = load_image_base64("assets/front_header.png")
+
+        # Try to load company-specific logo
+        company_logo_path = f"assets/{request.company_name.replace(' ', '_')}_logo.png"
+        if os.path.exists(company_logo_path):
+            company_logo_data = load_image_base64(company_logo_path)
+
+        # Prepare context
+        context = {
+            "company_name": request.company_name.upper(),
+            "document_date": datetime.today().strftime("%B %Y"),
+            "company_logo_data": company_logo_data,
+            "axis_logo_data": axis_logo_data,
+            "front_header_data": front_header_data,
+            "content": html_body,
+        }
+
+        # Render HTML
+        front_html = env.get_template("front_page.html").render(context)
+        content_html = env.get_template("content_page.html").render(context)
+        full_html = front_html + content_html
+
+        # Generate PDF filename
+        safe_company_name = (
+            request.company_name.replace(" ", "_").replace("/", "_").replace("\\", "_")
+        )
+        pdf_filename = f"{safe_company_name}_IPO_Notes.pdf"
+        pdf_path = os.path.join(output_dir, pdf_filename)
+
+        # Generate PDF
+        html_doc = HTML(string=full_html, base_url=".")
+        css_doc = CSS(filename="styles/styles.css")
+        html_doc.write_pdf(pdf_path, stylesheets=[css_doc])
+
+        return FileResponse(
+            pdf_path,
+            media_type="application/pdf",
+            filename=pdf_filename,
+            headers={"Content-Disposition": f"attachment; filename={pdf_filename}"},
+        )
+
+    except Exception as e:
+        logger.error(f"Error generating PDF: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to generate PDF: {str(e)}")
+
+
+@app.post("/generate-report-pdf/")
+async def generate_report_pdf(request: PDFGenerationRequest):
+    """Generate PDF from markdown content (alternative endpoint)."""
     try:
         # Create output directory
         output_dir = "output"

@@ -49,6 +49,58 @@ Returns the generated markdown content for a company. This is used to quickly lo
 }
 ```
 
+#### `GET /company/{company_id}/report-html`
+Returns the fully rendered HTML report for a company using Jinja templates and CSS styling. This provides the complete formatted report as it would appear in the final PDF.
+
+**Response:**
+```json
+{
+  "company_id": "company_id",
+  "company_name": "Company Name",
+  "html": "<div class='page front-page'>...</div><div class='page'>...</div>",
+  "generated_at": "2024-01-01T00:00:00Z"
+}
+```
+
+#### `GET /companies/{company_id}/report-html`
+Renders markdown content using HTML templates with CSS styling. Returns complete HTML document with embedded CSS for web display. Called by frontend when user selects a company to view the report.
+
+**Response:**
+```json
+{
+  "company_id": "company_id",
+  "company_name": "Company Name",
+  "html": "<div class='page front-page'>...</div><div class='page'>...</div>",
+  "generated_at": "2024-01-01T00:00:00Z"
+}
+```
+
+#### `GET /companies/{company_id}/markdown`
+Returns raw markdown content for a company. Used for backend processing and raw data access.
+
+**Response:**
+```json
+{
+  "company_id": "company_id",
+  "company_name": "Company Name",
+  "markdown": "# Company Analysis\n\nDetailed markdown content...",
+  "generated_at": "2024-01-01T00:00:00Z"
+}
+```
+
+#### `POST /generate-report-pdf/`
+Generate PDF from markdown content (alternative endpoint). Used by frontend PDF download functionality.
+
+**Request:**
+```json
+{
+  "markdown_content": "# Report Content\n\nMarkdown content...",
+  "company_name": "Company Name"
+}
+```
+
+**Response:** PDF file download
+
 #### `GET /company/{company_id}/status`
 Returns the processing status for a company.
 
@@ -103,7 +155,9 @@ Cancels ongoing processing for a company.
 
 ### Report Display
 - **Immediate Loading**: Reports load instantly when clicking on a company
-- **HTML Rendering**: Markdown is converted to HTML and displayed in the right pane
+- **Formatted HTML Reports**: Reports are rendered using Jinja templates with proper CSS styling
+- **Professional Layout**: Reports display with front page, headers, footers, and proper typography
+- **PDF-Ready Format**: Same formatting as the final PDF output
 - **No Processing Status**: Removed processing status display for cleaner interface
 - **Auto-refresh**: New companies are automatically added to the dropdown as they complete
 
@@ -172,10 +226,34 @@ This will test:
    - Upload a PDF to process a new company
    - The company will be automatically added to the dropdown when processing completes
 
+## Complete Endpoint Summary
+
+| Endpoint | Method | Purpose | Frontend Usage | Backend Usage | Status |
+|----------|--------|---------|----------------|---------------|---------|
+| `POST /companies/` | POST | Upload and process DRHP PDF files | ✅ File upload & processing | ✅ Pipeline orchestration | Active |
+| `GET /companies/` | GET | List all processed companies | ✅ Company dropdown | ✅ Data retrieval | Active |
+| `GET /companies/{id}/markdown` | GET | Get raw markdown content | ❌ | ✅ Raw data access | Active |
+| `GET /companies/{id}/report` | GET | Get markdown report for preview | ❌ | ✅ Markdown preview | Active |
+| `GET /companies/{id}/report-html` | GET | Get HTML-formatted report with styling | ✅ HTML display | ✅ Template rendering | Active |
+| `POST /companies/{id}/regenerate` | POST | Regenerate IPO note for existing company | ✅ Report regeneration | ✅ Pipeline rerun | Active |
+| `DELETE /companies/{id}` | DELETE | Delete company and all associated data | ✅ Company deletion | ✅ Data cleanup | Active |
+| `POST /generate-report-pdf/` | POST | Generate PDF from markdown content | ✅ PDF download | ✅ PDF generation | Active |
+| `POST /reports/generate-pdf` | POST | Generate PDF from markdown (alternative) | ✅ PDF generation | ✅ PDF creation | Active |
+| `POST /assets/logos` | POST | Upload company/entity logos | ✅ Logo upload | ✅ Asset management | Active |
+| `GET /company/{id}` | GET | Get specific company details | ✅ Company details | ✅ Data access | Active |
+| `GET /company/{id}/status` | GET | Get processing status for company | ✅ Status monitoring | ✅ Progress tracking | Active |
+| `GET /company/{id}/markdown` | GET | Get markdown content for company | ✅ Raw data access | ✅ Content retrieval | Active |
+| `GET /company/{id}/report-html` | GET | Get HTML report (company endpoint) | ✅ HTML display | ✅ Template rendering | Active |
+| `POST /company/{id}/cancel-processing` | POST | Cancel processing for company | ✅ Cancel operations | ✅ Process control | Active |
+| `PUT /companies/{id}/logo` | PUT | Associate logo with company | ✅ Logo association | ✅ Asset linking | Active |
+| `PUT /config/entity-assets` | PUT | Set global entity assets configuration | ✅ Asset config | ✅ Global settings | Active |
+| `GET /health` | GET | Health check endpoint | ✅ System monitoring | ✅ Status check | Active |
+
 ## Key Features
 
 - **Fast Report Loading**: Reports load instantly from pre-generated markdown
 - **Clean Interface**: Focus on completed reports rather than processing status
 - **Real-time Updates**: New companies appear automatically in the dropdown
 - **Robust Error Handling**: Clear feedback for all operations
-- **Enhanced Styling**: Modern, responsive design with smooth animations 
+- **Enhanced Styling**: Modern, responsive design with smooth animations
+- **Complete API Coverage**: All 17 endpoints implemented with proper error handling 

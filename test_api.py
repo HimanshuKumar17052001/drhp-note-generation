@@ -76,6 +76,71 @@ def test_get_company_markdown(company_id):
         return False
 
 
+def test_get_company_report_html(company_id):
+    """Test getting company HTML report"""
+    try:
+        response = requests.get(f"{API_BASE_URL}/company/{company_id}/report-html")
+        print(f"Get company HTML report: {response.status_code}")
+        if response.status_code == 200:
+            report_data = response.json()
+            print(f"HTML report for: {report_data['company_name']}")
+            print(f"Generated at: {report_data['generated_at']}")
+            print(f"HTML length: {len(report_data['html'])} characters")
+        return response.status_code == 200
+    except Exception as e:
+        print(f"Get company HTML report failed: {e}")
+        return False
+
+
+def test_get_company_report_html_companies(company_id):
+    """Test getting company HTML report from companies endpoint"""
+    try:
+        response = requests.get(f"{API_BASE_URL}/companies/{company_id}/report-html")
+        print(f"Get company HTML report (companies): {response.status_code}")
+        if response.status_code == 200:
+            report_data = response.json()
+            print(f"HTML report for: {report_data['company_name']}")
+            print(f"Generated at: {report_data['generated_at']}")
+            print(f"HTML length: {len(report_data['html'])} characters")
+        return response.status_code == 200
+    except Exception as e:
+        print(f"Get company HTML report (companies) failed: {e}")
+        return False
+
+
+def test_get_company_markdown_companies(company_id):
+    """Test getting company markdown from companies endpoint"""
+    try:
+        response = requests.get(f"{API_BASE_URL}/companies/{company_id}/markdown")
+        print(f"Get company markdown (companies): {response.status_code}")
+        if response.status_code == 200:
+            markdown_data = response.json()
+            print(f"Markdown for: {markdown_data['company_name']}")
+            print(f"Generated at: {markdown_data['generated_at']}")
+            print(f"Markdown length: {len(markdown_data['markdown'])} characters")
+        return response.status_code == 200
+    except Exception as e:
+        print(f"Get company markdown (companies) failed: {e}")
+        return False
+
+
+def test_generate_report_pdf():
+    """Test PDF generation endpoint"""
+    try:
+        test_data = {
+            "markdown_content": "# Test Report\n\nThis is a test markdown content.",
+            "company_name": "Test Company",
+        }
+        response = requests.post(f"{API_BASE_URL}/generate-report-pdf/", json=test_data)
+        print(f"Generate report PDF: {response.status_code}")
+        if response.status_code == 200:
+            print("PDF generated successfully")
+        return response.status_code == 200
+    except Exception as e:
+        print(f"Generate report PDF failed: {e}")
+        return False
+
+
 def test_get_company_status(company_id):
     """Test getting company processing status"""
     try:
@@ -139,8 +204,18 @@ def main():
                 # Test company markdown (only if company has markdown)
                 if companies[0]["has_markdown"]:
                     test_get_company_markdown(company_id)
+                    print()
+                    test_get_company_report_html(company_id)
+                    print()
+                    test_get_company_report_html_companies(company_id)
+                    print()
+                    test_get_company_markdown_companies(company_id)
                 else:
                     print("Company doesn't have markdown yet")
+
+                # Test PDF generation
+                print()
+                test_generate_report_pdf()
 
                 print("✅ All tests completed")
             else:
