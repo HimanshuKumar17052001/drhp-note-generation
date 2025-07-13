@@ -1918,7 +1918,15 @@
                 } catch (error) {
                     document.getElementById('right-loading-overlay').classList.remove('active');
                     document.getElementById('no-ipo-message').style.display = 'flex';
-                    showError('Failed to load company report');
+
+                    // Show more specific error message
+                    let errorMessage = 'Failed to load company report';
+                    if (error.message && error.message.includes('404')) {
+                        errorMessage = 'No report found for this company. The company may not have completed processing yet.';
+                    } else if (error.message) {
+                        errorMessage = error.message;
+                    }
+                    showError(errorMessage);
                 }
             } catch (error) {
                 console.error('Error selecting company:', error);

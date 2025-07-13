@@ -950,30 +950,52 @@ async def get_company_report_html_companies(company_id: str):
     Called by frontend when user selects a company to view the report.
     """
     try:
-        company = get_company_by_id(company_id)
-        markdown_doc = FinalMarkdown.objects(company_id=company).first()
+        logger.info(f"Fetching HTML report for company ID: {company_id}")
 
-        if not markdown_doc:
+        # Check if company exists
+        try:
+            company = get_company_by_id(company_id)
+            logger.info(f"Company found: {company.name}")
+        except HTTPException as e:
+            logger.error(f"Company not found for ID {company_id}: {e.detail}")
             raise HTTPException(
-                status_code=404, detail="No report found for this company"
+                status_code=404, detail=f"Company with ID {company_id} not found"
             )
+
+        # Check if markdown exists
+        markdown_doc = FinalMarkdown.objects(company_id=company).first()
+        if not markdown_doc:
+            logger.error(
+                f"No markdown found for company {company.name} (ID: {company_id})"
+            )
+            raise HTTPException(
+                status_code=404,
+                detail=f"No report found for company {company.name}. The company may not have completed processing yet.",
+            )
+
+        logger.info(
+            f"Markdown found for company {company.name}, generating HTML report"
+        )
 
         # Convert markdown to HTML
         html_body = markdown.markdown(
             markdown_doc.markdown, extensions=["tables", "fenced_code"]
         )
 
-        # Load images
+        # Load images with better error handling
         def load_image_base64(path):
             try:
-                with open(path, "rb") as f:
-                    return (
-                        f"data:image/png;base64,{base64.b64encode(f.read()).decode()}"
-                    )
+                if os.path.exists(path):
+                    with open(path, "rb") as f:
+                        return f"data:image/png;base64,{base64.b64encode(f.read()).decode()}"
+                else:
+                    logger.warning(f"Image file not found: {path}")
+                    return None
             except Exception as e:
                 logger.warning(f"Failed to load image {path}: {e}")
                 return None
 
+        # Load default images
         axis_logo_data = load_image_base64("assets/axis_logo.png")
         company_logo_data = load_image_base64("assets/Pine Labs_logo.png")  # Default
         front_header_data = load_image_base64("assets/front_header.png")
@@ -982,6 +1004,11 @@ async def get_company_report_html_companies(company_id: str):
         company_logo_path = f"assets/{company.name.replace(' ', '_')}_logo.png"
         if os.path.exists(company_logo_path):
             company_logo_data = load_image_base64(company_logo_path)
+            logger.info(f"Loaded company-specific logo: {company_logo_path}")
+        else:
+            logger.info(
+                f"Company-specific logo not found: {company_logo_path}, using default"
+            )
 
         # Setup Jinja2 environment
         env = Environment(loader=FileSystemLoader("templates"))
@@ -1001,6 +1028,8 @@ async def get_company_report_html_companies(company_id: str):
         content_html = env.get_template("content_page.html").render(context)
         full_html = front_html + content_html
 
+        logger.info(f"Successfully generated HTML report for company {company.name}")
+
         return {
             "company_id": str(company.id),
             "company_name": company.name,
@@ -1011,8 +1040,11 @@ async def get_company_report_html_companies(company_id: str):
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Error generating HTML report: {e}")
-        raise HTTPException(status_code=500, detail="Internal server error")
+        logger.error(f"Error generating HTML report for company {company_id}: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Internal server error while generating HTML report: {str(e)}",
+        )
 
 
 @app.post("/companies/{company_id}/regenerate")
@@ -1391,6 +1423,41 @@ async def set_entity_assets(request: AssetConfigRequest):
 async def health_check():
     """Health check endpoint."""
     return {"status": "healthy", "timestamp": datetime.utcnow()}
+
+
+@app.get("/debug/companies")
+async def debug_companies():
+    """Debug endpoint to check companies and their markdown status."""
+    try:
+        companies = Company.objects.all()
+        markdown_docs = FinalMarkdown.objects.all()
+
+        company_data = []
+        for company in companies:
+            markdown_exists = (
+                FinalMarkdown.objects(company_id=company).first() is not None
+            )
+            company_data.append(
+                {
+                    "id": str(company.id),
+                    "name": company.name,
+                    "corporate_identity_number": company.corporate_identity_number,
+                    "processing_status": company.processing_status,
+                    "has_markdown": markdown_exists,
+                    "created_at": (
+                        company.created_at.isoformat() if company.created_at else None
+                    ),
+                }
+            )
+
+        return {
+            "total_companies": len(company_data),
+            "total_markdown_docs": len(markdown_docs),
+            "companies": company_data,
+        }
+    except Exception as e:
+        logger.error(f"Error in debug endpoint: {e}")
+        raise HTTPException(status_code=500, detail=f"Debug error: {str(e)}")
 
 
 if __name__ == "__main__":

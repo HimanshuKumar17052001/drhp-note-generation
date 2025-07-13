@@ -141,6 +141,27 @@ def test_generate_report_pdf():
         return False
 
 
+def test_debug_companies():
+    """Test debug companies endpoint"""
+    try:
+        response = requests.get(f"{API_BASE_URL}/debug/companies")
+        print(f"Debug companies: {response.status_code}")
+        if response.status_code == 200:
+            data = response.json()
+            print(f"Total companies: {data['total_companies']}")
+            print(f"Total markdown docs: {data['total_markdown_docs']}")
+            if data["companies"]:
+                print("Companies:")
+                for company in data["companies"]:
+                    print(
+                        f"  - {company['name']} (ID: {company['id']}, Has markdown: {company['has_markdown']})"
+                    )
+        return response.status_code == 200
+    except Exception as e:
+        print(f"Debug companies failed: {e}")
+        return False
+
+
 def test_get_company_status(company_id):
     """Test getting company processing status"""
     try:
@@ -178,6 +199,10 @@ def main():
         return
 
     print("✅ Get companies passed")
+    print()
+
+    # Test debug endpoint
+    test_debug_companies()
     print()
 
     # If we have companies, test individual company endpoints
