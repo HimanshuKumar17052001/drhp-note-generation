@@ -23,6 +23,7 @@ from mongoengine import (
     ListField,
     DateTimeField,
     DoesNotExist,
+    ReferenceField,  # <-- add this
 )
 from datetime import datetime
 from collections import defaultdict
@@ -45,22 +46,6 @@ DB_NAME = os.getenv("DB_NAME", "DRHP_NOTES")
 connect(alias="core", host=MONGODB_URI, db=DB_NAME)
 
 
-# ChecklistOutput model
-class ChecklistOutput(Document):
-    meta = {"db_alias": "core", "collection": "checklist_outputs"}
-    company_id = StringField(required=True)
-    checklist_name = StringField(required=True)
-    row_index = IntField(required=True)
-    topic = StringField()
-    section = StringField()
-    ai_prompt = StringField()
-    ai_output = StringField()
-    citations = ListField(StringField())
-    commentary = StringField()
-    created_at = DateTimeField(default=datetime.utcnow)
-    updated_at = DateTimeField(default=datetime.utcnow)
-
-
 class Company(Document):
     meta = {"db_alias": "core", "collection": "company"}
     name = StringField(required=True)
@@ -68,6 +53,22 @@ class Company(Document):
     drhp_file_url = StringField(required=True)
     website_link = StringField()
     created_at = DateTimeField(default=datetime.utcnow)
+
+
+# ChecklistOutput model
+class ChecklistOutput(Document):
+    meta = {"db_alias": "core", "collection": "checklist_outputs"}
+    company_id = ReferenceField(Company, required=True)
+    checklist_name = StringField(required=True)
+    row_index = IntField(required=True)
+    topic = StringField()
+    section = StringField()
+    ai_prompt = StringField()
+    ai_output = StringField()
+    citations = ListField(IntField())
+    commentary = StringField()
+    created_at = DateTimeField(default=datetime.utcnow)
+    updated_at = DateTimeField(default=datetime.utcnow)
 
 
 logging.basicConfig(level=logging.ERROR)
@@ -102,8 +103,11 @@ class DRHPNoteChecklistProcessor:
         self.qdrant = QdrantClient(url=os.getenv("QDRANT_URL"))
         self.openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
         # Extract company name from collection_name (supports both 'drhp_notes_' and 'rhp_notes_' prefixes)
+        from bson import ObjectId
+
         if company_id:
             self.company_id = company_id
+            self.company_doc = Company.objects.get(id=ObjectId(company_id))
         else:
             if collection_name.startswith("drhp_notes_"):
                 company_name = (
@@ -117,6 +121,7 @@ class DRHPNoteChecklistProcessor:
                 company_name = collection_name.replace("_", " ").strip()
             try:
                 company_doc = Company.objects.get(name=company_name)
+                self.company_doc = company_doc
                 self.company_id = str(company_doc.id)
                 print(
                     f"[INFO] Found company_id for '{company_name}': {self.company_id}"
@@ -447,17 +452,28 @@ class DRHPNoteChecklistProcessor:
             topic = str(df.iloc[idx].get("Topic", ""))
             section = str(df.iloc[idx].get("Section for search", ""))
             ai_prompt = str(df.iloc[idx].get("AI Prompts", ""))
+
+            # Convert citations string to list of integers
+            citations_list = []
+            if citations and citations.lower() != "no citations":
+                for citation in citations.split(","):
+                    citation = citation.strip()
+                    if citation and citation.lower() != "no citations":
+                        try:
+                            citations_list.append(int(citation))
+                        except (ValueError, TypeError):
+                            logger.warning(
+                                f"Could not convert citation '{citation}' to int, skipping"
+                            )
+                            continue
+
             ChecklistOutput.objects(
-                company_id=self.company_id,
+                company_id=self.company_doc,
                 checklist_name=self.checklist_name,
                 row_index=idx,
             ).update_one(
                 set__ai_output=output,
-                set__citations=[
-                    c.strip()
-                    for c in citations.split(",")
-                    if c.strip() and c.strip().lower() != "no citations"
-                ],
+                set__citations=citations_list,
                 set__topic=topic,
                 set__section=section,
                 set__ai_prompt=ai_prompt,

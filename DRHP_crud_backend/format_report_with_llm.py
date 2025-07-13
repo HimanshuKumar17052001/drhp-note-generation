@@ -1,5 +1,5 @@
 import os
-from mongoengine import connect, Document, StringField, IntField
+from mongoengine import connect, Document, StringField, IntField, ReferenceField
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -20,7 +20,7 @@ class Company(Document):
 
 class ChecklistOutput(Document):
     meta = {"db_alias": "core", "collection": "checklist_outputs"}
-    company_id = StringField(required=True)
+    company_id = ReferenceField(Company, required=True)
     checklist_name = StringField(required=True)
     row_index = IntField(required=True)
     topic = StringField()
@@ -31,7 +31,7 @@ class ChecklistOutput(Document):
 
 class FinalMarkdown(Document):
     meta = {"db_alias": "core", "collection": "final_markdown"}
-    company_id = StringField(required=True)
+    company_id = ReferenceField(Company, required=True)
     company_name = StringField(required=True)
     markdown = StringField(required=True)
 
@@ -44,6 +44,7 @@ def get_company_by_name(company_name):
 
 
 def generate_markdown_for_company(company_id, company_name):
+    # company_id should be a Company object
     rows = (
         ChecklistOutput.objects(company_id=company_id)
         .order_by("row_index")
@@ -82,7 +83,7 @@ if __name__ == "__main__":
     # Set the company name you want to generate the markdown for
     company_name = "Anthem Biosciences Limited"  # Change as needed
     company = get_company_by_name(company_name)
-    markdown = generate_markdown_for_company(str(company.id), company.name)
-    save_final_markdown(str(company.id), company.name, markdown)
+    markdown = generate_markdown_for_company(company, company.name)
+    save_final_markdown(company, company.name, markdown)
     print("\n--- Markdown Preview ---\n")
     print(markdown[:])

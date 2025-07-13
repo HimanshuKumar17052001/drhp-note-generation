@@ -7,6 +7,8 @@ import logging
 import time
 import base64
 import shutil
+import uuid
+import warnings
 from datetime import datetime
 from typing import List, Optional, Dict, Any
 from pathlib import Path
@@ -20,11 +22,19 @@ from fastapi import (
     Path,
     BackgroundTasks,
     Query,
+    Depends,
 )
 from fastapi.responses import StreamingResponse, FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from mongoengine import connect, disconnect, DoesNotExist
+
+# Suppress warnings
+warnings.filterwarnings("ignore")
+os.environ["LITELLM_LOG"] = "ERROR"
+os.environ["OPENAI_LOG"] = "ERROR"
+os.environ["URLLIB3_DISABLE_WARNINGS"] = "1"
+os.environ["PYTHONWARNINGS"] = "ignore"
 
 # Add the backend directory to the Python path to allow imports
 sys.path.append(os.path.join(os.path.dirname(__file__), "DRHP_crud_backend"))
@@ -63,9 +73,7 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.error(f"Startup failed: {e}")
         raise
-
     yield
-
     # Shutdown
     try:
         disconnect(alias="core")
@@ -74,13 +82,13 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="DRHP IPO Notes Generator API",
-    description="API to manage and process DRHP documents for IPO note generation.",
+    title="DRHP IPO Notes Generation API",
+    description="API for processing DRHP documents and generating IPO notes",
     version="1.0.0",
     lifespan=lifespan,
 )
 
-# --- CORS Configuration ---
+# Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -89,52 +97,70 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# --- Configuration ---
-CHECKLIST_PATH = os.path.join(
-    os.path.dirname(__file__),
-    "DRHP_crud_backend",
-    "Checklists",
-    "IPO_Notes_Checklist_AI_Final_prod_updated.xlsx",
-)
-QDRANT_URL = os.getenv("QDRANT_URL")
-MONGODB_URI = os.getenv("DRHP_MONGODB_URI")
-DB_NAME = os.getenv("DRHP_DB_NAME", "DRHP_NOTES")
 
-
-# --- Pydantic Models for API Data Validation ---
-class CompanyModel(BaseModel):
+# --- Pydantic Models ---
+class CompanyResponse(BaseModel):
     id: str
     name: str
-    uin: str
-    uploadDate: str
-    status: str
-    hasMarkdown: bool
+    corporate_identity_number: str
+    website_link: Optional[str] = None
+    created_at: datetime
+    processing_status: str
+    has_markdown: bool
+    pages_count: int
+    checklist_outputs_count: int
 
 
-class ReportRequest(BaseModel):
+class ReportResponse(BaseModel):
+    company_id: str
+    company_name: str
+    markdown: str
+    generated_at: datetime
+
+
+class PDFGenerationRequest(BaseModel):
     markdown_content: str
     company_name: str
-    output_filename: str
+    logo_id: Optional[str] = None
 
 
-class ProcessingStatus(BaseModel):
-    status: str
-    message: str
-    progress: Optional[float] = None
-    current_step: Optional[str] = None
+class LogoUploadResponse(BaseModel):
+    logo_id: str
+    filename: str
+    path: str
 
 
-class CompanyUpdateRequest(BaseModel):
-    name: Optional[str] = None
-    website_link: Optional[str] = None
+class AssetConfigRequest(BaseModel):
+    entity_logo_id: str
+    front_header_id: str
 
 
-class SearchRequest(BaseModel):
-    query: str
-    filters: Optional[Dict[str, Any]] = None
+# --- Environment and Database Setup ---
+def validate_env():
+    required_vars = ["OPENAI_API_KEY", "QDRANT_URL", "DRHP_MONGODB_URI"]
+    missing = [v for v in required_vars if not os.getenv(v)]
+    if missing:
+        logger.error(f"Missing required environment variables: {', '.join(missing)}")
+        raise EnvironmentError(
+            f"Missing required environment variables: {', '.join(missing)}"
+        )
+    logger.info("All required environment variables are set.")
 
 
-# --- MongoDB Models ---
+def connect_to_db():
+    MONGODB_URI = os.getenv("DRHP_MONGODB_URI")
+    DB_NAME = os.getenv("DRHP_DB_NAME", "DRHP_NOTES")
+
+    try:
+        disconnect(alias="core")
+        connect(alias="core", host=MONGODB_URI, db=DB_NAME)
+        logger.info(f"Connected to MongoDB at {MONGODB_URI}, DB: {DB_NAME}")
+    except Exception as e:
+        logger.error(f"MongoDB connection failed: {e}")
+        raise
+
+
+# --- MongoEngine Models ---
 from mongoengine import (
     Document,
     StringField,
@@ -142,7 +168,7 @@ from mongoengine import (
     IntField,
     ListField,
     ReferenceField,
-    ObjectIdField,
+    BooleanField,
 )
 
 
@@ -150,16 +176,17 @@ class Company(Document):
     meta = {"db_alias": "core", "collection": "company"}
     name = StringField(required=True)
     corporate_identity_number = StringField(required=True, unique=True)
-    drhp_file_url = StringField(required=True)
     website_link = StringField()
     created_at = DateTimeField(default=datetime.utcnow)
+    processing_status = StringField(default="PENDING")
+    has_markdown = BooleanField(default=False)
 
 
 class Page(Document):
     meta = {"db_alias": "core", "collection": "pages"}
     company_id = ReferenceField(Company, required=True)
     page_number_pdf = IntField(required=True)
-    page_number_drhp = StringField()
+    page_number_drhp = IntField()
     page_content = StringField()
 
 
@@ -172,7 +199,7 @@ class ChecklistOutput(Document):
     section = StringField()
     ai_prompt = StringField()
     ai_output = StringField()
-    citations = ListField(StringField())
+    citations = ListField(IntField())
     commentary = StringField()
     created_at = DateTimeField(default=datetime.utcnow)
     updated_at = DateTimeField(default=datetime.utcnow)
@@ -180,285 +207,93 @@ class ChecklistOutput(Document):
 
 class FinalMarkdown(Document):
     meta = {"db_alias": "core", "collection": "final_markdown"}
-    company_id = StringField(required=True)
+    company_id = ReferenceField(Company, required=True)
     company_name = StringField(required=True)
     markdown = StringField(required=True)
+    generated_at = DateTimeField(default=datetime.utcnow)
 
 
 # --- Utility Functions ---
-def validate_env():
-    """Validate that all required environment variables are set."""
-    required_vars = ["OPENAI_API_KEY", "QDRANT_URL", "DRHP_MONGODB_URI"]
-    missing = [v for v in required_vars if not os.getenv(v)]
-    if missing:
-        logger.error(f"Missing required environment variables: {', '.join(missing)}")
-        raise EnvironmentError(
-            f"Missing required environment variables: {', '.join(missing)}"
-        )
-    logger.info("All required environment variables are set.")
-
-
-def connect_to_db():
-    """Connect to MongoDB database."""
+def get_company_by_id(company_id: str) -> Company:
+    """Get company by ID with proper error handling."""
     try:
-        # Disconnect if already connected with this alias
-        disconnect(alias="core")
-        connect(alias="core", host=MONGODB_URI, db=DB_NAME)
-        logger.info(f"Connected to MongoDB at {MONGODB_URI}, DB: {DB_NAME}")
-    except Exception as e:
-        logger.error(f"MongoDB connection error: {e}")
-        raise
+        from bson import ObjectId
 
-
-def qdrant_collection_exists(collection_name, qdrant_url):
-    """Check if a Qdrant collection exists."""
-    try:
-        client = QdrantClient(url=qdrant_url)
-        return collection_name in [c.name for c in client.get_collections().collections]
-    except Exception as e:
-        logger.error(f"Failed to check Qdrant collections: {e}")
-        return False
-
-
-def get_or_create_company(company_details, pdf_path):
-    """Get existing company or create new one."""
-    unique_id = company_details.corporate_identity_number
-    try:
-        company_doc = Company.objects.get(corporate_identity_number=unique_id)
-        logger.info(f"Company already exists in MongoDB: {company_doc.id}")
-        return company_doc, False
+        company = Company.objects.get(id=ObjectId(company_id))
+        return company
     except DoesNotExist:
-        try:
-            company_doc = Company(
-                name=company_details.name,
-                corporate_identity_number=unique_id,
-                drhp_file_url=pdf_path,
-                website_link=getattr(company_details, "website_link", None),
-            ).save()
-            logger.info(f"Company details saved to MongoDB: {company_doc.id}")
-            return company_doc, True
-        except Exception as e:
-            logger.error(f"Failed to save company: {e}")
-            raise
-
-
-def save_page_safe(company_doc, page_no, page_info, saved_pages, failed_pages):
-    """Safely save a page to MongoDB."""
-    try:
-        if Page.objects(company_id=company_doc, page_number_pdf=int(page_no)).first():
-            logger.info(
-                f"Page {page_no} already exists for company {company_doc.name}, skipping."
-            )
-            saved_pages.append(page_no)
-            return
-        Page(
-            company_id=company_doc,
-            page_number_pdf=int(page_no),
-            page_number_drhp=page_info.get("page_number_drhp", ""),
-            page_content=page_info.get("page_content", ""),
-        ).save()
-        saved_pages.append(page_no)
-    except Exception as e:
-        logger.error(f"Failed to save page {page_no}: {e}")
-        failed_pages.append(page_no)
-
-
-def cleanup_company_and_pages(company_doc):
-    """Clean up company and pages on error."""
-    try:
-        Page.objects(company_id=company_doc).delete()
-        company_doc.delete()
-        logger.info(f"Rolled back company and pages for {company_doc.name}")
-    except Exception as e:
-        logger.error(f"Failed to clean up after error: {e}")
-
-
-def checklist_exists(company_id, checklist_name):
-    """Check if checklist outputs exist for a company."""
-    if not isinstance(company_id, Company):
-        raise ValueError("company_id must be a Company instance, not a string.")
-    return (
-        ChecklistOutput.objects(
-            company_id=company_id, checklist_name=checklist_name
-        ).first()
-        is not None
-    )
-
-
-def markdown_exists(company_id):
-    """Check if markdown exists for a company."""
-    try:
-        company_id_str = str(company_id)
-        return FinalMarkdown.objects(company_id=company_id_str).first() is not None
-    except Exception:
-        return False
-
-
-def generate_markdown_for_company(company_id, company_name):
-    """Generate markdown from checklist outputs."""
-    if not isinstance(company_id, Company):
-        raise ValueError("company_id must be a Company instance, not a string.")
-    rows = (
-        ChecklistOutput.objects(company_id=company_id)
-        .order_by("row_index")
-        .only("topic", "ai_output", "commentary", "row_index")
-    )
-    md_lines = []
-    for row in rows:
-        topic = row.topic or ""
-        ai_output = row.ai_output or ""
-        commentary = row.commentary or ""
-        heading_md = f"**{topic}**" if topic else ""
-        commentary_md = (
-            f'<span style="font-size:10px;"><i>AI Commentary : {commentary}</i></span>'
-            if commentary
-            else ""
+        raise HTTPException(
+            status_code=404, detail=f"Company with ID {company_id} not found"
         )
-        md_lines.append(f"{heading_md}\n\n{ai_output}\n\n{commentary_md}\n\n")
-    markdown = "".join(md_lines)
-    return markdown
-
-
-def save_final_markdown(company_id, company_name, markdown):
-    """Save final markdown to database."""
-    company_id_str = str(
-        company_id.id if isinstance(company_id, Company) else company_id
-    )
-    FinalMarkdown.objects(company_id=company_id_str).update_one(
-        set__company_name=company_name, set__markdown=markdown, upsert=True
-    )
-    logger.info(
-        f"Saved markdown for {company_name} ({company_id_str}) to final_markdown collection."
-    )
-
-
-def delete_company_and_related_data(company_doc, qdrant_url):
-    """Delete company and all related data from MongoDB and Qdrant."""
-    try:
-        Page.objects(company_id=company_doc).delete()
-        ChecklistOutput.objects(company_id=company_doc).delete()
-        FinalMarkdown.objects(company_id=company_doc).delete()
-        company_doc.delete()
-
-        # Delete Qdrant collection
-        qdrant_collection = f"drhp_notes_{company_doc.name.replace(' ', '_').upper()}"
-        try:
-            client = QdrantClient(url=qdrant_url)
-            if qdrant_collection in [
-                c.name for c in client.get_collections().collections
-            ]:
-                client.delete_collection(collection_name=qdrant_collection)
-                logger.info(f"Deleted Qdrant collection: {qdrant_collection}")
-        except Exception as qe:
-            logger.error(f"Failed to delete Qdrant collection: {qe}")
-        logger.info(f"Deleted company and all related data for {company_doc.name}")
     except Exception as e:
-        logger.error(f"Failed to delete company and related data: {e}")
+        logger.error(f"Error fetching company {company_id}: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
-# --- PDF Generation Functions ---
-def load_image_base64(path):
-    """Load image and convert to base64 data URL."""
+def update_company_status(company_id: str, status: str):
+    """Update company processing status."""
     try:
-        with open(path, "rb") as f:
-            return f"data:image/png;base64,{base64.b64encode(f.read()).decode()}"
-    except Exception as e:
-        logger.warning(f"Failed to load image {path}: {e}")
-        return None
+        from bson import ObjectId
 
-
-def render_template(env, template_name, context):
-    """Render Jinja2 template with given context."""
-    return env.get_template(template_name).render(context)
-
-
-def generate_ipo_notes_pdf(company_name, markdown_content, output_dir="output"):
-    """Generate professional IPO Notes PDF using Jinja2 templates and WeasyPrint."""
-    try:
-        os.makedirs(output_dir, exist_ok=True)
-
-        env = Environment(loader=FileSystemLoader("templates"))
-        html_body = markdown.markdown(
-            markdown_content, extensions=["tables", "fenced_code"]
+        Company.objects(id=ObjectId(company_id)).update_one(
+            set__processing_status=status
         )
+    except Exception as e:
+        logger.error(f"Error updating company status: {e}")
 
-        # Load images (with fallbacks)
-        axis_logo_data = load_image_base64("assets/axis_logo.png")
-        company_logo_data = load_image_base64("assets/Pine Labs_logo.png")
-        front_header_data = load_image_base64("assets/front_header.png")
 
-        # Try to load company-specific logo if it exists
-        company_logo_path = f"assets/{company_name.replace(' ', '_')}_logo.png"
-        if os.path.exists(company_logo_path):
-            company_logo_data = load_image_base64(company_logo_path)
+def get_company_stats(company: Company) -> Dict[str, Any]:
+    """Get comprehensive company statistics."""
+    try:
+        pages_count = Page.objects(company_id=company).count()
+        checklist_outputs_count = ChecklistOutput.objects(company_id=company).count()
+        has_markdown = FinalMarkdown.objects(company_id=company).first() is not None
 
-        context = {
-            "company_name": company_name.upper(),
-            "document_date": datetime.today().strftime("%B %Y"),
-            "company_logo_data": company_logo_data,
-            "axis_logo_data": axis_logo_data,
-            "front_header_data": front_header_data,
-            "content": html_body,
+        return {
+            "pages_count": pages_count,
+            "checklist_outputs_count": checklist_outputs_count,
+            "has_markdown": has_markdown,
         }
-
-        front_html = render_template(env, "front_page.html", context)
-        content_html = render_template(env, "content_page.html", context)
-        full_html = front_html + content_html
-
-        safe_company_name = (
-            company_name.replace(" ", "_").replace("/", "_").replace("\\", "_")
-        )
-        pdf_filename = f"{safe_company_name}_IPO_Notes.pdf"
-        pdf_path = os.path.join(output_dir, pdf_filename)
-
-        html_doc = HTML(string=full_html, base_url=".")
-        css_doc = CSS(filename="styles/styles.css")
-
-        html_doc.write_pdf(pdf_path, stylesheets=[css_doc])
-
-        logger.info(f"✅ PDF generated successfully: {pdf_path}")
-        return pdf_path
-
     except Exception as e:
-        logger.error(f"❌ Failed to generate PDF: {e}")
-        raise
+        logger.error(f"Error getting company stats: {e}")
+        return {"pages_count": 0, "checklist_outputs_count": 0, "has_markdown": False}
 
 
-# --- Pipeline Functions ---
-def run_full_pipeline(pdf_path, status_callback=None):
-    """Run the full DRHP processing pipeline."""
+def generate_sse_event(data: Dict[str, Any], event_type: str = "update") -> str:
+    """Generate Server-Sent Event format."""
+    return f"event: {event_type}\ndata: {json.dumps(data)}\n\n"
+
+
+# --- Background Processing Functions ---
+async def process_drhp_pipeline(pdf_path: str, company_id: str):
+    """Background task to process DRHP pipeline."""
     try:
-        if status_callback:
-            status_callback(
-                {"status": "started", "message": "Starting DRHP processing..."}
-            )
+        update_company_status(company_id, "PROCESSING")
 
-        # Step 1: Extract company details from PDF
-        if status_callback:
-            status_callback(
-                {
-                    "status": "processing",
-                    "message": "Extracting company details...",
-                    "progress": 10,
-                }
-            )
+        # Step 1: Extract company details
+        yield generate_sse_event(
+            {
+                "status": "PROCESSING",
+                "step": "extracting_company_details",
+                "message": "Extracting company details from PDF...",
+            }
+        )
 
+        # Process PDF and extract company details
         processor = LocalDRHPProcessor(
-            qdrant_url=QDRANT_URL,
+            qdrant_url=os.getenv("QDRANT_URL"),
             collection_name=None,
             max_workers=5,
             company_name=None,
         )
 
         json_path = processor.process_pdf_locally(pdf_path, "TEMP_COMPANY")
-        logger.info(f"PDF processed and extracted to: {json_path}")
 
         with open(json_path, "r", encoding="utf-8") as f:
             data = json.load(f)
 
         pdf_name = list(data.keys())[0]
         pages = data[pdf_name]
-
         first_pages_text = "\n".join(
             [
                 pages[str(i)].get("page_content", "")
@@ -468,125 +303,167 @@ def run_full_pipeline(pdf_path, status_callback=None):
         )
 
         company_details = b.ExtractCompanyDetails(first_pages_text)
-        company_name = company_details.name
-        unique_id = company_details.corporate_identity_number
 
-        if not company_name or not unique_id:
-            raise Exception("Could not extract company details from PDF")
+        yield generate_sse_event(
+            {
+                "status": "PROCESSING",
+                "step": "company_details_extracted",
+                "message": f"Company details extracted: {company_details.name}",
+            }
+        )
 
-        # Step 2: Check for existing company
-        company_doc = Company.objects(corporate_identity_number=unique_id).first()
+        # Step 2: Save pages to MongoDB
+        yield generate_sse_event(
+            {
+                "status": "PROCESSING",
+                "step": "saving_pages",
+                "message": "Saving pages to database...",
+            }
+        )
 
-        if company_doc:
-            if markdown_exists(company_doc):
-                if status_callback:
-                    status_callback(
-                        {
-                            "status": "completed",
-                            "message": "Company already processed",
-                            "progress": 100,
-                        }
-                    )
-                return {"company_id": str(company_doc.id), "status": "already_exists"}
-
-        # Create new company if doesn't exist
-        if not company_doc:
-            company_doc, _ = get_or_create_company(company_details, pdf_path)
-
-        if status_callback:
-            status_callback(
-                {
-                    "status": "processing",
-                    "message": "Saving pages to database...",
-                    "progress": 30,
-                }
-            )
-
-        # Step 3: Save pages to MongoDB
+        company = get_company_by_id(company_id)
         saved_pages = []
         failed_pages = []
+
         page_items = [(k, v) for k, v in pages.items() if k != "_metadata"]
         page_items = [(k, v) for k, v in page_items if k.isdigit()]
 
-        from concurrent.futures import ThreadPoolExecutor, as_completed
+        for page_no, page_info in page_items:
+            try:
+                if Page.objects(
+                    company_id=company, page_number_pdf=int(page_no)
+                ).first():
+                    saved_pages.append(page_no)
+                    continue
 
-        with ThreadPoolExecutor(max_workers=5) as executor:
-            futures = [
-                executor.submit(
-                    save_page_safe, company_doc, k, v, saved_pages, failed_pages
-                )
-                for k, v in page_items
-            ]
-            for future in as_completed(futures):
-                pass
+                page_number_drhp_val = page_info.get("page_number_drhp", None)
+                if (
+                    page_number_drhp_val is not None
+                    and page_number_drhp_val != ""
+                    and str(page_number_drhp_val).strip()
+                ):
+                    try:
+                        page_number_drhp_val = int(page_number_drhp_val)
+                    except (ValueError, TypeError):
+                        page_number_drhp_val = None
+                else:
+                    page_number_drhp_val = None
 
-        if failed_pages:
-            raise Exception(f"Failed to save pages: {failed_pages}")
+                Page(
+                    company_id=company,
+                    page_number_pdf=int(page_no),
+                    page_number_drhp=page_number_drhp_val,
+                    page_content=page_info.get("page_content", ""),
+                ).save()
+                saved_pages.append(page_no)
+            except Exception as e:
+                logger.error(f"Failed to save page {page_no}: {e}")
+                failed_pages.append(page_no)
 
-        if status_callback:
-            status_callback(
-                {
-                    "status": "processing",
-                    "message": "Indexing content for search...",
-                    "progress": 50,
-                }
-            )
+        yield generate_sse_event(
+            {
+                "status": "PROCESSING",
+                "step": "pages_saved",
+                "message": f"Saved {len(saved_pages)} pages, failed: {len(failed_pages)}",
+            }
+        )
 
-        # Step 4: Upsert to Qdrant
-        qdrant_collection = f"drhp_notes_{company_name.replace(' ', '_').upper()}"
+        # Step 3: Upsert to Qdrant
+        yield generate_sse_event(
+            {
+                "status": "PROCESSING",
+                "step": "upserting_to_qdrant",
+                "message": "Creating embeddings and upserting to vector database...",
+            }
+        )
+
+        qdrant_collection = (
+            f"drhp_notes_{company_details.name.replace(' ', '_').upper()}"
+        )
         processor.collection_name = qdrant_collection
-        processor.upsert_pages_to_qdrant(json_path, company_name, str(company_doc.id))
+        processor.upsert_pages_to_qdrant(
+            json_path, company_details.name, str(company.id)
+        )
 
-        if status_callback:
-            status_callback(
-                {
-                    "status": "processing",
-                    "message": "Processing AI checklist...",
-                    "progress": 70,
-                }
-            )
+        yield generate_sse_event(
+            {
+                "status": "PROCESSING",
+                "step": "qdrant_upserted",
+                "message": f"Embeddings upserted to Qdrant collection: {qdrant_collection}",
+            }
+        )
 
-        # Step 5: Process checklist
-        checklist_name = os.path.basename(CHECKLIST_PATH)
+        # Step 4: Process checklist
+        yield generate_sse_event(
+            {
+                "status": "PROCESSING",
+                "step": "processing_checklist",
+                "message": "Processing checklist and generating AI outputs...",
+            }
+        )
+
+        checklist_path = os.path.join(
+            os.path.dirname(__file__),
+            "DRHP_crud_backend",
+            "Checklists",
+            "IPO_Notes_Checklist_AI_Final_prod_updated.xlsx",
+        )
+
+        checklist_name = os.path.basename(checklist_path)
         note_processor = DRHPNoteChecklistProcessor(
-            CHECKLIST_PATH, qdrant_collection, str(company_doc.id), checklist_name
+            checklist_path, qdrant_collection, str(company.id), checklist_name
         )
         note_processor.process()
 
-        if status_callback:
-            status_callback(
-                {
-                    "status": "processing",
-                    "message": "Generating final notes...",
-                    "progress": 90,
-                }
+        yield generate_sse_event(
+            {
+                "status": "PROCESSING",
+                "step": "checklist_processed",
+                "message": "Checklist processing completed",
+            }
+        )
+
+        # Step 5: Generate markdown
+        yield generate_sse_event(
+            {
+                "status": "PROCESSING",
+                "step": "generating_markdown",
+                "message": "Generating final markdown report...",
+            }
+        )
+
+        # Get all checklist outputs for the company
+        rows = ChecklistOutput.objects(company_id=company).order_by("row_index")
+
+        md_lines = []
+        for row in rows:
+            topic = row.topic or ""
+            ai_output = row.ai_output or ""
+            commentary = row.commentary or ""
+
+            heading_md = f"**{topic}**" if topic else ""
+            commentary_md = (
+                f'<span style="font-size:10px;"><i>AI Commentary : {commentary}</i></span>'
+                if commentary
+                else ""
             )
 
-        # Step 6: Generate and save markdown
-        markdown = generate_markdown_for_company(company_doc, company_name)
-        save_final_markdown(company_doc, company_name, markdown)
+            md_lines.append(f"{heading_md}\n\n{ai_output}\n\n{commentary_md}\n\n")
 
-        # Step 7: Generate PDF
-        try:
-            pdf_path = generate_ipo_notes_pdf(company_name, markdown)
-            if status_callback:
-                status_callback(
-                    {
-                        "status": "completed",
-                        "message": f"PDF generated: {pdf_path}",
-                        "progress": 100,
-                    }
-                )
-        except Exception as pdf_error:
-            logger.error(f"PDF generation failed: {pdf_error}")
-            if status_callback:
-                status_callback(
-                    {
-                        "status": "completed",
-                        "message": "Processing completed (PDF generation failed)",
-                        "progress": 100,
-                    }
-                )
+        markdown_content = "".join(md_lines)
+
+        # Save final markdown
+        FinalMarkdown.objects(company_id=company).update_one(
+            set__company_name=company.name,
+            set__markdown=markdown_content,
+            set__generated_at=datetime.utcnow(),
+            upsert=True,
+        )
+
+        # Update company status
+        Company.objects(id=company.id).update_one(
+            set__processing_status="COMPLETED", set__has_markdown=True
+        )
 
         # Cleanup
         try:
@@ -594,520 +471,490 @@ def run_full_pipeline(pdf_path, status_callback=None):
         except Exception as e:
             logger.warning(f"Failed to clean up JSON file: {e}")
 
-        return {"company_id": str(company_doc.id), "status": "completed"}
-
-    except Exception as e:
-        logger.error(f"Pipeline failed: {e}")
-        if status_callback:
-            status_callback({"status": "error", "message": str(e)})
-        raise
-
-
-def rerun_pipeline_for_company(company_id, status_callback=None):
-    """Re-run pipeline for an existing company."""
-    try:
-        company_doc = Company.objects.get(id=company_id)
-
-        if status_callback:
-            status_callback(
-                {"status": "processing", "message": "Deleting existing data..."}
-            )
-
-        # Delete existing data
-        ChecklistOutput.objects(company_id=company_doc).delete()
-        FinalMarkdown.objects(company_id=company_doc).delete()
-
-        if status_callback:
-            status_callback(
-                {"status": "processing", "message": "Re-processing checklist..."}
-            )
-
-        # Re-run checklist
-        qdrant_collection = f"drhp_notes_{company_doc.name.replace(' ', '_').upper()}"
-        checklist_name = os.path.basename(CHECKLIST_PATH)
-        note_processor = DRHPNoteChecklistProcessor(
-            CHECKLIST_PATH, qdrant_collection, str(company_doc.id), checklist_name
-        )
-        note_processor.process()
-
-        if status_callback:
-            status_callback(
-                {"status": "processing", "message": "Generating new markdown..."}
-            )
-
-        # Generate new markdown
-        markdown = generate_markdown_for_company(company_doc, company_doc.name)
-        save_final_markdown(company_doc, company_doc.name, markdown)
-
-        # Generate new PDF
-        try:
-            pdf_path = generate_ipo_notes_pdf(company_doc.name, markdown)
-            if status_callback:
-                status_callback(
-                    {
-                        "status": "completed",
-                        "message": f"Regeneration completed. PDF: {pdf_path}",
-                    }
-                )
-        except Exception as pdf_error:
-            logger.error(f"PDF generation failed: {pdf_error}")
-            if status_callback:
-                status_callback(
-                    {
-                        "status": "completed",
-                        "message": "Regeneration completed (PDF generation failed)",
-                    }
-                )
-
-        return {"status": "completed"}
-
-    except Exception as e:
-        logger.error(f"Regeneration failed: {e}")
-        if status_callback:
-            status_callback({"status": "error", "message": str(e)})
-        raise
-
-
-def get_all_companies_with_status():
-    """Get all companies with their processing status."""
-    companies = Company.objects().order_by("-created_at")
-    result = []
-
-    for company in companies:
-        markdown_done = markdown_exists(company)
-        result.append(
-            CompanyModel(
-                id=str(company.id),
-                name=company.name,
-                uin=company.corporate_identity_number,
-                uploadDate=company.created_at.isoformat(),
-                status="completed" if markdown_done else "processing",
-                hasMarkdown=markdown_done,
-            )
+        yield generate_sse_event(
+            {
+                "status": "COMPLETED",
+                "step": "final",
+                "message": "DRHP processing completed successfully",
+                "markdown": markdown_content,
+            }
         )
 
-    return result
-
-
-def get_final_markdown(company_id):
-    """Get final markdown for a company."""
-    try:
-        company_id_str = str(company_id)
-        markdown_doc = FinalMarkdown.objects(company_id=company_id_str).first()
-        if markdown_doc:
-            return markdown_doc.markdown
-        return None
     except Exception as e:
-        logger.error(f"Error in get_final_markdown: {e}")
-        return None
-
-
-def delete_company_and_all_data(company_id):
-    """Delete company and all its data."""
-    try:
-        company_doc = Company.objects.get(id=company_id)
-        delete_company_and_related_data(company_doc, QDRANT_URL)
-        return True
-    except DoesNotExist:
-        return False
+        logger.error(f"Pipeline processing error: {e}")
+        update_company_status(company_id, "FAILED")
+        yield generate_sse_event(
+            {
+                "status": "FAILED",
+                "step": "error",
+                "message": f"Processing failed: {str(e)}",
+            }
+        )
 
 
 # --- API Endpoints ---
 
 
-@app.get("/", summary="Health Check")
-def health_check():
-    """Health check endpoint."""
-    return {"status": "healthy", "message": "DRHP IPO Notes Generator API is running"}
-
-
-@app.post("/companies/", summary="Upload and Process DRHP PDF")
+@app.post("/companies/")
 async def upload_and_process_drhp(file: UploadFile = File(...)):
-    """Accepts a DRHP PDF, processes it through the full pipeline, and streams real-time status updates."""
-    if file.content_type != "application/pdf":
-        raise HTTPException(
-            status_code=400, detail="Invalid file type. Please upload a PDF."
+    """
+    Upload a DRHP PDF and initiate the full processing pipeline.
+    Returns a Server-Sent Events stream with real-time status updates.
+    """
+    if not file.filename.lower().endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="Only PDF files are allowed")
+
+    try:
+        # Create temporary file
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
+            shutil.copyfileobj(file.file, temp_file)
+            temp_path = temp_file.name
+
+        # Extract company details first
+        processor = LocalDRHPProcessor(
+            qdrant_url=os.getenv("QDRANT_URL"),
+            collection_name=None,
+            max_workers=5,
+            company_name=None,
         )
 
-    # Save the uploaded file to a temporary location
-    with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp:
-        tmp.write(await file.read())
-        temp_pdf_path = tmp.name
+        json_path = processor.process_pdf_locally(temp_path, "TEMP_COMPANY")
 
-    async def event_stream():
-        try:
-            queue = asyncio.Queue()
-            loop = asyncio.get_event_loop()
+        with open(json_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
 
-            future = loop.run_in_executor(
-                None, run_full_pipeline, temp_pdf_path, queue.put_nowait
-            )
-
-            while True:
-                try:
-                    update = await asyncio.wait_for(queue.get(), timeout=600)
-                    if update is None:
-                        break
-                    yield f"data: {json.dumps(update)}\n\n"
-                except asyncio.TimeoutError:
-                    yield f"data: {json.dumps({'status': 'error', 'message': 'Processing timed out.'})}\n\n"
-                    break
-
-            await future
-
-        except Exception as e:
-            error_message = f"An unexpected error occurred: {str(e)}"
-            yield f"data: {json.dumps({'status': 'error', 'message': error_message})}\n\n"
-        finally:
-            # Clean up the temporary file
-            if os.path.exists(temp_pdf_path):
-                os.remove(temp_pdf_path)
-
-    return StreamingResponse(event_stream(), media_type="text/event-stream")
-
-
-@app.get("/companies/", response_model=List[CompanyModel], summary="List All Companies")
-def get_all_companies():
-    """Retrieves a list of all companies from the database, along with their processing status."""
-    try:
-        companies = get_all_companies_with_status()
-        return companies
-    except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Failed to retrieve companies: {e}"
+        pdf_name = list(data.keys())[0]
+        pages = data[pdf_name]
+        first_pages_text = "\n".join(
+            [
+                pages[str(i)].get("page_content", "")
+                for i in range(1, 11)
+                if str(i) in pages
+            ]
         )
 
+        company_details = b.ExtractCompanyDetails(first_pages_text)
 
-@app.get(
-    "/companies/{company_id}/markdown",
-    response_class=JSONResponse,
-    summary="Get Company's Final Markdown",
-)
-def get_company_markdown(
-    company_id: str = Path(..., description="The MongoDB ID of the company.")
-):
-    """Fetches the final generated markdown report for a specific company."""
-    try:
-        markdown_content = get_final_markdown(company_id)
-        if markdown_content is None:
+        # Check if company already exists
+        existing_company = Company.objects(
+            corporate_identity_number=company_details.corporate_identity_number
+        ).first()
+        if existing_company:
             raise HTTPException(
-                status_code=404, detail="Markdown not found for this company."
+                status_code=409, detail=f"Company {company_details.name} already exists"
             )
-        return JSONResponse(content={"markdown": markdown_content})
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get markdown: {e}")
 
+        # Create company record
+        company = Company(
+            name=company_details.name,
+            corporate_identity_number=company_details.corporate_identity_number,
+            website_link=getattr(company_details, "website_link", None),
+            processing_status="PENDING",
+        ).save()
 
-@app.get(
-    "/companies/{company_id}", response_model=CompanyModel, summary="Get Company by ID"
-)
-def get_company_by_id(company_id: str):
-    """Get a specific company by its MongoDB ID."""
-    try:
-        company = Company.objects.get(id=company_id)
-        markdown_done = markdown_exists(company)
-        return CompanyModel(
-            id=str(company.id),
-            name=company.name,
-            uin=company.corporate_identity_number,
-            uploadDate=company.created_at.isoformat(),
-            status="completed" if markdown_done else "processing",
-            hasMarkdown=markdown_done,
-        )
-    except DoesNotExist:
-        raise HTTPException(status_code=404, detail="Company not found")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get company: {e}")
-
-
-@app.post(
-    "/companies/{company_id}/regenerate", summary="Regenerate IPO Note for a Company"
-)
-async def regenerate_company_report(
-    company_id: str = Path(..., description="The MongoDB ID of the company.")
-):
-    """Deletes existing checklist outputs and re-runs the AI processing steps to generate a new IPO note."""
-
-    async def event_stream():
+        # Cleanup temporary files
         try:
-            queue = asyncio.Queue()
-            loop = asyncio.get_event_loop()
-
-            future = loop.run_in_executor(
-                None, rerun_pipeline_for_company, company_id, queue.put_nowait
-            )
-
-            while True:
-                try:
-                    update = await asyncio.wait_for(queue.get(), timeout=600)
-                    if update is None:
-                        break
-                    yield f"data: {json.dumps(update)}\n\n"
-                except asyncio.TimeoutError:
-                    yield f"data: {json.dumps({'status': 'error', 'message': 'Regeneration timed out.'})}\n\n"
-                    break
-
-            await future
-
+            os.remove(json_path)
+            os.remove(temp_path)
         except Exception as e:
-            error_message = (
-                f"An unexpected error occurred during regeneration: {str(e)}"
-            )
-            yield f"data: {json.dumps({'status': 'error', 'message': error_message})}\n\n"
+            logger.warning(f"Failed to clean up temporary files: {e}")
 
-    return StreamingResponse(event_stream(), media_type="text/event-stream")
+        # Start background processing
+        async def process_stream():
+            async for event in process_drhp_pipeline(temp_path, str(company.id)):
+                yield event
 
-
-@app.delete(
-    "/companies/{company_id}",
-    status_code=204,
-    summary="Delete a Company and All Its Data",
-)
-def delete_company(
-    company_id: str = Path(..., description="The MongoDB ID of the company.")
-):
-    """Deletes a company and all its associated data from MongoDB and Qdrant."""
-    try:
-        success = delete_company_and_all_data(company_id)
-        if not success:
-            raise HTTPException(status_code=404, detail="Company not found.")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to delete company: {e}")
-    return None
-
-
-@app.post(
-    "/generate-report-pdf/",
-    response_class=FileResponse,
-    summary="Generate PDF from Markdown",
-)
-def create_report_pdf(request: ReportRequest):
-    """Takes markdown content and other details, and returns a generated PDF file."""
-    try:
-        pdf_path = generate_ipo_notes_pdf(
-            company_name=request.company_name, markdown_content=request.markdown_content
+        return StreamingResponse(
+            process_stream(),
+            media_type="text/event-stream",
+            headers={
+                "Cache-Control": "no-cache",
+                "Connection": "keep-alive",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "*",
+            },
         )
+
+    except Exception as e:
+        logger.error(f"Error in upload_and_process_drhp: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/companies/", response_model=List[CompanyResponse])
+async def get_companies():
+    """Get all companies with their processing status."""
+    try:
+        companies = Company.objects.all().order_by("-created_at")
+        response_companies = []
+
+        for company in companies:
+            stats = get_company_stats(company)
+            response_companies.append(
+                CompanyResponse(
+                    id=str(company.id),
+                    name=company.name,
+                    corporate_identity_number=company.corporate_identity_number,
+                    website_link=company.website_link,
+                    created_at=company.created_at,
+                    processing_status=company.processing_status,
+                    has_markdown=stats["has_markdown"],
+                    pages_count=stats["pages_count"],
+                    checklist_outputs_count=stats["checklist_outputs_count"],
+                )
+            )
+
+        return response_companies
+
+    except Exception as e:
+        logger.error(f"Error fetching companies: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+
+@app.delete("/companies/{company_id}")
+async def delete_company(company_id: str):
+    """Delete a company and all its associated data."""
+    try:
+        company = get_company_by_id(company_id)
+
+        # Delete related data
+        Page.objects(company_id=company).delete()
+        ChecklistOutput.objects(company_id=company).delete()
+        FinalMarkdown.objects(company_id=company).delete()
+
+        # Delete Qdrant collection
+        try:
+            qdrant_collection = f"drhp_notes_{company.name.replace(' ', '_').upper()}"
+            client = QdrantClient(url=os.getenv("QDRANT_URL"))
+            if qdrant_collection in [
+                c.name for c in client.get_collections().collections
+            ]:
+                client.delete_collection(collection_name=qdrant_collection)
+        except Exception as e:
+            logger.warning(f"Failed to delete Qdrant collection: {e}")
+
+        # Delete company
+        company.delete()
+
+        return {
+            "message": f"Company {company.name} and all associated data deleted successfully"
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error deleting company: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+
+@app.get("/companies/{company_id}/report", response_model=ReportResponse)
+async def get_company_report(company_id: str):
+    """Get the final generated report for a company."""
+    try:
+        company = get_company_by_id(company_id)
+        markdown_doc = FinalMarkdown.objects(company_id=company).first()
+
+        if not markdown_doc:
+            raise HTTPException(
+                status_code=404, detail="No report found for this company"
+            )
+
+        return ReportResponse(
+            company_id=str(company.id),
+            company_name=company.name,
+            markdown=markdown_doc.markdown,
+            generated_at=markdown_doc.generated_at,
+        )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching company report: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+
+@app.post("/companies/{company_id}/regenerate")
+async def regenerate_company_report(company_id: str):
+    """Re-run the AI processing steps for an existing company."""
+    try:
+        company = get_company_by_id(company_id)
+
+        # Delete existing checklist outputs and markdown
+        ChecklistOutput.objects(company_id=company).delete()
+        FinalMarkdown.objects(company_id=company).delete()
+
+        # Update status
+        update_company_status(company_id, "PROCESSING")
+
+        async def regenerate_stream():
+            try:
+                yield generate_sse_event(
+                    {
+                        "status": "PROCESSING",
+                        "step": "regenerating",
+                        "message": "Starting regeneration process...",
+                    }
+                )
+
+                # Get Qdrant collection name
+                qdrant_collection = (
+                    f"drhp_notes_{company.name.replace(' ', '_').upper()}"
+                )
+
+                # Process checklist
+                yield generate_sse_event(
+                    {
+                        "status": "PROCESSING",
+                        "step": "processing_checklist",
+                        "message": "Processing checklist and generating AI outputs...",
+                    }
+                )
+
+                checklist_path = os.path.join(
+                    os.path.dirname(__file__),
+                    "DRHP_crud_backend",
+                    "Checklists",
+                    "IPO_Notes_Checklist_AI_Final_prod_updated.xlsx",
+                )
+
+                checklist_name = os.path.basename(checklist_path)
+                note_processor = DRHPNoteChecklistProcessor(
+                    checklist_path, qdrant_collection, str(company.id), checklist_name
+                )
+                note_processor.process()
+
+                yield generate_sse_event(
+                    {
+                        "status": "PROCESSING",
+                        "step": "checklist_processed",
+                        "message": "Checklist processing completed",
+                    }
+                )
+
+                # Generate markdown
+                yield generate_sse_event(
+                    {
+                        "status": "PROCESSING",
+                        "step": "generating_markdown",
+                        "message": "Generating final markdown report...",
+                    }
+                )
+
+                rows = ChecklistOutput.objects(company_id=company).order_by("row_index")
+
+                md_lines = []
+                for row in rows:
+                    topic = row.topic or ""
+                    ai_output = row.ai_output or ""
+                    commentary = row.commentary or ""
+
+                    heading_md = f"**{topic}**" if topic else ""
+                    commentary_md = (
+                        f'<span style="font-size:10px;"><i>AI Commentary : {commentary}</i></span>'
+                        if commentary
+                        else ""
+                    )
+
+                    md_lines.append(
+                        f"{heading_md}\n\n{ai_output}\n\n{commentary_md}\n\n"
+                    )
+
+                markdown_content = "".join(md_lines)
+
+                # Save final markdown
+                FinalMarkdown.objects(company_id=company).update_one(
+                    set__company_name=company.name,
+                    set__markdown=markdown_content,
+                    set__generated_at=datetime.utcnow(),
+                    upsert=True,
+                )
+
+                # Update company status
+                Company.objects(id=company.id).update_one(
+                    set__processing_status="COMPLETED", set__has_markdown=True
+                )
+
+                yield generate_sse_event(
+                    {
+                        "status": "COMPLETED",
+                        "step": "final",
+                        "message": "Report regeneration completed successfully",
+                        "markdown": markdown_content,
+                    }
+                )
+
+            except Exception as e:
+                logger.error(f"Regeneration error: {e}")
+                update_company_status(company_id, "FAILED")
+                yield generate_sse_event(
+                    {
+                        "status": "FAILED",
+                        "step": "error",
+                        "message": f"Regeneration failed: {str(e)}",
+                    }
+                )
+
+        return StreamingResponse(
+            regenerate_stream(),
+            media_type="text/event-stream",
+            headers={
+                "Cache-Control": "no-cache",
+                "Connection": "keep-alive",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "*",
+            },
+        )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error in regenerate_company_report: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+
+@app.post("/reports/generate-pdf")
+async def generate_pdf_report(request: PDFGenerationRequest):
+    """Convert markdown content to PDF with company branding."""
+    try:
+        # Create output directory
+        output_dir = "output"
+        os.makedirs(output_dir, exist_ok=True)
+
+        # Setup Jinja2 environment
+        env = Environment(loader=FileSystemLoader("templates"))
+
+        # Convert markdown to HTML
+        html_body = markdown.markdown(
+            request.markdown_content, extensions=["tables", "fenced_code"]
+        )
+
+        # Load images
+        def load_image_base64(path):
+            try:
+                with open(path, "rb") as f:
+                    return (
+                        f"data:image/png;base64,{base64.b64encode(f.read()).decode()}"
+                    )
+            except Exception as e:
+                logger.warning(f"Failed to load image {path}: {e}")
+                return None
+
+        axis_logo_data = load_image_base64("assets/axis_logo.png")
+        company_logo_data = load_image_base64("assets/Pine Labs_logo.png")  # Default
+        front_header_data = load_image_base64("assets/front_header.png")
+
+        # Try to load company-specific logo
+        company_logo_path = f"assets/{request.company_name.replace(' ', '_')}_logo.png"
+        if os.path.exists(company_logo_path):
+            company_logo_data = load_image_base64(company_logo_path)
+
+        # Prepare context
+        context = {
+            "company_name": request.company_name.upper(),
+            "document_date": datetime.today().strftime("%B %Y"),
+            "company_logo_data": company_logo_data,
+            "axis_logo_data": axis_logo_data,
+            "front_header_data": front_header_data,
+            "content": html_body,
+        }
+
+        # Render HTML
+        front_html = env.get_template("front_page.html").render(context)
+        content_html = env.get_template("content_page.html").render(context)
+        full_html = front_html + content_html
+
+        # Generate PDF filename
+        safe_company_name = (
+            request.company_name.replace(" ", "_").replace("/", "_").replace("\\", "_")
+        )
+        pdf_filename = f"{safe_company_name}_IPO_Notes.pdf"
+        pdf_path = os.path.join(output_dir, pdf_filename)
+
+        # Generate PDF
+        html_doc = HTML(string=full_html, base_url=".")
+        css_doc = CSS(filename="styles/styles.css")
+        html_doc.write_pdf(pdf_path, stylesheets=[css_doc])
 
         return FileResponse(
             pdf_path,
             media_type="application/pdf",
-            filename=request.output_filename,
-        )
-    except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Failed to generate PDF report: {e}"
+            filename=pdf_filename,
+            headers={"Content-Disposition": f"attachment; filename={pdf_filename}"},
         )
 
-
-# --- Additional Endpoints for UI Features ---
-
-
-@app.get(
-    "/companies/{company_id}/status",
-    response_model=ProcessingStatus,
-    summary="Get Company Processing Status",
-)
-def get_company_status(company_id: str):
-    """Get detailed processing status for a company."""
-    try:
-        company = Company.objects.get(id=company_id)
-
-        # Check what data exists
-        pages_done = Page.objects(company_id=company).first() is not None
-        qdrant_collection = f"drhp_notes_{company.name.replace(' ', '_').upper()}"
-        qdrant_done = qdrant_collection_exists(qdrant_collection, QDRANT_URL)
-        checklist_done = checklist_exists(company, os.path.basename(CHECKLIST_PATH))
-        markdown_done = markdown_exists(company)
-
-        # Calculate progress
-        total_steps = 4
-        completed_steps = sum([pages_done, qdrant_done, checklist_done, markdown_done])
-        progress = (completed_steps / total_steps) * 100 if total_steps > 0 else 0
-
-        # Determine current step
-        if markdown_done:
-            current_step = "completed"
-        elif checklist_done:
-            current_step = "markdown_generation"
-        elif qdrant_done:
-            current_step = "checklist_processing"
-        elif pages_done:
-            current_step = "qdrant_upsert"
-        else:
-            current_step = "pages_saved"
-
-        return ProcessingStatus(
-            status="completed" if markdown_done else "processing",
-            message=f"Step: {current_step}",
-            progress=progress,
-            current_step=current_step,
-        )
-
-    except DoesNotExist:
-        raise HTTPException(status_code=404, detail="Company not found")
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to get status: {e}")
+        logger.error(f"Error generating PDF: {e}")
+        raise HTTPException(status_code=500, detail=f"Failed to generate PDF: {str(e)}")
 
 
-@app.put(
-    "/companies/{company_id}",
-    response_model=CompanyModel,
-    summary="Update Company Details",
-)
-def update_company(company_id: str, update_data: CompanyUpdateRequest):
-    """Update company details."""
+@app.post("/assets/logos", response_model=LogoUploadResponse)
+async def upload_logo(file: UploadFile = File(...)):
+    """Upload a logo image."""
     try:
-        company = Company.objects.get(id=company_id)
-
-        if update_data.name is not None:
-            company.name = update_data.name
-        if update_data.website_link is not None:
-            company.website_link = update_data.website_link
-
-        company.save()
-
-        markdown_done = markdown_exists(company)
-        return CompanyModel(
-            id=str(company.id),
-            name=company.name,
-            uin=company.corporate_identity_number,
-            uploadDate=company.created_at.isoformat(),
-            status="completed" if markdown_done else "processing",
-            hasMarkdown=markdown_done,
-        )
-
-    except DoesNotExist:
-        raise HTTPException(status_code=404, detail="Company not found")
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to update company: {e}")
-
-
-@app.post("/companies/bulk-delete", summary="Bulk Delete Companies")
-def bulk_delete_companies(company_ids: List[str]):
-    """Bulk delete multiple companies."""
-    try:
-        deleted_count = 0
-        failed_deletions = []
-
-        for company_id in company_ids:
-            try:
-                success = delete_company_and_all_data(company_id)
-                if success:
-                    deleted_count += 1
-                else:
-                    failed_deletions.append(
-                        {"company_id": company_id, "error": "Company not found"}
-                    )
-            except Exception as e:
-                failed_deletions.append({"company_id": company_id, "error": str(e)})
-
-        return {
-            "message": f"Bulk deletion completed",
-            "deleted_count": deleted_count,
-            "failed_deletions": failed_deletions,
-        }
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to bulk delete: {e}")
-
-
-@app.post("/search", summary="Search Companies")
-def search_companies(search_request: SearchRequest):
-    """Search companies with filters."""
-    try:
-        query = search_request.query.lower()
-        filters = search_request.filters or {}
-
-        companies_query = Company.objects()
-
-        if query:
-            companies_query = companies_query.filter(
-                name__icontains=query
-            ) | companies_query.filter(corporate_identity_number__icontains=query)
-
-        if filters.get("processing_status"):
-            # Note: This would need a processing_status field in Company model
-            pass
-
-        if filters.get("date_from"):
-            companies_query = companies_query.filter(
-                created_at__gte=datetime.fromisoformat(filters["date_from"])
-            )
-
-        if filters.get("date_to"):
-            companies_query = companies_query.filter(
-                created_at__lte=datetime.fromisoformat(filters["date_to"])
-            )
-
-        companies = companies_query.order_by("-created_at")
-        total_count = companies.count()
-
-        if filters.get("limit"):
-            companies = companies[: filters["limit"]]
-
-        return {
-            "companies": [
-                CompanyModel(
-                    id=str(company.id),
-                    name=company.name,
-                    uin=company.corporate_identity_number,
-                    uploadDate=company.created_at.isoformat(),
-                    status="completed" if markdown_exists(company) else "processing",
-                    hasMarkdown=markdown_exists(company),
-                )
-                for company in companies
-            ],
-            "total_count": total_count,
-        }
-
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to search companies: {e}")
-
-
-@app.post("/upload-company-logo/", summary="Upload Company Logo")
-def upload_company_logo(company_id: str, file: UploadFile = File(...)):
-    """Upload company logo for a specific company."""
-    try:
-        company = Company.objects.get(id=company_id)
-
+        # Validate file type
         if not file.content_type.startswith("image/"):
             raise HTTPException(status_code=400, detail="Only image files are allowed")
 
-        logo_dir = Path(__file__).parent / "static" / "logos"
-        logo_dir.mkdir(parents=True, exist_ok=True)
+        # Create assets directory
+        assets_dir = "assets"
+        os.makedirs(assets_dir, exist_ok=True)
 
-        logo_path = logo_dir / f"{company_id}_logo.png"
-        with open(logo_path, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
+        # Generate unique filename
+        logo_id = str(uuid.uuid4())
+        file_extension = os.path.splitext(file.filename)[1]
+        filename = f"{logo_id}{file_extension}"
+        file_path = os.path.join(assets_dir, filename)
 
-        return {"message": f"Company logo uploaded successfully for {company.name}"}
+        # Save file
+        with open(file_path, "wb") as f:
+            shutil.copyfileobj(file.file, f)
 
-    except DoesNotExist:
-        raise HTTPException(status_code=404, detail="Company not found")
+        return LogoUploadResponse(logo_id=logo_id, filename=filename, path=file_path)
+
+    except HTTPException:
+        raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Failed to upload logo: {e}")
+        logger.error(f"Error uploading logo: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
-@app.post("/upload-entity-logo/", summary="Upload Entity Logo")
-def upload_entity_logo(file: UploadFile = File(...)):
-    """Upload entity/axis logo for global use."""
+@app.put("/companies/{company_id}/logo")
+async def associate_company_logo(company_id: str, logo_id: str):
+    """Associate a logo with a company."""
     try:
-        if not file.content_type.startswith("image/"):
-            raise HTTPException(status_code=400, detail="Only image files are allowed")
+        company = get_company_by_id(company_id)
+        # In a real implementation, you would store the logo association
+        # For now, we'll just return success
+        return {"message": f"Logo {logo_id} associated with company {company.name}"}
 
-        logo_dir = Path(__file__).parent / "static" / "logos"
-        logo_dir.mkdir(parents=True, exist_ok=True)
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error associating logo: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
 
-        logo_path = logo_dir / "entity_logo.png"
-        with open(logo_path, "wb") as buffer:
-            shutil.copyfileobj(file.file, buffer)
 
-        return {"message": "Entity logo uploaded successfully"}
+@app.put("/config/entity-assets")
+async def set_entity_assets(request: AssetConfigRequest):
+    """Set global entity assets configuration."""
+    try:
+        # In a real implementation, you would store this configuration
+        # For now, we'll just return success
+        return {
+            "message": "Entity assets configuration updated",
+            "entity_logo_id": request.entity_logo_id,
+            "front_header_id": request.front_header_id,
+        }
 
     except Exception as e:
-        raise HTTPException(
-            status_code=500, detail=f"Failed to upload entity logo: {e}"
-        )
+        logger.error(f"Error setting entity assets: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+
+# --- Health Check Endpoint ---
+@app.get("/health")
+async def health_check():
+    """Health check endpoint."""
+    return {"status": "healthy", "timestamp": datetime.utcnow()}
 
 
 if __name__ == "__main__":

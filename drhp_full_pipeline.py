@@ -73,7 +73,7 @@ class Page(Document):
     meta = {"db_alias": "core", "collection": "pages"}
     company_id = ReferenceField(Company, required=True)
     page_number_pdf = IntField(required=True)
-    page_number_drhp = StringField()
+    page_number_drhp = IntField()
     page_content = StringField()
 
 
@@ -86,7 +86,7 @@ class ChecklistOutput(Document):
     section = StringField()
     ai_prompt = StringField()
     ai_output = StringField()
-    citations = ListField(StringField())
+    citations = ListField(IntField())
     commentary = StringField()
     created_at = DateTimeField(default=datetime.utcnow)
     updated_at = DateTimeField(default=datetime.utcnow)
@@ -164,10 +164,26 @@ def save_page_safe(company_doc, page_no, page_info, saved_pages, failed_pages):
             )
             saved_pages.append(page_no)
             return
+        page_number_drhp_val = page_info.get("page_number_drhp", None)
+        # Handle empty strings, None, and other invalid values
+        if (
+            page_number_drhp_val is not None
+            and page_number_drhp_val != ""
+            and str(page_number_drhp_val).strip()
+        ):
+            try:
+                page_number_drhp_val = int(page_number_drhp_val)
+            except (ValueError, TypeError):
+                logger.warning(
+                    f"Could not convert page_number_drhp '{page_number_drhp_val}' to int for page {page_no}, setting to None"
+                )
+                page_number_drhp_val = None
+        else:
+            page_number_drhp_val = None
         Page(
             company_id=company_doc,
             page_number_pdf=int(page_no),
-            page_number_drhp=page_info.get("page_number_drhp", ""),
+            page_number_drhp=page_number_drhp_val,
             page_content=page_info.get("page_content", ""),
         ).save()
         saved_pages.append(page_no)
@@ -426,6 +442,9 @@ def main(pdf_path):
     MONGODB_URI = os.getenv("DRHP_MONGODB_URI")
     DB_NAME = os.getenv("DRHP_DB_NAME", "DRHP_NOTES")
     try:
+        from mongoengine import disconnect
+
+        disconnect(alias="core")  # <-- Add this line
         connect(alias="core", host=MONGODB_URI, db=DB_NAME)
         logger.info(f"Connected to MongoDB at {MONGODB_URI}, DB: {DB_NAME}")
     except Exception as e:
