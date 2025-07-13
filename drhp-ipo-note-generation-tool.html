@@ -1688,12 +1688,23 @@
                     return;
                 }
 
-                container.innerHTML = companies.map(company => `
+                // Filter to show only companies that have been processed (have markdown)
+                const processedCompanies = companies.filter(company => company.has_markdown);
+
+                if (processedCompanies.length === 0) {
+                    container.innerHTML = '<p style="color: #666; text-align: center;">No processed companies found</p>';
+                    return;
+                }
+
+                container.innerHTML = processedCompanies.map(company => `
                     <div class="company-item" data-company-id="${company.id}">
                         <div class="company-name-item">${company.name}</div>
                         <div class="company-cin">CIN: ${company.corporate_identity_number}</div>
                         <div style="font-size: 0.7rem; color: #999; margin-top: 5px;">
                             Created: ${new Date(company.created_at).toLocaleDateString()}
+                        </div>
+                        <div style="font-size: 0.7rem; color: #28a745; margin-top: 3px;">
+                            ✅ Report Available
                         </div>
                     </div>
                 `).join('');
@@ -1730,26 +1741,25 @@
                 document.getElementById('company-name').textContent = company.name;
                 currentCompanyId = companyId;
 
-                // Check if markdown exists
+                // Show loading overlay while fetching markdown
+                document.getElementById('right-loading-overlay').classList.add('active');
+                document.getElementById('no-ipo-message').style.display = 'none';
+                document.getElementById('preview-container').style.display = 'none';
+
+                // Fetch and display markdown immediately
                 try {
                     const markdownData = await getMarkdown(companyId);
-                    showExistingMarkdownNotification();
+                    document.getElementById('right-loading-overlay').classList.remove('active');
                     displayGeneratedIPO(markdownData.markdown, company.name);
                 } catch (error) {
-                    // No markdown yet, check processing status
-                    try {
-                        const status = await getProcessingStatus(companyId);
-                        updateStatusIndicator(status);
-
-                        if (status.overall_status === 'Processing') {
-                            pollProcessingStatus(companyId);
-                        }
-                    } catch (statusError) {
-                        console.error('Error checking status:', statusError);
-                    }
+                    document.getElementById('right-loading-overlay').classList.remove('active');
+                    document.getElementById('no-ipo-message').style.display = 'flex';
+                    showError('Failed to load company report');
                 }
             } catch (error) {
                 console.error('Error selecting company:', error);
+                document.getElementById('right-loading-overlay').classList.remove('active');
+                document.getElementById('no-ipo-message').style.display = 'flex';
                 showError('Failed to load company details');
             }
         }

@@ -610,6 +610,93 @@ async def get_companies():
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
+@app.get("/company/{company_id}")
+async def get_company(company_id: str):
+    """Get a specific company by ID."""
+    try:
+        company = get_company_by_id(company_id)
+        stats = get_company_stats(company)
+
+        return {
+            "id": str(company.id),
+            "name": company.name,
+            "corporate_identity_number": company.corporate_identity_number,
+            "website_link": company.website_link,
+            "created_at": company.created_at,
+            "processing_status": company.processing_status,
+            "has_markdown": stats["has_markdown"],
+            "pages_count": stats["pages_count"],
+            "checklist_outputs_count": stats["checklist_outputs_count"],
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching company: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+
+@app.get("/company/{company_id}/status")
+async def get_company_processing_status(company_id: str):
+    """Get processing status for a company."""
+    try:
+        company = get_company_by_id(company_id)
+        stats = get_company_stats(company)
+
+        # Determine overall status
+        if company.processing_status == "COMPLETED":
+            overall_status = "Completed"
+        elif company.processing_status == "PROCESSING":
+            overall_status = "Processing"
+        elif company.processing_status == "FAILED":
+            overall_status = "Failed"
+        else:
+            overall_status = "Pending"
+
+        return {
+            "company_id": str(company.id),
+            "processing_status": company.processing_status,
+            "pages_done": stats["pages_count"] > 0,
+            "qdrant_done": stats["pages_count"]
+            > 0,  # Assume Qdrant is done if pages exist
+            "checklist_done": stats["checklist_outputs_count"] > 0,
+            "markdown_done": stats["has_markdown"],
+            "overall_status": overall_status,
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching company status: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+
+@app.get("/company/{company_id}/markdown")
+async def get_company_markdown(company_id: str):
+    """Get the markdown content for a company."""
+    try:
+        company = get_company_by_id(company_id)
+        markdown_doc = FinalMarkdown.objects(company_id=company).first()
+
+        if not markdown_doc:
+            raise HTTPException(
+                status_code=404, detail="No markdown found for this company"
+            )
+
+        return {
+            "company_id": str(company.id),
+            "company_name": company.name,
+            "markdown": markdown_doc.markdown,
+            "generated_at": markdown_doc.generated_at,
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching company markdown: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+
 @app.delete("/companies/{company_id}")
 async def delete_company(company_id: str):
     """Delete a company and all its associated data."""
