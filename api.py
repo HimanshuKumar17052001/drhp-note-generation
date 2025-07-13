@@ -495,6 +495,94 @@ async def process_drhp_pipeline(pdf_path: str, company_id: str):
 # --- API Endpoints ---
 
 
+@app.post("/process-drhp/")
+async def process_drhp_upload(file: UploadFile = File(...)):
+    """
+    Upload a DRHP PDF and initiate the full processing pipeline.
+    This endpoint matches the HTML interface expectations.
+    """
+    if not file.filename.lower().endswith(".pdf"):
+        raise HTTPException(status_code=400, detail="Only PDF files are allowed")
+
+    try:
+        # Create temporary file
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
+            shutil.copyfileobj(file.file, temp_file)
+            temp_path = temp_file.name
+
+        # Extract company details first
+        processor = LocalDRHPProcessor(
+            qdrant_url=os.getenv("QDRANT_URL"),
+            collection_name=None,
+            max_workers=5,
+            company_name=None,
+        )
+
+        json_path = processor.process_pdf_locally(temp_path, "TEMP_COMPANY")
+
+        with open(json_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        pdf_name = list(data.keys())[0]
+        pages = data[pdf_name]
+        first_pages_text = "\n".join(
+            [
+                pages[str(i)].get("page_content", "")
+                for i in range(1, 11)
+                if str(i) in pages
+            ]
+        )
+
+        company_details = b.ExtractCompanyDetails(first_pages_text)
+
+        # Check if company already exists
+        existing_company = Company.objects(
+            corporate_identity_number=company_details.corporate_identity_number
+        ).first()
+        if existing_company:
+            # Check if markdown already exists
+            existing_markdown = FinalMarkdown.objects(
+                company_id=existing_company
+            ).first()
+            if existing_markdown:
+                return {
+                    "company_id": str(existing_company.id),
+                    "message": "Company already exists with markdown",
+                    "existing_markdown": True,
+                }
+            else:
+                return {
+                    "company_id": str(existing_company.id),
+                    "message": "Company already exists but processing is in progress",
+                    "existing_markdown": False,
+                }
+
+        # Create company record
+        company = Company(
+            name=company_details.name,
+            corporate_identity_number=company_details.corporate_identity_number,
+            website_link=getattr(company_details, "website_link", None),
+            processing_status="PENDING",
+        ).save()
+
+        # Cleanup temporary files
+        try:
+            os.remove(json_path)
+            os.remove(temp_path)
+        except Exception as e:
+            logger.warning(f"Failed to clean up temporary files: {e}")
+
+        return {
+            "company_id": str(company.id),
+            "message": "Company created successfully",
+            "existing_markdown": False,
+        }
+
+    except Exception as e:
+        logger.error(f"Error in process_drhp_upload: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @app.post("/companies/")
 async def upload_and_process_drhp(file: UploadFile = File(...)):
     """
@@ -1017,6 +1105,24 @@ async def associate_company_logo(company_id: str, logo_id: str):
         raise
     except Exception as e:
         logger.error(f"Error associating logo: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
+
+
+@app.post("/company/{company_id}/cancel-processing")
+async def cancel_company_processing(company_id: str):
+    """Cancel processing for a company."""
+    try:
+        company = get_company_by_id(company_id)
+
+        # Update status to cancelled
+        Company.objects(id=company.id).update_one(set__processing_status="CANCELLED")
+
+        return {"message": f"Processing cancelled for company {company.name}"}
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error cancelling company processing: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 
