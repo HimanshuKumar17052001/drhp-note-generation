@@ -28,9 +28,6 @@ from fastapi.responses import StreamingResponse, FileResponse, JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from mongoengine import connect, disconnect, DoesNotExist
-from motor.motor_asyncio import AsyncIOMotorClient
-from pymongo import MongoClient
-from bson import ObjectId
 
 # Suppress warnings
 warnings.filterwarnings("ignore")
@@ -62,15 +59,6 @@ load_dotenv()
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("DRHP_API")
 
-# MongoDB Configuration
-MONGO_URI = os.getenv("DRHP_MONGODB_URI")
-DB_NAME = os.getenv("DRHP_DB_NAME", "DRHP_NOTES")
-COLLECTION_NAME = "final_markdown"
-
-# MongoDB client
-client = None
-db = None
-
 # --- FastAPI App Initialization ---
 from contextlib import asynccontextmanager
 
@@ -81,14 +69,13 @@ async def lifespan(app: FastAPI):
     # Startup
     try:
         validate_env()
-        await startup_db_client()
+        connect_to_db()
     except Exception as e:
         logger.error(f"Startup failed: {e}")
         raise
     yield
     # Shutdown
     try:
-        await shutdown_db_client()
         disconnect(alias="core")
     except Exception as e:
         logger.error(f"Shutdown error: {e}")
@@ -158,28 +145,6 @@ def validate_env():
             f"Missing required environment variables: {', '.join(missing)}"
         )
     logger.info("All required environment variables are set.")
-
-
-async def startup_db_client():
-    """Startup MongoDB client"""
-    global client, db
-    try:
-        client = AsyncIOMotorClient(MONGO_URI)
-        db = client[DB_NAME]
-        # Test the connection
-        await client.admin.command("ping")
-        logger.info("✅ Connected to MongoDB successfully")
-    except Exception as e:
-        logger.error(f"❌ Failed to connect to MongoDB: {e}")
-        raise e
-
-
-async def shutdown_db_client():
-    """Shutdown MongoDB client"""
-    global client
-    if client:
-        client.close()
-        logger.info("✅ MongoDB connection closed")
 
 
 def connect_to_db():
@@ -297,114 +262,6 @@ def get_company_stats(company: Company) -> Dict[str, Any]:
 def generate_sse_event(data: Dict[str, Any], event_type: str = "update") -> str:
     """Generate Server-Sent Event format."""
     return f"event: {event_type}\ndata: {json.dumps(data)}\n\n"
-
-
-def load_image_base64(path):
-    """Load image and convert to base64"""
-    try:
-        if os.path.exists(path):
-            with open(path, "rb") as f:
-                return f"data:image/png;base64,{base64.b64encode(f.read()).decode()}"
-        else:
-            logger.warning(f"Image not found: {path}")
-            return ""
-    except Exception as e:
-        logger.warning(f"Failed to load image {path}: {e}")
-        return ""
-
-
-def render_template(env, template_name, context):
-    """Render Jinja2 template with context"""
-    return env.get_template(template_name).render(context)
-
-
-def generate_pdf_from_markdown(markdown_content: str, company_name: str) -> str:
-    """Generate PDF from markdown content"""
-    try:
-        # Setup Jinja2 environment
-        env = Environment(loader=FileSystemLoader("templates"))
-
-        # Convert Markdown to HTML
-        html_body = markdown.markdown(
-            markdown_content, extensions=["tables", "fenced_code"]
-        )
-
-        # Prepare dynamic context
-        context = {
-            "company_name": company_name.upper(),
-            "document_date": datetime.today().strftime("%B %Y"),
-            "company_logo_data": load_image_base64("assets/Pine Labs_logo.png"),
-            "axis_logo_data": load_image_base64("assets/axis_logo.png"),
-            "front_header_data": load_image_base64("assets/front_header.png"),
-            "content": html_body,
-        }
-
-        # Render full HTML
-        front_html = render_template(env, "front_page.html", context)
-        content_html = render_template(env, "content_page.html", context)
-        full_html = front_html + content_html
-
-        # Create temporary file for PDF
-        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
-        temp_path = temp_file.name
-        temp_file.close()
-
-        # Generate PDF
-        HTML(string=full_html, base_url=".").write_pdf(
-            temp_path, stylesheets=[CSS("styles/styles.css")]
-        )
-
-        logger.info(f"✅ PDF generated for {company_name}")
-        return temp_path
-
-    except Exception as e:
-        logger.error(f"❌ Error generating PDF: {e}")
-        raise HTTPException(status_code=500, detail=f"Error generating PDF: {str(e)}")
-
-
-async def get_final_markdown_by_company_id(company_id: str) -> Dict[str, Any]:
-    """Get final markdown from final_markdown collection by company ID"""
-    try:
-        collection = db[COLLECTION_NAME]
-
-        # Convert string ID to ObjectId
-        try:
-            object_id = ObjectId(company_id)
-        except Exception:
-            raise HTTPException(
-                status_code=400, detail=f"Invalid company ID format: {company_id}"
-            )
-
-        # Query the final_markdown collection
-        document = await collection.find_one({"company_id": object_id})
-
-        if not document:
-            raise HTTPException(
-                status_code=404,
-                detail=f"Company with ID {company_id} not found in final_markdown collection",
-            )
-
-        company_name = document.get("company_name", f"Company {company_id}")
-        markdown_content = document.get("markdown", "")
-
-        if not markdown_content:
-            raise HTTPException(
-                status_code=404,
-                detail=f"No markdown content found for company {company_id}",
-            )
-
-        return {
-            "company_id": company_id,
-            "company_name": company_name,
-            "markdown": markdown_content,
-            "generated_at": document.get("generated_at", datetime.utcnow()),
-        }
-
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"Error fetching final markdown for company {company_id}: {e}")
-        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 # --- Background Processing Functions ---
@@ -636,162 +493,6 @@ async def process_drhp_pipeline(pdf_path: str, company_id: str):
 
 
 # --- API Endpoints ---
-
-
-@app.get("/")
-async def root():
-    """Root endpoint"""
-    return {"message": "DRHP Report Generator API", "version": "1.0.0"}
-
-
-@app.get("/health")
-async def health_check():
-    """Health check endpoint"""
-    try:
-        await client.admin.command("ping")
-        return {"status": "healthy", "database": "connected"}
-    except Exception as e:
-        return {"status": "unhealthy", "database": "disconnected", "error": str(e)}
-
-
-@app.get("/companies")
-async def list_companies():
-    """List all companies in the final_markdown collection"""
-    try:
-        collection = db[COLLECTION_NAME]
-        companies = []
-
-        async for doc in collection.find(
-            {}, {"company_id": 1, "company_name": 1, "_id": 0}
-        ):
-            company_id = doc.get("company_id")
-            # Always convert ObjectId to string
-            if isinstance(company_id, ObjectId):
-                company_id = str(company_id)
-            companies.append(
-                {
-                    "company_id": company_id,
-                    "company_name": doc.get("company_name"),
-                }
-            )
-
-        return {"total_companies": len(companies), "companies": companies}
-
-    except Exception as e:
-        logger.error(f"❌ Error listing companies: {e}")
-        raise HTTPException(
-            status_code=500, detail=f"Error listing companies: {str(e)}"
-        )
-
-
-@app.get("/report/{company_id}")
-async def get_final_report(company_id: str, format: str = "html"):
-    """
-    Get final report for a company by ID
-
-    Args:
-        company_id: The company ID (ObjectId as string)
-        format: Output format (pdf, html, markdown)
-
-    Returns:
-        The report in the requested format
-    """
-    try:
-        # Get markdown from final_markdown collection
-        markdown_data = await get_final_markdown_by_company_id(company_id)
-
-        company_name = markdown_data["company_name"]
-        markdown_content = markdown_data["markdown"]
-
-        logger.info(f"✅ Found markdown for company {company_id}: {company_name}")
-
-        # Return based on requested format
-        if format.lower() == "markdown":
-            return {
-                "company_id": company_id,
-                "company_name": company_name,
-                "content": markdown_content,
-                "format": "markdown",
-            }
-
-        elif format.lower() == "html":
-            # Generate HTML report with templates
-            html_content = generate_html_report(markdown_content, company_name)
-            return {
-                "company_id": company_id,
-                "company_name": company_name,
-                "content": html_content,
-                "format": "html",
-            }
-
-        elif format.lower() == "pdf":
-            # Generate PDF
-            pdf_path = generate_pdf_from_markdown(markdown_content, company_name)
-
-            # Return PDF file
-            return FileResponse(
-                path=pdf_path,
-                media_type="application/pdf",
-                filename=f"{company_name}_ipo_notes.pdf",
-                background=None,  # This ensures the file is deleted after sending
-            )
-
-        else:
-            raise HTTPException(
-                status_code=400,
-                detail="Invalid format. Supported formats: pdf, html, markdown",
-            )
-
-    except HTTPException:
-        raise
-    except Exception as e:
-        logger.error(f"❌ Error processing request for company {company_id}: {e}")
-        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
-
-
-def generate_html_report(markdown_content: str, company_name: str) -> str:
-    """Generate HTML report from markdown content using templates"""
-    try:
-        # Setup Jinja2 environment
-        env = Environment(loader=FileSystemLoader("templates"))
-
-        # Convert markdown to HTML
-        html_body = markdown.markdown(
-            markdown_content, extensions=["tables", "fenced_code"]
-        )
-
-        # Load images
-        axis_logo_data = load_image_base64("assets/axis_logo.png")
-        company_logo_data = load_image_base64("assets/Pine Labs_logo.png")  # Default
-        front_header_data = load_image_base64("assets/front_header.png")
-
-        # Try to load company-specific logo
-        company_logo_path = f"assets/{company_name.replace(' ', '_')}_logo.png"
-        if os.path.exists(company_logo_path):
-            company_logo_data = load_image_base64(company_logo_path)
-
-        # Prepare context
-        context = {
-            "company_name": company_name.upper(),
-            "document_date": datetime.today().strftime("%B %Y"),
-            "company_logo_data": company_logo_data,
-            "axis_logo_data": axis_logo_data,
-            "front_header_data": front_header_data,
-            "content": html_body,
-        }
-
-        # Render HTML
-        front_html = env.get_template("front_page.html").render(context)
-        content_html = env.get_template("content_page.html").render(context)
-        full_html = front_html + content_html
-
-        return full_html
-
-    except Exception as e:
-        logger.error(f"Error generating HTML report: {e}")
-        raise HTTPException(
-            status_code=500, detail=f"Error generating HTML report: {str(e)}"
-        )
 
 
 @app.post("/process-drhp/")
@@ -1757,6 +1458,179 @@ async def debug_companies():
     except Exception as e:
         logger.error(f"Error in debug endpoint: {e}")
         raise HTTPException(status_code=500, detail=f"Debug error: {str(e)}")
+
+
+@app.get("/report/{company_id}")
+async def get_final_report(company_id: str, format: str = "pdf"):
+    """
+    Get final report for a company by ID
+
+    Args:
+        company_id: The company ID (ObjectId as string)
+        format: Output format (pdf, html, markdown)
+
+    Returns:
+        The report in the requested format
+    """
+    try:
+        logger.info(
+            f"Fetching final report for company {company_id} in format: {format}"
+        )
+
+        # Get company and markdown document
+        try:
+            company = get_company_by_id(company_id)
+            logger.info(f"Company found: {company.name}")
+        except HTTPException as e:
+            logger.error(f"Company not found for ID {company_id}: {e.detail}")
+            raise HTTPException(
+                status_code=404,
+                detail=f"Company with ID {company_id} not found",
+            )
+
+        # Get markdown document
+        markdown_doc = FinalMarkdown.objects(company_id=company).first()
+        if not markdown_doc:
+            logger.error(
+                f"No markdown found for company {company.name} (ID: {company_id})"
+            )
+            raise HTTPException(
+                status_code=404,
+                detail=f"No markdown content found for company {company.name}",
+            )
+
+        company_name = company.name
+        markdown_content = markdown_doc.markdown
+
+        if not markdown_content:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Empty markdown content for company {company_name}",
+            )
+
+        logger.info(f"✅ Found markdown for company {company_id}: {company_name}")
+
+        # Return based on requested format
+        if format.lower() == "markdown":
+            return {
+                "company_id": company_id,
+                "company_name": company_name,
+                "content": markdown_content,
+                "format": "markdown",
+            }
+
+        elif format.lower() == "html":
+            html_content = markdown.markdown(
+                markdown_content, extensions=["tables", "fenced_code"]
+            )
+            return {
+                "company_id": company_id,
+                "company_name": company_name,
+                "content": html_content,
+                "format": "html",
+            }
+
+        elif format.lower() == "pdf":
+            # Generate PDF using existing function
+            try:
+                # Create output directory
+                output_dir = "output"
+                os.makedirs(output_dir, exist_ok=True)
+
+                # Setup Jinja2 environment
+                env = Environment(loader=FileSystemLoader("templates"))
+
+                # Convert markdown to HTML
+                html_body = markdown.markdown(
+                    markdown_content, extensions=["tables", "fenced_code"]
+                )
+
+                # Load images
+                def load_image_base64(path):
+                    try:
+                        if os.path.exists(path):
+                            with open(path, "rb") as f:
+                                return f"data:image/png;base64,{base64.b64encode(f.read()).decode()}"
+                        else:
+                            logger.warning(f"Image file not found: {path}")
+                            return None
+                    except Exception as e:
+                        logger.warning(f"Failed to load image {path}: {e}")
+                        return None
+
+                # Load default images
+                axis_logo_data = load_image_base64("assets/axis_logo.png")
+                company_logo_data = load_image_base64(
+                    "assets/Pine Labs_logo.png"
+                )  # Default
+                front_header_data = load_image_base64("assets/front_header.png")
+
+                # Try to load company-specific logo
+                company_logo_path = f"assets/{company_name.replace(' ', '_')}_logo.png"
+                if os.path.exists(company_logo_path):
+                    company_logo_data = load_image_base64(company_logo_path)
+                    logger.info(f"Loaded company-specific logo: {company_logo_path}")
+                else:
+                    logger.info(
+                        f"Company-specific logo not found: {company_logo_path}, using default"
+                    )
+
+                # Prepare context
+                context = {
+                    "company_name": company_name.upper(),
+                    "document_date": datetime.today().strftime("%B %Y"),
+                    "company_logo_data": company_logo_data,
+                    "axis_logo_data": axis_logo_data,
+                    "front_header_data": front_header_data,
+                    "content": html_body,
+                }
+
+                # Render HTML
+                front_html = env.get_template("front_page.html").render(context)
+                content_html = env.get_template("content_page.html").render(context)
+                full_html = front_html + content_html
+
+                # Generate PDF filename
+                safe_company_name = (
+                    company_name.replace(" ", "_").replace("/", "_").replace("\\", "_")
+                )
+                pdf_filename = f"{safe_company_name}_IPO_Notes.pdf"
+                pdf_path = os.path.join(output_dir, pdf_filename)
+
+                # Generate PDF
+                html_doc = HTML(string=full_html, base_url=".")
+                css_doc = CSS(filename="styles/styles.css")
+                html_doc.write_pdf(pdf_path, stylesheets=[css_doc])
+
+                logger.info(f"Successfully generated PDF for company {company_name}")
+
+                # Return PDF file
+                return FileResponse(
+                    path=pdf_path,
+                    media_type="application/pdf",
+                    filename=pdf_filename,
+                    headers={
+                        "Content-Disposition": f"attachment; filename={pdf_filename}"
+                    },
+                )
+
+            except Exception as e:
+                logger.error(f"Error generating PDF for company {company_name}: {e}")
+                raise HTTPException(
+                    status_code=500, detail=f"Failed to generate PDF: {str(e)}"
+                )
+
+        else:
+            raise HTTPException(
+                status_code=400,
+                detail="Invalid format. Supported formats: pdf, html, markdown",
+            )
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"❌ Error processing request for company {company_id}: {e}")
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
 
 if __name__ == "__main__":

@@ -101,6 +101,42 @@ Generate PDF from markdown content (alternative endpoint). Used by frontend PDF 
 
 **Response:** PDF file download
 
+#### `GET /report/{company_id}?format={format}`
+Get final report for a company by ID in the requested format.
+
+**Path Parameters:**
+- `company_id` (string): The ObjectId of the company as a 24-character hex string
+
+**Query Parameters:**
+- `format` (string, optional): Output format. Can be:
+  - `pdf` (default): Returns a downloadable PDF file
+  - `html`: Returns the report as HTML in a JSON response
+  - `markdown`: Returns the raw markdown in a JSON response
+
+**Response Examples:**
+
+**Markdown format:**
+```json
+{
+  "company_id": "687407dd927a7192cfabb784",
+  "company_name": "QUALITY POWER ELECTRICAL EQUIPMENTS LIMITED",
+  "content": "**Issue Highlights**\n\n| Particulars | Det…",
+  "format": "markdown"
+}
+```
+
+**HTML format:**
+```json
+{
+  "company_id": "687407dd927a7192cfabb784",
+  "company_name": "QUALITY POWER ELECTRICAL EQUIPMENTS LIMITED",
+  "content": "<h2>Issue Highlights</h2> ...",
+  "format": "html"
+}
+```
+
+**PDF format:** Returns a PDF file as download
+
 #### `GET /company/{company_id}/status`
 Returns the processing status for a company.
 
@@ -239,6 +275,7 @@ This will test:
 | `DELETE /companies/{id}` | DELETE | Delete company and all associated data | ✅ Company deletion | ✅ Data cleanup | Active |
 | `POST /generate-report-pdf/` | POST | Generate PDF from markdown content | ✅ PDF download | ✅ PDF generation | Active |
 | `POST /reports/generate-pdf` | POST | Generate PDF from markdown (alternative) | ✅ PDF generation | ✅ PDF creation | Active |
+| `GET /report/{id}?format={format}` | GET | Get final report in multiple formats | ✅ Report retrieval | ✅ Multi-format output | Active |
 | `POST /assets/logos` | POST | Upload company/entity logos | ✅ Logo upload | ✅ Asset management | Active |
 | `GET /company/{id}` | GET | Get specific company details | ✅ Company details | ✅ Data access | Active |
 | `GET /company/{id}/status` | GET | Get processing status for company | ✅ Status monitoring | ✅ Progress tracking | Active |

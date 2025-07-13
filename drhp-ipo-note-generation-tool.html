@@ -1714,7 +1714,7 @@
         }
 
         async function getCompanies() {
-            return await apiCall('/companies');
+            return await apiCall('/companies/');
         }
 
         async function getCompany(companyId) {
@@ -1734,11 +1734,7 @@
         }
 
         async function getReportHtmlCompanies(companyId) {
-            return await apiCall(`/report/${companyId}?format=html`);
-        }
-
-        async function getReportPdf(companyId) {
-            return await apiCall(`/report/${companyId}?format=pdf`);
+            return await apiCall(`/companies/${companyId}/report-html`);
         }
 
         async function deleteCompany(companyId) {
@@ -1848,17 +1844,29 @@
         /* ---------------- COMPANY MANAGEMENT ---------------- */
         async function loadCompanies() {
             try {
-                const companiesData = await getCompanies();
+                const companies = await getCompanies();
                 const container = document.getElementById('companies-container');
 
-                if (companiesData.companies.length === 0) {
+                if (companies.length === 0) {
                     container.innerHTML = '<p style="color: #666; text-align: center;">No companies found</p>';
                     return;
                 }
 
-                container.innerHTML = companiesData.companies.map(company => `
-                    <div class="company-item" data-company-id="${company.company_id}">
-                        <div class="company-name-item">${company.company_name}</div>
+                // Filter to show only companies that have been processed (have markdown)
+                const processedCompanies = companies.filter(company => company.has_markdown);
+
+                if (processedCompanies.length === 0) {
+                    container.innerHTML = '<p style="color: #666; text-align: center;">No processed companies found</p>';
+                    return;
+                }
+
+                container.innerHTML = processedCompanies.map(company => `
+                    <div class="company-item" data-company-id="${company.id}">
+                        <div class="company-name-item">${company.name}</div>
+                        <div class="company-cin">CIN: ${company.corporate_identity_number}</div>
+                        <div style="font-size: 0.7rem; color: #999; margin-top: 5px;">
+                            Created: ${new Date(company.created_at).toLocaleDateString()}
+                        </div>
                         <div style="font-size: 0.7rem; color: #28a745; margin-top: 3px;">
                             ✅ Report Available
                         </div>
@@ -1890,12 +1898,11 @@
                 // Hide company list
                 document.getElementById('company-list').classList.remove('active');
 
-                // Get company name from the selected item
-                const selectedItem = document.querySelector(`[data-company-id="${companyId}"]`);
-                const companyName = selectedItem.querySelector('.company-name-item').textContent;
+                // Get company details
+                const company = await getCompany(companyId);
 
                 // Update company name in the UI
-                document.getElementById('company-name').textContent = companyName;
+                document.getElementById('company-name').textContent = company.name;
                 currentCompanyId = companyId;
 
                 // Show loading overlay while fetching markdown
@@ -1907,10 +1914,7 @@
                 try {
                     const reportData = await getReportHtmlCompanies(companyId);
                     document.getElementById('right-loading-overlay').classList.remove('active');
-                    displayGeneratedIPO(reportData.content, companyName, true);
-
-                    // Enable PDF download button
-                    enablePdfDownload(companyId, companyName);
+                    displayGeneratedIPO(reportData.html, company.name, true);
                 } catch (error) {
                     document.getElementById('right-loading-overlay').classList.remove('active');
                     document.getElementById('no-ipo-message').style.display = 'flex';
@@ -1985,74 +1989,6 @@
             contentPages.forEach(page => {
                 contentContainer.appendChild(page.cloneNode(true));
             });
-        }
-
-        function enablePdfDownload(companyId, companyName) {
-            // Enable the download PDF button
-            const downloadBtn = document.getElementById('download-pdf');
-            downloadBtn.disabled = false;
-            downloadBtn.onclick = () => downloadPdf(companyId, companyName);
-        }
-
-        async function downloadPdf(companyId, companyName) {
-            try {
-                const downloadBtn = document.getElementById('download-pdf');
-                const originalContent = downloadBtn.innerHTML;
-                downloadBtn.disabled = true;
-                downloadBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Generating PDF…';
-
-                // Fetch PDF from API
-                const response = await fetch(`${API_BASE_URL}/report/${companyId}?format=pdf`);
-
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-                }
-
-                // Get the blob from the response
-                const blob = await response.blob();
-
-                // Create download link
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `${companyName.replace(/\s+/g, '_')}_IPO_Notes.pdf`;
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
-
-                showSuccess('PDF downloaded successfully!');
-            } catch (error) {
-                console.error('Error downloading PDF:', error);
-                showError('Failed to download PDF. Please try again.');
-            } finally {
-                const downloadBtn = document.getElementById('download-pdf');
-                downloadBtn.disabled = false;
-                downloadBtn.innerHTML = originalContent;
-            }
-        }
-
-        function showSuccess(message) {
-            // Create a success notification
-            const successDiv = document.createElement('div');
-            successDiv.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: #28a745;
-                color: white;
-                padding: 15px 20px;
-                border-radius: 8px;
-                z-index: 10000;
-                max-width: 300px;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            `;
-            successDiv.textContent = message;
-            document.body.appendChild(successDiv);
-
-            setTimeout(() => {
-                successDiv.remove();
-            }, 3000);
         }
 
         /* ---------------- LOGO UPLOAD / DISPLAY ---------------- */
@@ -2159,7 +2095,6 @@
             // Disable buttons initially
             document.getElementById('remove-pdf').disabled = true;
             document.getElementById('generate-ipo').disabled = true;
-            document.getElementById('download-pdf').disabled = true;
             uploadedPdfFile = null;
             currentCompanyId = null;
         });
@@ -2490,7 +2425,6 @@
             document.getElementById('content-pages').innerHTML = '';
             removePdfBtn.disabled = true;
             generateIpoBtn.disabled = true;
-            document.getElementById('download-pdf').disabled = true;
             isIpoGenerated = false;
             currentCompanyId = null;
             processingStatus = 'not_started';

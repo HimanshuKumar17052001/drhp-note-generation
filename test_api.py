@@ -162,6 +162,32 @@ def test_debug_companies():
         return False
 
 
+def test_get_final_report(company_id):
+    """Test get final report endpoint with different formats"""
+    formats = ["markdown", "html", "pdf"]
+
+    for fmt in formats:
+        try:
+            response = requests.get(f"{API_BASE_URL}/report/{company_id}?format={fmt}")
+            print(f"Get final report ({fmt}): {response.status_code}")
+
+            if response.status_code == 200:
+                if fmt == "pdf":
+                    print(f"  PDF generated successfully")
+                else:
+                    data = response.json()
+                    print(f"  Company: {data['company_name']}")
+                    print(f"  Format: {data['format']}")
+                    print(f"  Content length: {len(data['content'])} characters")
+            else:
+                print(f"  Error: {response.status_code}")
+
+        except Exception as e:
+            print(f"Get final report ({fmt}) failed: {e}")
+
+    return True
+
+
 def test_get_company_status(company_id):
     """Test getting company processing status"""
     try:
@@ -235,6 +261,8 @@ def main():
                     test_get_company_report_html_companies(company_id)
                     print()
                     test_get_company_markdown_companies(company_id)
+                    print()
+                    test_get_final_report(company_id)
                 else:
                     print("Company doesn't have markdown yet")
 
