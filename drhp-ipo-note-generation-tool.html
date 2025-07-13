@@ -1457,7 +1457,7 @@
                 <input type="file" id="axis-logo-upload" accept="image/*" hidden>
                 <input type="file" id="company-logo-upload" accept="image/*" hidden>
                 <button id="upload-axis-logo" class="btn btn-light" type="button">
-                    <i class="fas fa-image me-2"></i>Upload Entity Logo
+                    <i class="fas fa-image me-2"></i>Upload AXIS CAPITAL Logo
                 </button>
                 <button id="upload-company-logo" class="btn btn-light" type="button">
                     <i class="fas fa-image me-2"></i>Upload Company Logo
@@ -1713,43 +1713,36 @@
             return await response.json();
         }
 
-        // Global variables for logo management
-        let currentCompanyId = null;
-        let currentCompanyName = null;
-        let isReportLoaded = false;
-
         async function getCompanies() {
             return await apiCall('/companies');
         }
 
-        async function getCompanyReport(companyId) {
+        async function getCompany(companyId) {
+            return await apiCall(`/company/${companyId}`);
+        }
+
+        async function getProcessingStatus(companyId) {
+            return await apiCall(`/company/${companyId}/status`);
+        }
+
+        async function getMarkdown(companyId) {
+            return await apiCall(`/company/${companyId}/markdown`);
+        }
+
+        async function getReportHtml(companyId) {
+            return await apiCall(`/company/${companyId}/report-html`);
+        }
+
+        async function getReportHtmlCompanies(companyId) {
             return await apiCall(`/report/${companyId}?format=html`);
         }
 
-        async function getCompanyReportPDF(companyId) {
-            const response = await fetch(`${API_BASE_URL}/report/${companyId}?format=pdf`);
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}`);
-            }
-            return response.blob();
+        async function getReportPdf(companyId) {
+            return await apiCall(`/report/${companyId}?format=pdf`);
         }
 
-        async function uploadLogo(file, logoType) {
-            const formData = new FormData();
-            formData.append('file', file);
-            formData.append('logo_type', logoType);
-
-            const response = await fetch(`${API_BASE_URL}/upload-logo?logo_type=${logoType}`, {
-                method: 'POST',
-                body: formData
-            });
-
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-                throw new Error(errorData.error || `HTTP ${response.status}`);
-            }
-
-            return await response.json();
+        async function deleteCompany(companyId) {
+            return await apiCall(`/company/${companyId}`, { method: 'DELETE' });
         }
 
         /* ---------------- ENHANCED NOTIFICATION SYSTEM ---------------- */
@@ -1782,29 +1775,6 @@
 
             setTimeout(() => {
                 errorDiv.remove();
-            }, 5000);
-        }
-
-        function showSuccess(message) {
-            // Create a simple success notification
-            const successDiv = document.createElement('div');
-            successDiv.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: #28a745;
-                color: white;
-                padding: 15px 20px;
-                border-radius: 8px;
-                z-index: 10000;
-                max-width: 300px;
-                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            `;
-            successDiv.textContent = message;
-            document.body.appendChild(successDiv);
-
-            setTimeout(() => {
-                successDiv.remove();
             }, 5000);
         }
 
@@ -1881,7 +1851,7 @@
                 const companiesData = await getCompanies();
                 const container = document.getElementById('companies-container');
 
-                if (companiesData.total_companies === 0) {
+                if (companiesData.companies.length === 0) {
                     container.innerHTML = '<p style="color: #666; text-align: center;">No companies found</p>';
                     return;
                 }
@@ -1920,27 +1890,27 @@
                 // Hide company list
                 document.getElementById('company-list').classList.remove('active');
 
-                // Show loading overlay while fetching report
+                // Get company name from the selected item
+                const selectedItem = document.querySelector(`[data-company-id="${companyId}"]`);
+                const companyName = selectedItem.querySelector('.company-name-item').textContent;
+
+                // Update company name in the UI
+                document.getElementById('company-name').textContent = companyName;
+                currentCompanyId = companyId;
+
+                // Show loading overlay while fetching markdown
                 document.getElementById('right-loading-overlay').classList.add('active');
                 document.getElementById('no-ipo-message').style.display = 'none';
                 document.getElementById('preview-container').style.display = 'none';
 
                 // Fetch and display HTML report immediately
                 try {
-                    const reportData = await getCompanyReport(companyId);
+                    const reportData = await getReportHtmlCompanies(companyId);
                     document.getElementById('right-loading-overlay').classList.remove('active');
+                    displayGeneratedIPO(reportData.content, companyName, true);
 
-                    // Update company name in the UI
-                    document.getElementById('company-name').textContent = reportData.company_name;
-                    currentCompanyId = companyId;
-                    currentCompanyName = reportData.company_name;
-
-                    // Display the report
-                    displayGeneratedIPO(reportData.content, reportData.company_name, true);
-                    isReportLoaded = true;
-
-                    // Enable download button
-                    document.getElementById('download-pdf').disabled = false;
+                    // Enable PDF download button
+                    enablePdfDownload(companyId, companyName);
                 } catch (error) {
                     document.getElementById('right-loading-overlay').classList.remove('active');
                     document.getElementById('no-ipo-message').style.display = 'flex';
@@ -2017,45 +1987,113 @@
             });
         }
 
+        function enablePdfDownload(companyId, companyName) {
+            // Enable the download PDF button
+            const downloadBtn = document.getElementById('download-pdf');
+            downloadBtn.disabled = false;
+            downloadBtn.onclick = () => downloadPdf(companyId, companyName);
+        }
+
+        async function downloadPdf(companyId, companyName) {
+            try {
+                const downloadBtn = document.getElementById('download-pdf');
+                const originalContent = downloadBtn.innerHTML;
+                downloadBtn.disabled = true;
+                downloadBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Generating PDF…';
+
+                // Fetch PDF from API
+                const response = await fetch(`${API_BASE_URL}/report/${companyId}?format=pdf`);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+
+                // Get the blob from the response
+                const blob = await response.blob();
+
+                // Create download link
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${companyName.replace(/\s+/g, '_')}_IPO_Notes.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+
+                showSuccess('PDF downloaded successfully!');
+            } catch (error) {
+                console.error('Error downloading PDF:', error);
+                showError('Failed to download PDF. Please try again.');
+            } finally {
+                const downloadBtn = document.getElementById('download-pdf');
+                downloadBtn.disabled = false;
+                downloadBtn.innerHTML = originalContent;
+            }
+        }
+
+        function showSuccess(message) {
+            // Create a success notification
+            const successDiv = document.createElement('div');
+            successDiv.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #28a745;
+                color: white;
+                padding: 15px 20px;
+                border-radius: 8px;
+                z-index: 10000;
+                max-width: 300px;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            `;
+            successDiv.textContent = message;
+            document.body.appendChild(successDiv);
+
+            setTimeout(() => {
+                successDiv.remove();
+            }, 3000);
+        }
+
         /* ---------------- LOGO UPLOAD / DISPLAY ---------------- */
         document.getElementById('upload-axis-logo').addEventListener('click', function (e) {
+            if (!isIpoGenerated) {
+                e.preventDefault();
+                document.getElementById('no-ipo-popup').classList.add('active');
+                return false;
+            }
             document.getElementById('axis-logo-upload').click();
         });
 
         document.getElementById('upload-company-logo').addEventListener('click', function (e) {
+            if (!isIpoGenerated) {
+                e.preventDefault();
+                document.getElementById('no-ipo-popup').classList.add('active');
+                return false;
+            }
             document.getElementById('company-logo-upload').click();
         });
 
-        document.getElementById('axis-logo-upload').onchange = async (e) => {
+        document.getElementById('axis-logo-upload').onchange = (e) => {
             const file = e.target.files[0];
             if (!file) return;
-
-            try {
-                const result = await uploadLogo(file, 'entity');
-                showSuccess('Entity logo uploaded successfully!');
-                // Refresh the current report if one is loaded
-                if (currentCompanyId && isReportLoaded) {
-                    await selectCompany(currentCompanyId);
-                }
-            } catch (error) {
-                showError('Failed to upload entity logo: ' + error.message);
-            }
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                axisCapitalLogoDataUrl = ev.target.result;
+                updateLogoDisplay();
+            };
+            reader.readAsDataURL(file);
         };
 
-        document.getElementById('company-logo-upload').onchange = async (e) => {
+        document.getElementById('company-logo-upload').onchange = (e) => {
             const file = e.target.files[0];
             if (!file) return;
-
-            try {
-                const result = await uploadLogo(file, 'company');
-                showSuccess('Company logo uploaded successfully!');
-                // Refresh the current report if one is loaded
-                if (currentCompanyId && isReportLoaded) {
-                    await selectCompany(currentCompanyId);
-                }
-            } catch (error) {
-                showError('Failed to upload company logo: ' + error.message);
-            }
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                companyLogoDataUrl = ev.target.result;
+                updateLogoDisplay();
+            };
+            reader.readAsDataURL(file);
         };
 
         function updateLogoDisplay() {
@@ -2114,7 +2152,7 @@
             updateLogoDisplay();
 
             // Initially set state
-            isReportLoaded = false;
+            isIpoGenerated = false;
             document.getElementById('no-ipo-message').style.display = 'flex';
             document.getElementById('preview-container').style.display = 'none';
 
@@ -2124,7 +2162,6 @@
             document.getElementById('download-pdf').disabled = true;
             uploadedPdfFile = null;
             currentCompanyId = null;
-            currentCompanyName = null;
         });
 
         /* ---------------- PAGE CREATION ---------------- */
@@ -2239,7 +2276,7 @@
 
         /* ---------------- PDF EXPORT ---------------- */
         document.getElementById('download-pdf').onclick = async (e) => {
-            if (!isReportLoaded || !currentCompanyId) {
+            if (!isIpoGenerated) {
                 e.preventDefault();
                 document.getElementById('no-ipo-popup').classList.add('active');
                 return;
@@ -2251,24 +2288,45 @@
             downloadBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Generating PDF…';
 
             try {
-                // Get PDF from server
-                const pdfBlob = await getCompanyReportPDF(currentCompanyId);
+                // Update logos for PDF
+                updateLogoDisplay();
 
-                // Create download link
-                const url = window.URL.createObjectURL(pdfBlob);
-                const a = document.createElement('a');
-                a.style.display = 'none';
-                a.href = url;
-                a.download = `${currentCompanyName.replace(/\s+/g, '_')}_IPO_Notes.pdf`;
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-                document.body.removeChild(a);
+                const { jsPDF } = window.jspdf;
+                const pdf = new jsPDF({
+                    orientation: 'portrait',
+                    unit: 'mm',
+                    format: 'a4',
+                    compress: true
+                });
 
-                showSuccess('PDF downloaded successfully!');
+                const pages = document.querySelectorAll('.page');
+
+                for (let i = 0; i < pages.length; i++) {
+                    const page = pages[i];
+
+                    const canvas = await html2canvas(page, {
+                        scale: 2,
+                        useCORS: true,
+                        backgroundColor: '#ffffff',
+                        width: 794,
+                        height: 1122
+                    });
+
+                    const imgData = canvas.toDataURL('image/jpeg', 0.98);
+                    const pdfWidth = pdf.internal.pageSize.getWidth();
+                    const pdfHeight = pdf.internal.pageSize.getHeight();
+
+                    if (i > 0) pdf.addPage();
+                    pdf.addImage(imgData, 'JPEG', 0, 0, pdfWidth, pdfHeight, '', 'FAST');
+                }
+
+                let companyName = document.getElementById('company-name').textContent.trim();
+                companyName = companyName.replace(/\s+/g, '_');
+                const filename = `${companyName}_DRHP_IPO_NOTES.pdf`;
+                pdf.save(filename);
             } catch (err) {
-                console.error('Error downloading PDF:', err);
-                showError('Failed to download PDF. Please try again.');
+                console.error('Error generating PDF:', err);
+                showError('Failed to generate PDF. Please try again.');
             } finally {
                 downloadBtn.disabled = false;
                 downloadBtn.innerHTML = originalContent;
@@ -2432,6 +2490,7 @@
             document.getElementById('content-pages').innerHTML = '';
             removePdfBtn.disabled = true;
             generateIpoBtn.disabled = true;
+            document.getElementById('download-pdf').disabled = true;
             isIpoGenerated = false;
             currentCompanyId = null;
             processingStatus = 'not_started';
