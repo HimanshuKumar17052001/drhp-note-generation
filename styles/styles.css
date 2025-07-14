@@ -29,42 +29,69 @@ body {
   page-break-inside: avoid;
 }
 
-/* === Header (Used on Every Page) === */
-.page-header {
+/* Blue Header for Content Pages */
+.page-header.blue-header {
   display: flex;
-  justify-content: space-between;
+  flex-direction: row;
   align-items: center;
-  background: linear-gradient(135deg, #97144D, #a91d42);
-  padding: 6px 16px;
-  height: 50px;
+  justify-content: center;
+  background: #1565c0;
+  height: 38px;
+  min-height: 38px;
+  max-width: 180mm;
+  margin: 0 auto;
+  border-radius: 0 0 8px 8px;
   position: running(page-header);
   box-sizing: border-box;
+  border-bottom: 2px solid #1976d2;
+  padding: 0 12mm;
 }
 
-.header-left,
-.header-right {
+.header-center {
   display: flex;
   align-items: center;
+  justify-content: center;
+  width: 100%;
+  gap: 10px;
 }
 
-.axis-logo,
 .company-logo-small {
-  max-height: 30px;
-  max-width: 120px;
+  max-height: 26px;
+  max-width: 70px;
   object-fit: contain;
 }
 
+.company-name-header {
+  font-size: 1.1rem;
+  font-weight: bold;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin-left: 10px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 110mm;
+}
+
 .company-name {
-  font-size: 2.5rem;
+  font-size: 3rem;
   text-transform: uppercase;
   letter-spacing: 2px;
   margin: 20px 0;
   text-align: center;
+  color: white !important;
+  font-weight: bold;
+}
+
+.company-name.blue-theme {
+  color: white !important;
+  font-weight: bold;
 }
 
 .company-logo {
-  width: 120px;
-  height: 120px;
+  width: 150px;
+  height: 150px;
   object-fit: contain;
   margin-bottom: 20px;
 }
@@ -72,45 +99,75 @@ body {
 .front-page {
   display: flex;
   flex-direction: column;
-  justify-content: center; /* Vertically center content */
-  align-items: center;      /* Horizontally center content */
+  justify-content: center;
+  align-items: center;
   text-align: center;
   height: 100%;
-  background: #fff;
+  background: #1565c0;
   padding: 0 20mm;
   box-sizing: border-box;
   position: relative;
+  color: white;
 }
 
-
-.divider-line {
-  width: 200px;
-  height: 2px;
-  background: #97144D;
+.divider-line.blue-divider {
+  width: 250px;
+  height: 3px;
+  background: white;
   margin: 20px 0;
+  border-radius: 2px;
 }
 
 .document-title {
-  font-size: 1.6rem;
-  color: #97144D;
+  font-size: 2rem;
+  color: white;
   margin-bottom: 10px;
+  font-weight: bold;
+}
+
+.document-title.blue-theme {
+  color: white;
+  font-weight: bold;
 }
 
 .document-date {
-  font-size: 1.2rem;
-  color: #333;
+  font-size: 1.5rem;
+  color: white;
 }
 
 .page-content {
-  margin-top: 60px;     /* space for header */
-  margin-bottom: 40px;  /* space for footer */
+  margin-top: 48px;
+  margin-bottom: 40px;
   padding: 0;
   box-sizing: border-box;
 }
 
+/* Footer Styles */
+.page-footer.blue-footer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+  border: none;
+  height: 30px;
+  position: running(page-footer);
+}
+
+.page-number {
+  color: #1565c0;
+  font-weight: bold;
+  font-size: 1.1rem;
+  text-align: center;
+  width: 100%;
+}
+
+.page-num:before {
+  content: counter(page);
+}
+
 /* Typography */
 h1, h2, h3, h4, h5, h6 {
-  color: #97144D !important;
+  color: #1565c0 !important;
   text-align: center;
 }
 
@@ -122,7 +179,7 @@ table {
 }
 
 table th, table td {
-  border: 1px solid #ccc;
+  border: 1px solid #90caf9;
   padding: 5px;
   text-align: left;
   font-size: 10px;
@@ -133,10 +190,10 @@ tr {
 }
 
 blockquote {
-  border-left: 4px solid #97144D;
+  border-left: 4px solid #1565c0;
   margin: 10px 0;
   padding: 10px;
-  background: #f9f3f6;
+  background: #e3f2fd;
 }
 
 pre {
@@ -151,11 +208,10 @@ pre {
 }
 
 strong, b {
-  color: #97144D;
+  color: #1565c0;
 }
 
-/* Optional: If you want a specific class for highlights, add this and use <span class="highlight">text</span> in your markdown/html */
 .highlight {
-  color: #97144D;
+  color: #1565c0;
   font-weight: bold;
 }
