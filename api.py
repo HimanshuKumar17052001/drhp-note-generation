@@ -1496,8 +1496,11 @@ def get_company_logo_path(company_name: str) -> str:
         return "assets/ANTHEM_logo.png"
     elif "capillary" in name:
         return "assets/CAPILLARY TECHNOLOGIES INDIA LIMITED_logo.png"
+    elif "quailty" in name:
+        return "assets/QUALITY POWER_logo.png"
     else:
-        return "assets/axis_logo.png"  # Default logo
+        logger.warning(f"No specific logo found for {company_name}, using default")
+        return ""
 
 
 def generate_pdf_from_markdown(markdown_content: str, company_name: str) -> str:
