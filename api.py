@@ -1479,6 +1479,27 @@ def render_template(env, template_name, context):
     return env.get_template(template_name).render(context)
 
 
+def get_company_logo_path(company_name: str) -> str:
+    """Return the logo path from assets based on company name (demo mapping)."""
+    name = company_name.strip().lower()
+    if "neilsoft" in name:
+        return "assets/NEILSOFT LIMITED_logo.png"
+    elif "wakefit" in name:
+        return "assets/WAKEFIT INNOVATIONS LIMITED_logo.png"
+    elif "ather" in name:
+        return "assets/ATHER_logo.png"
+    elif "pine labs" in name:
+        return "assets/Pine Labs_logo.png"
+    elif "swiggy" in name:
+        return "assets/SWIGGY LIMITED_logo.png"
+    elif "anthem" in name:
+        return "assets/ANTHEM_logo.png"
+    elif "capillary" in name:
+        return "assets/CAPILLARY TECHNOLOGIES INDIA LIMITED_logo.png"
+    else:
+        return "assets/axis_logo.png"  # Default logo
+
+
 def generate_pdf_from_markdown(markdown_content: str, company_name: str) -> str:
     """Generate PDF from markdown content"""
     try:
@@ -1492,13 +1513,9 @@ def generate_pdf_from_markdown(markdown_content: str, company_name: str) -> str:
 
         # Load images
         axis_logo_data = load_image_base64("assets/axis_logo.png")
-        company_logo_data = load_image_base64("assets/Pine Labs_logo.png")  # Default
+        company_logo_path = get_company_logo_path(company_name)
+        company_logo_data = load_image_base64(company_logo_path)
         front_header_data = load_image_base64("assets/front_header.png")
-
-        # Try to load company-specific logo
-        company_logo_path = f"assets/{company_name.replace(' ', '_')}_logo.png"
-        if os.path.exists(company_logo_path):
-            company_logo_data = load_image_base64(company_logo_path)
 
         # Prepare dynamic context
         context = {
