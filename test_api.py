@@ -164,28 +164,35 @@ def test_debug_companies():
 
 def test_get_final_report(company_id):
     """Test get final report endpoint with different formats"""
-    formats = ["markdown", "html", "pdf"]
+    try:
+        # Test markdown format
+        response = requests.get(f"{API_BASE_URL}/report/{company_id}?format=markdown")
+        print(f"Get final report (markdown): {response.status_code}")
+        if response.status_code == 200:
+            data = response.json()
+            print(f"  Company: {data['company_name']}")
+            print(f"  Format: {data['format']}")
+            print(f"  Content length: {len(data['content'])} characters")
 
-    for fmt in formats:
-        try:
-            response = requests.get(f"{API_BASE_URL}/report/{company_id}?format={fmt}")
-            print(f"Get final report ({fmt}): {response.status_code}")
+        # Test HTML format
+        response = requests.get(f"{API_BASE_URL}/report/{company_id}?format=html")
+        print(f"Get final report (html): {response.status_code}")
+        if response.status_code == 200:
+            data = response.json()
+            print(f"  Company: {data['company_name']}")
+            print(f"  Format: {data['format']}")
+            print(f"  Content length: {len(data['content'])} characters")
 
-            if response.status_code == 200:
-                if fmt == "pdf":
-                    print(f"  PDF generated successfully")
-                else:
-                    data = response.json()
-                    print(f"  Company: {data['company_name']}")
-                    print(f"  Format: {data['format']}")
-                    print(f"  Content length: {len(data['content'])} characters")
-            else:
-                print(f"  Error: {response.status_code}")
+        # Test PDF format
+        response = requests.get(f"{API_BASE_URL}/report/{company_id}?format=pdf")
+        print(f"Get final report (pdf): {response.status_code}")
+        if response.status_code == 200:
+            print("  PDF generated successfully")
 
-        except Exception as e:
-            print(f"Get final report ({fmt}) failed: {e}")
-
-    return True
+        return True
+    except Exception as e:
+        print(f"Get final report failed: {e}")
+        return False
 
 
 def test_get_company_status(company_id):

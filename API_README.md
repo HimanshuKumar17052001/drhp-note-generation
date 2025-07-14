@@ -102,7 +102,7 @@ Generate PDF from markdown content (alternative endpoint). Used by frontend PDF 
 **Response:** PDF file download
 
 #### `GET /report/{company_id}?format={format}`
-Get final report for a company by ID in the requested format.
+Get final report for a company in the requested format. Supports PDF, HTML, and markdown formats.
 
 **Path Parameters:**
 - `company_id` (string): The ObjectId of the company as a 24-character hex string
@@ -275,7 +275,7 @@ This will test:
 | `DELETE /companies/{id}` | DELETE | Delete company and all associated data | ✅ Company deletion | ✅ Data cleanup | Active |
 | `POST /generate-report-pdf/` | POST | Generate PDF from markdown content | ✅ PDF download | ✅ PDF generation | Active |
 | `POST /reports/generate-pdf` | POST | Generate PDF from markdown (alternative) | ✅ PDF generation | ✅ PDF creation | Active |
-| `GET /report/{id}?format={format}` | GET | Get final report in multiple formats | ✅ Report retrieval | ✅ Multi-format output | Active |
+| `GET /report/{id}?format={format}` | GET | Get final report in multiple formats | ✅ Report access | ✅ Multi-format output | Active |
 | `POST /assets/logos` | POST | Upload company/entity logos | ✅ Logo upload | ✅ Asset management | Active |
 | `GET /company/{id}` | GET | Get specific company details | ✅ Company details | ✅ Data access | Active |
 | `GET /company/{id}/status` | GET | Get processing status for company | ✅ Status monitoring | ✅ Progress tracking | Active |

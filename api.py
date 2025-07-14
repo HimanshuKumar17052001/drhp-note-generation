@@ -1460,6 +1460,79 @@ async def debug_companies():
         raise HTTPException(status_code=500, detail=f"Debug error: {str(e)}")
 
 
+def load_image_base64(path):
+    """Load image and convert to base64"""
+    try:
+        if os.path.exists(path):
+            with open(path, "rb") as f:
+                return f"data:image/png;base64,{base64.b64encode(f.read()).decode()}"
+        else:
+            logger.warning(f"Image not found: {path}")
+            return ""
+    except Exception as e:
+        logger.warning(f"Failed to load image {path}: {e}")
+        return ""
+
+
+def render_template(env, template_name, context):
+    """Render Jinja2 template with context"""
+    return env.get_template(template_name).render(context)
+
+
+def generate_pdf_from_markdown(markdown_content: str, company_name: str) -> str:
+    """Generate PDF from markdown content"""
+    try:
+        # Setup Jinja2 environment
+        env = Environment(loader=FileSystemLoader("templates"))
+
+        # Convert Markdown to HTML
+        html_body = markdown.markdown(
+            markdown_content, extensions=["tables", "fenced_code"]
+        )
+
+        # Load images
+        axis_logo_data = load_image_base64("assets/axis_logo.png")
+        company_logo_data = load_image_base64("assets/Pine Labs_logo.png")  # Default
+        front_header_data = load_image_base64("assets/front_header.png")
+
+        # Try to load company-specific logo
+        company_logo_path = f"assets/{company_name.replace(' ', '_')}_logo.png"
+        if os.path.exists(company_logo_path):
+            company_logo_data = load_image_base64(company_logo_path)
+
+        # Prepare dynamic context
+        context = {
+            "company_name": company_name.upper(),
+            "document_date": datetime.today().strftime("%B %Y"),
+            "company_logo_data": company_logo_data,
+            "axis_logo_data": axis_logo_data,
+            "front_header_data": front_header_data,
+            "content": html_body,
+        }
+
+        # Render full HTML
+        front_html = render_template(env, "front_page.html", context)
+        content_html = render_template(env, "content_page.html", context)
+        full_html = front_html + content_html
+
+        # Create temporary file for PDF
+        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".pdf")
+        temp_path = temp_file.name
+        temp_file.close()
+
+        # Generate PDF
+        html_doc = HTML(string=full_html, base_url=".")
+        css_doc = CSS(filename="styles/styles.css")
+        html_doc.write_pdf(temp_path, stylesheets=[css_doc])
+
+        logger.info(f"✅ PDF generated for {company_name}")
+        return temp_path
+
+    except Exception as e:
+        logger.error(f"❌ Error generating PDF: {e}")
+        raise HTTPException(status_code=500, detail=f"Error generating PDF: {str(e)}")
+
+
 @app.get("/report/{company_id}")
 async def get_final_report(company_id: str, format: str = "pdf"):
     """
@@ -1474,18 +1547,28 @@ async def get_final_report(company_id: str, format: str = "pdf"):
     """
     try:
         logger.info(
-            f"Fetching final report for company {company_id} in format: {format}"
+            f"Fetching final report for company ID: {company_id}, format: {format}"
         )
 
-        # Get company and markdown document
+        # Validate company_id format
+        try:
+            from bson import ObjectId
+
+            object_id = ObjectId(company_id)
+        except Exception as e:
+            logger.error(f"Invalid company ID format: {company_id}")
+            raise HTTPException(
+                status_code=400, detail=f"Invalid company ID format: {company_id}"
+            )
+
+        # Get company and markdown
         try:
             company = get_company_by_id(company_id)
             logger.info(f"Company found: {company.name}")
         except HTTPException as e:
             logger.error(f"Company not found for ID {company_id}: {e.detail}")
             raise HTTPException(
-                status_code=404,
-                detail=f"Company with ID {company_id} not found",
+                status_code=404, detail=f"Company with ID {company_id} not found"
             )
 
         # Get markdown document
@@ -1496,16 +1579,17 @@ async def get_final_report(company_id: str, format: str = "pdf"):
             )
             raise HTTPException(
                 status_code=404,
-                detail=f"No markdown content found for company {company.name}",
+                detail=f"No report found for company {company.name}. The company may not have completed processing yet.",
             )
 
-        company_name = company.name
+        company_name = markdown_doc.company_name or company.name
         markdown_content = markdown_doc.markdown
 
         if not markdown_content:
+            logger.error(f"Empty markdown content for company {company.name}")
             raise HTTPException(
                 status_code=404,
-                detail=f"Empty markdown content for company {company_name}",
+                detail=f"No markdown content found for company {company.name}",
             )
 
         logger.info(f"✅ Found markdown for company {company_id}: {company_name}")
@@ -1531,94 +1615,22 @@ async def get_final_report(company_id: str, format: str = "pdf"):
             }
 
         elif format.lower() == "pdf":
-            # Generate PDF using existing function
-            try:
-                # Create output directory
-                output_dir = "output"
-                os.makedirs(output_dir, exist_ok=True)
+            # Generate PDF
+            pdf_path = generate_pdf_from_markdown(markdown_content, company_name)
 
-                # Setup Jinja2 environment
-                env = Environment(loader=FileSystemLoader("templates"))
+            # Generate safe filename
+            safe_company_name = (
+                company_name.replace(" ", "_").replace("/", "_").replace("\\", "_")
+            )
+            pdf_filename = f"{safe_company_name}_ipo_notes.pdf"
 
-                # Convert markdown to HTML
-                html_body = markdown.markdown(
-                    markdown_content, extensions=["tables", "fenced_code"]
-                )
-
-                # Load images
-                def load_image_base64(path):
-                    try:
-                        if os.path.exists(path):
-                            with open(path, "rb") as f:
-                                return f"data:image/png;base64,{base64.b64encode(f.read()).decode()}"
-                        else:
-                            logger.warning(f"Image file not found: {path}")
-                            return None
-                    except Exception as e:
-                        logger.warning(f"Failed to load image {path}: {e}")
-                        return None
-
-                # Load default images
-                axis_logo_data = load_image_base64("assets/axis_logo.png")
-                company_logo_data = load_image_base64(
-                    "assets/Pine Labs_logo.png"
-                )  # Default
-                front_header_data = load_image_base64("assets/front_header.png")
-
-                # Try to load company-specific logo
-                company_logo_path = f"assets/{company_name.replace(' ', '_')}_logo.png"
-                if os.path.exists(company_logo_path):
-                    company_logo_data = load_image_base64(company_logo_path)
-                    logger.info(f"Loaded company-specific logo: {company_logo_path}")
-                else:
-                    logger.info(
-                        f"Company-specific logo not found: {company_logo_path}, using default"
-                    )
-
-                # Prepare context
-                context = {
-                    "company_name": company_name.upper(),
-                    "document_date": datetime.today().strftime("%B %Y"),
-                    "company_logo_data": company_logo_data,
-                    "axis_logo_data": axis_logo_data,
-                    "front_header_data": front_header_data,
-                    "content": html_body,
-                }
-
-                # Render HTML
-                front_html = env.get_template("front_page.html").render(context)
-                content_html = env.get_template("content_page.html").render(context)
-                full_html = front_html + content_html
-
-                # Generate PDF filename
-                safe_company_name = (
-                    company_name.replace(" ", "_").replace("/", "_").replace("\\", "_")
-                )
-                pdf_filename = f"{safe_company_name}_IPO_Notes.pdf"
-                pdf_path = os.path.join(output_dir, pdf_filename)
-
-                # Generate PDF
-                html_doc = HTML(string=full_html, base_url=".")
-                css_doc = CSS(filename="styles/styles.css")
-                html_doc.write_pdf(pdf_path, stylesheets=[css_doc])
-
-                logger.info(f"Successfully generated PDF for company {company_name}")
-
-                # Return PDF file
-                return FileResponse(
-                    path=pdf_path,
-                    media_type="application/pdf",
-                    filename=pdf_filename,
-                    headers={
-                        "Content-Disposition": f"attachment; filename={pdf_filename}"
-                    },
-                )
-
-            except Exception as e:
-                logger.error(f"Error generating PDF for company {company_name}: {e}")
-                raise HTTPException(
-                    status_code=500, detail=f"Failed to generate PDF: {str(e)}"
-                )
+            # Return PDF file
+            return FileResponse(
+                path=pdf_path,
+                media_type="application/pdf",
+                filename=pdf_filename,
+                headers={"Content-Disposition": f"attachment; filename={pdf_filename}"},
+            )
 
         else:
             raise HTTPException(
