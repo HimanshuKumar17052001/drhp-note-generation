@@ -51,6 +51,7 @@ from qdrant_client import QdrantClient
 import markdown
 from jinja2 import Environment, FileSystemLoader
 from weasyprint import HTML, CSS
+from azure_blob_utils import get_blob_storage
 
 # Load environment variables
 load_dotenv()
@@ -287,9 +288,18 @@ async def process_drhp_pipeline(pdf_path: str, company_id: str):
             company_name=None,
         )
 
-        json_path = processor.process_pdf_locally(pdf_path, "TEMP_COMPANY")
+        # Call process_pdf_locally, which now returns the Azure blob name of the temp JSON
+        json_blob_name = processor.process_pdf_locally(pdf_path, "TEMP_COMPANY")
 
-        with open(json_path, "r", encoding="utf-8") as f:
+        # Download the temp JSON blob to a local temp file for further processing
+        with tempfile.NamedTemporaryFile(
+            delete=False, suffix=".json"
+        ) as temp_json_file:
+            blob_storage = get_blob_storage()
+            blob_storage.download_file(json_blob_name, temp_json_file.name)
+            local_json_path = temp_json_file.name
+
+        with open(local_json_path, "r", encoding="utf-8") as f:
             data = json.load(f)
 
         pdf_name = list(data.keys())[0]
@@ -382,7 +392,7 @@ async def process_drhp_pipeline(pdf_path: str, company_id: str):
         )
         processor.collection_name = qdrant_collection
         processor.upsert_pages_to_qdrant(
-            json_path, company_details.name, str(company.id)
+            local_json_path, company_details.name, str(company.id)
         )
 
         yield generate_sse_event(
@@ -467,7 +477,7 @@ async def process_drhp_pipeline(pdf_path: str, company_id: str):
 
         # Cleanup
         try:
-            os.remove(json_path)
+            os.remove(local_json_path)
         except Exception as e:
             logger.warning(f"Failed to clean up JSON file: {e}")
 
@@ -504,12 +514,25 @@ async def process_drhp_upload(file: UploadFile = File(...)):
     if not file.filename.lower().endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Only PDF files are allowed")
 
+    blob_storage = get_blob_storage()
+    blob_url = None
+    blob_name = None
     try:
-        # Create temporary file
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
-            shutil.copyfileobj(file.file, temp_file)
-            temp_path = temp_file.name
+        # Generate a unique blob name for the PDF
+        import uuid
 
+        unique_id = str(uuid.uuid4())
+        blob_name = f"pdfs/{unique_id}_{file.filename}"
+        # Upload PDF to Azure Blob Storage
+        blob_url = blob_storage.upload_data(file.file, blob_name)
+        logger.info(f"PDF uploaded to Azure Blob Storage: {blob_url}")
+    except Exception as e:
+        logger.error(f"Failed to upload PDF to Azure Blob Storage: {e}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to upload PDF to Azure Blob Storage: {e}"
+        )
+
+    try:
         # Extract company details first
         processor = LocalDRHPProcessor(
             qdrant_url=os.getenv("QDRANT_URL"),
@@ -518,9 +541,24 @@ async def process_drhp_upload(file: UploadFile = File(...)):
             company_name=None,
         )
 
-        json_path = processor.process_pdf_locally(temp_path, "TEMP_COMPANY")
+        # Download the PDF from blob storage for processing (if needed)
+        import tempfile
 
-        with open(json_path, "r", encoding="utf-8") as f:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
+            blob_storage.download_file(blob_name, temp_file.name)
+            temp_path = temp_file.name
+
+        # Call process_pdf_locally, which now returns the Azure blob name of the temp JSON
+        json_blob_name = processor.process_pdf_locally(temp_path, "TEMP_COMPANY")
+
+        # Download the temp JSON blob to a local temp file for further processing
+        with tempfile.NamedTemporaryFile(
+            delete=False, suffix=".json"
+        ) as temp_json_file:
+            blob_storage.download_file(json_blob_name, temp_json_file.name)
+            local_json_path = temp_json_file.name
+
+        with open(local_json_path, "r", encoding="utf-8") as f:
             data = json.load(f)
 
         pdf_name = list(data.keys())[0]
@@ -549,25 +587,32 @@ async def process_drhp_upload(file: UploadFile = File(...)):
                     "company_id": str(existing_company.id),
                     "message": "Company already exists with markdown",
                     "existing_markdown": True,
+                    "pdf_blob_url": blob_url,
                 }
             else:
                 return {
                     "company_id": str(existing_company.id),
                     "message": "Company already exists but processing is in progress",
                     "existing_markdown": False,
+                    "pdf_blob_url": blob_url,
                 }
 
-        # Create company record
+        # Create company record, store blob_url
         company = Company(
             name=company_details.name,
             corporate_identity_number=company_details.corporate_identity_number,
             website_link=getattr(company_details, "website_link", None),
             processing_status="PENDING",
-        ).save()
+        )
+        company.save()
+        logger.info(f"Company created: {company.name} ({company.id})")
+
+        # Optionally, store the PDF blob URL in the company document (add a field if needed)
+        # company.update(set__pdf_blob_url=blob_url)
 
         # Cleanup temporary files
         try:
-            os.remove(json_path)
+            os.remove(local_json_path)
             os.remove(temp_path)
         except Exception as e:
             logger.warning(f"Failed to clean up temporary files: {e}")
@@ -576,6 +621,7 @@ async def process_drhp_upload(file: UploadFile = File(...)):
             "company_id": str(company.id),
             "message": "Company created successfully",
             "existing_markdown": False,
+            "pdf_blob_url": blob_url,
         }
 
     except Exception as e:
@@ -592,23 +638,49 @@ async def upload_and_process_drhp(file: UploadFile = File(...)):
     if not file.filename.lower().endswith(".pdf"):
         raise HTTPException(status_code=400, detail="Only PDF files are allowed")
 
+    blob_storage = get_blob_storage()
+    blob_url = None
+    blob_name = None
     try:
-        # Create temporary file
+        # Generate a unique blob name for the PDF
+        import uuid
+
+        unique_id = str(uuid.uuid4())
+        blob_name = f"pdfs/{unique_id}_{file.filename}"
+        # Upload PDF to Azure Blob Storage
+        blob_url = blob_storage.upload_data(file.file, blob_name)
+        logger.info(f"PDF uploaded to Azure Blob Storage: {blob_url}")
+    except Exception as e:
+        logger.error(f"Failed to upload PDF to Azure Blob Storage: {e}")
+        raise HTTPException(
+            status_code=500, detail=f"Failed to upload PDF to Azure Blob Storage: {e}"
+        )
+
+    try:
+        # Download the PDF from blob storage for processing (if needed)
+        import tempfile
+
         with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
-            shutil.copyfileobj(file.file, temp_file)
+            blob_storage.download_file(blob_name, temp_file.name)
             temp_path = temp_file.name
 
-        # Extract company details first
+        # Call process_pdf_locally, which now returns the Azure blob name of the temp JSON
         processor = LocalDRHPProcessor(
             qdrant_url=os.getenv("QDRANT_URL"),
             collection_name=None,
             max_workers=5,
             company_name=None,
         )
+        json_blob_name = processor.process_pdf_locally(temp_path, "TEMP_COMPANY")
 
-        json_path = processor.process_pdf_locally(temp_path, "TEMP_COMPANY")
+        # Download the temp JSON blob to a local temp file for further processing
+        with tempfile.NamedTemporaryFile(
+            delete=False, suffix=".json"
+        ) as temp_json_file:
+            blob_storage.download_file(json_blob_name, temp_json_file.name)
+            local_json_path = temp_json_file.name
 
-        with open(json_path, "r", encoding="utf-8") as f:
+        with open(local_json_path, "r", encoding="utf-8") as f:
             data = json.load(f)
 
         pdf_name = list(data.keys())[0]
@@ -632,17 +704,22 @@ async def upload_and_process_drhp(file: UploadFile = File(...)):
                 status_code=409, detail=f"Company {company_details.name} already exists"
             )
 
-        # Create company record
+        # Create company record, store blob_url
         company = Company(
             name=company_details.name,
             corporate_identity_number=company_details.corporate_identity_number,
             website_link=getattr(company_details, "website_link", None),
             processing_status="PENDING",
-        ).save()
+        )
+        company.save()
+        logger.info(f"Company created: {company.name} ({company.id})")
+
+        # Optionally, store the PDF blob URL in the company document (add a field if needed)
+        # company.update(set__pdf_blob_url=blob_url)
 
         # Cleanup temporary files
         try:
-            os.remove(json_path)
+            os.remove(local_json_path)
             os.remove(temp_path)
         except Exception as e:
             logger.warning(f"Failed to clean up temporary files: {e}")
@@ -1188,7 +1265,7 @@ async def regenerate_company_report(company_id: str):
 
 @app.post("/reports/generate-pdf")
 async def generate_pdf_report(request: PDFGenerationRequest):
-    """Convert markdown content to PDF with company branding."""
+    """Convert markdown content to PDF with company branding and upload to Azure Blob Storage."""
     try:
         # Create output directory
         output_dir = "output"
@@ -1248,6 +1325,21 @@ async def generate_pdf_report(request: PDFGenerationRequest):
         html_doc = HTML(string=full_html, base_url=".")
         css_doc = CSS(filename="styles/styles.css")
         html_doc.write_pdf(pdf_path, stylesheets=[css_doc])
+
+        logger.info(f"PDF generated: {pdf_path}")
+
+        # Upload generated PDF to Azure Blob Storage
+        blob_storage = get_blob_storage()
+        blob_name = f"reports/{pdf_filename}"
+        try:
+            blob_url = blob_storage.upload_file(pdf_path, blob_name)
+            logger.info(f"Generated PDF uploaded to Azure Blob Storage: {blob_url}")
+        except Exception as e:
+            logger.error(f"Failed to upload generated PDF to Azure Blob Storage: {e}")
+            raise HTTPException(
+                status_code=500,
+                detail=f"Failed to upload generated PDF to Azure Blob Storage: {e}",
+            )
 
         return FileResponse(
             pdf_path,
@@ -1338,27 +1430,33 @@ async def generate_report_pdf(request: PDFGenerationRequest):
 
 @app.post("/assets/logos", response_model=LogoUploadResponse)
 async def upload_logo(file: UploadFile = File(...)):
-    """Upload a logo image."""
+    """Upload a logo image to Azure Blob Storage."""
     try:
         # Validate file type
         if not file.content_type.startswith("image/"):
             raise HTTPException(status_code=400, detail="Only image files are allowed")
 
-        # Create assets directory
-        assets_dir = "assets"
-        os.makedirs(assets_dir, exist_ok=True)
-
         # Generate unique filename
+        import uuid
+
         logo_id = str(uuid.uuid4())
         file_extension = os.path.splitext(file.filename)[1]
         filename = f"{logo_id}{file_extension}"
-        file_path = os.path.join(assets_dir, filename)
+        blob_name = f"logos/{filename}"
 
-        # Save file
-        with open(file_path, "wb") as f:
-            shutil.copyfileobj(file.file, f)
+        # Upload logo to Azure Blob Storage
+        blob_storage = get_blob_storage()
+        try:
+            blob_url = blob_storage.upload_data(file.file, blob_name)
+            logger.info(f"Logo uploaded to Azure Blob Storage: {blob_url}")
+        except Exception as e:
+            logger.error(f"Failed to upload logo to Azure Blob Storage: {e}")
+            raise HTTPException(
+                status_code=500,
+                detail=f"Failed to upload logo to Azure Blob Storage: {e}",
+            )
 
-        return LogoUploadResponse(logo_id=logo_id, filename=filename, path=file_path)
+        return LogoUploadResponse(logo_id=logo_id, filename=filename, path=blob_url)
 
     except HTTPException:
         raise

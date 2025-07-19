@@ -1,6 +1,7 @@
 import os
 from mongoengine import connect, Document, StringField, IntField, ReferenceField
 from dotenv import load_dotenv
+from azure_blob_utils import get_blob_storage
 
 load_dotenv()
 MONGODB_URI = os.getenv("MONGODB_URI")
@@ -77,6 +78,23 @@ def save_final_markdown(company_id, company_name, markdown):
     print(
         f"Saved markdown for {company_name} ({company_id}) to final_markdown collection."
     )
+    # Optionally, upload markdown to Azure Blob Storage
+    blob_storage = get_blob_storage()
+    import tempfile
+    import uuid
+
+    try:
+        with tempfile.NamedTemporaryFile(
+            delete=False, suffix=".md", mode="w", encoding="utf-8"
+        ) as f:
+            f.write(markdown)
+            temp_md_path = f.name
+        blob_name = f"markdown/{uuid.uuid4()}_{company_name.replace(' ', '_')}.md"
+        blob_url = blob_storage.upload_file(temp_md_path, blob_name)
+        print(f"Markdown uploaded to Azure Blob Storage: {blob_url}")
+        os.unlink(temp_md_path)
+    except Exception as e:
+        print(f"Failed to upload markdown to Azure Blob Storage: {e}")
 
 
 if __name__ == "__main__":

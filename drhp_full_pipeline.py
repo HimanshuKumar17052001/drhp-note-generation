@@ -24,6 +24,7 @@ import pytz
 import markdown
 from jinja2 import Environment, FileSystemLoader
 from weasyprint import HTML, CSS
+from azure_blob_utils import get_blob_storage
 
 # Add DRHP_crud_backend to sys.path for imports
 sys.path.append(os.path.join(os.path.dirname(__file__), "DRHP_crud_backend"))
@@ -441,6 +442,23 @@ def main(pdf_path):
     QDRANT_URL = os.getenv("QDRANT_URL")
     MONGODB_URI = os.getenv("DRHP_MONGODB_URI")
     DB_NAME = os.getenv("DRHP_DB_NAME", "DRHP_NOTES")
+
+    # --- Azure Blob Storage integration ---
+    blob_storage = get_blob_storage()
+    pdf_blob_url = None
+    pdf_blob_name = None
+    try:
+        import uuid
+
+        unique_id = str(uuid.uuid4())
+        pdf_filename = os.path.basename(pdf_path)
+        pdf_blob_name = f"pdfs/{unique_id}_{pdf_filename}"
+        pdf_blob_url = blob_storage.upload_file(pdf_path, pdf_blob_name)
+        logger.info(f"PDF uploaded to Azure Blob Storage: {pdf_blob_url}")
+    except Exception as e:
+        logger.error(f"Failed to upload input PDF to Azure Blob Storage: {e}")
+        sys.exit(1)
+
     try:
         from mongoengine import disconnect
 
@@ -450,8 +468,16 @@ def main(pdf_path):
     except Exception as e:
         logger.error(f"[MONGODB CONNECTION ERROR] {e}")
         sys.exit(1)
-    if not os.path.exists(pdf_path):
-        logger.error(f"PDF file not found: {pdf_path}")
+
+    # Download the PDF from blob storage for processing (if needed)
+    import tempfile
+
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
+        blob_storage.download_file(pdf_blob_name, temp_file.name)
+        temp_pdf_path = temp_file.name
+
+    if not os.path.exists(temp_pdf_path):
+        logger.error(f"PDF file not found: {temp_pdf_path}")
         sys.exit(1)
     # Step 1: Extract company details from PDF (first 10 pages)
     try:
@@ -461,7 +487,7 @@ def main(pdf_path):
             max_workers=5,
             company_name=None,
         )
-        json_path = processor.process_pdf_locally(pdf_path, "TEMP_COMPANY")
+        json_path = processor.process_pdf_locally(temp_pdf_path, "TEMP_COMPANY")
         logger.info(f"PDF processed and extracted to: {json_path}")
         with open(json_path, "r", encoding="utf-8") as f:
             data = json.load(f)
@@ -511,6 +537,19 @@ def main(pdf_path):
         try:
             pdf_path = generate_ipo_notes_pdf(company_name, markdown)
             logger.info(f"PDF generated for existing company: {pdf_path}")
+            # Upload generated PDF to Azure Blob Storage
+            try:
+                report_blob_name = (
+                    f"reports/{company_name.replace(' ', '_')}_IPO_Notes.pdf"
+                )
+                report_blob_url = blob_storage.upload_file(pdf_path, report_blob_name)
+                logger.info(
+                    f"Generated PDF uploaded to Azure Blob Storage: {report_blob_url}"
+                )
+            except Exception as e:
+                logger.error(
+                    f"Failed to upload generated PDF to Azure Blob Storage: {e}"
+                )
             print(f"🎉 PDF generated: {pdf_path}")
         except Exception as pdf_error:
             logger.error(f"Failed to generate PDF for existing company: {pdf_error}")
@@ -519,7 +558,9 @@ def main(pdf_path):
         return markdown
     # If company does not exist, create it
     if not company_doc:
-        company_doc, _ = get_or_create_company(company_details, pdf_path)
+        company_doc, _ = get_or_create_company(
+            company_details, pdf_blob_url or pdf_path
+        )
     # If pages do not exist, upsert them
     if not pages_done:
         saved_pages = []
@@ -589,6 +630,19 @@ def main(pdf_path):
         try:
             pdf_path = generate_ipo_notes_pdf(company_name, markdown)
             logger.info(f"🎉 Complete! IPO Notes PDF generated: {pdf_path}")
+            # Upload generated PDF to Azure Blob Storage
+            try:
+                report_blob_name = (
+                    f"reports/{company_name.replace(' ', '_')}_IPO_Notes.pdf"
+                )
+                report_blob_url = blob_storage.upload_file(pdf_path, report_blob_name)
+                logger.info(
+                    f"Generated PDF uploaded to Azure Blob Storage: {report_blob_url}"
+                )
+            except Exception as e:
+                logger.error(
+                    f"Failed to upload generated PDF to Azure Blob Storage: {e}"
+                )
             print(f"\n🎉 IPO Notes PDF generated: {pdf_path}")
 
         except Exception as pdf_error:

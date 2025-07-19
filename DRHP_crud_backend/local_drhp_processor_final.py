@@ -24,6 +24,7 @@ import cv2
 import base64
 import re
 from openai import OpenAI
+from azure_blob_utils import get_blob_storage
 
 
 # Configure comprehensive logging with both file and console handlers
@@ -300,52 +301,117 @@ class LocalDRHPProcessor:
     ) -> str:
         """
         Step 1: Process PDF locally using page_processor with comprehensive error handling
-        Returns: path to the output JSON file
+        Returns: Azure blob name of the output JSON file (for internal use only)
         """
         self.logger.info(f"📄 Starting PDF processing: {pdf_path}")
         self.stats["start_time"] = time.time()
 
+        blob_storage = get_blob_storage()
+        temp_blobs_to_cleanup = []
+        company_id = company_name.replace(" ", "_")
         try:
             # Detect TOC page first
             toc_page = self.detect_toc_page(pdf_path, company_name)
 
+            # Prepare temp blob names
+            json_blob_name = (
+                f"temp/{company_id}/temp_pages_json/{company_id}_pages.json"
+            )
+            temp_img_dir_blob_prefix = f"temp/{company_id}/temp_stripped_bottom_images/"
+
             # Call process_pdf (local-only, no MongoDB)
             self.logger.info("🔄 Processing PDF pages...")
-            total_in, total_out = process_pdf_local(
-                pdf_path=pdf_path,
-                company_name=company_name,
-                dpi=dpi,
-                threshold=threshold,
-                max_workers=max_workers,
-            )
+            import tempfile
+            import shutil
 
-            self.logger.info(
-                f"✅ PDF processing complete. Tokens - in: {total_in}, out: {total_out}"
-            )
+            with tempfile.TemporaryDirectory() as temp_dir:
+                temp_company_dir = os.path.join(temp_dir, company_id)
+                os.makedirs(temp_company_dir, exist_ok=True)
+                temp_pages_json_dir = os.path.join(temp_company_dir, "temp_pages_json")
+                temp_stripped_img_dir = os.path.join(
+                    temp_company_dir, "temp_stripped_bottom_images"
+                )
+                os.makedirs(temp_pages_json_dir, exist_ok=True)
+                os.makedirs(temp_stripped_img_dir, exist_ok=True)
 
-            # Find the output JSON file
-            base_dir = os.path.join(os.getcwd(), company_name, "temp_pages_json")
-            if not os.path.exists(base_dir):
-                raise FileNotFoundError(f"Output directory not found: {base_dir}")
+                # Patch os.getcwd() to temp_dir for process_pdf_local
+                orig_cwd = os.getcwd()
+                os.chdir(temp_dir)
+                try:
+                    total_in, total_out = process_pdf_local(
+                        pdf_path=pdf_path,
+                        company_name=company_name,
+                        dpi=dpi,
+                        threshold=threshold,
+                        max_workers=max_workers,
+                    )
+                finally:
+                    os.chdir(orig_cwd)
 
-            json_files = [f for f in os.listdir(base_dir) if f.endswith("_pages.json")]
-            if not json_files:
-                raise FileNotFoundError(
-                    "No output JSON found in temp_pages_json directory"
+                self.logger.info(
+                    f"✅ PDF processing complete. Tokens - in: {total_in}, out: {total_out}"
                 )
 
-            json_path = os.path.join(base_dir, json_files[0])
-            self.logger.info(f"📁 Found output JSON: {json_path}")
+                # Find the output JSON file
+                json_files = [
+                    f
+                    for f in os.listdir(temp_pages_json_dir)
+                    if f.endswith("_pages.json")
+                ]
+                if not json_files:
+                    raise FileNotFoundError(
+                        "No output JSON found in temp_pages_json directory"
+                    )
+                local_json_path = os.path.join(temp_pages_json_dir, json_files[0])
+                self.logger.info(f"📁 Found output JSON: {local_json_path}")
 
-            # Add TOC information to the JSON
-            self.add_toc_to_json(json_path, toc_page)
+                # Add TOC information to the JSON
+                self.add_toc_to_json(local_json_path, toc_page)
 
-            return json_path
+                # Upload JSON to Azure Blob Storage (internal use only, do not expose URL)
+                try:
+                    blob_storage.upload_file(local_json_path, json_blob_name)
+                    self.logger.debug(
+                        f"Uploaded temp JSON to Azure Blob Storage: {json_blob_name} (internal use only)"
+                    )
+                    temp_blobs_to_cleanup.append(json_blob_name)
+                except Exception as e:
+                    self.logger.error(
+                        f"Failed to upload temp JSON to Azure Blob Storage: {e}"
+                    )
+
+                # Upload any PNGs in temp_stripped_bottom_images (internal use only)
+                if os.path.exists(temp_stripped_img_dir):
+                    for fname in os.listdir(temp_stripped_img_dir):
+                        if fname.lower().endswith(".png"):
+                            local_img_path = os.path.join(temp_stripped_img_dir, fname)
+                            img_blob_name = f"{temp_img_dir_blob_prefix}{fname}"
+                            try:
+                                blob_storage.upload_file(local_img_path, img_blob_name)
+                                self.logger.debug(
+                                    f"Uploaded temp PNG to Azure Blob Storage: {img_blob_name} (internal use only)"
+                                )
+                                temp_blobs_to_cleanup.append(img_blob_name)
+                            except Exception as e:
+                                self.logger.error(
+                                    f"Failed to upload temp PNG to Azure Blob Storage: {e}"
+                                )
+
+                # Return the Azure blob name of the JSON file (for internal use only)
+                return json_blob_name
 
         except Exception as e:
             self.logger.error(f"❌ Error in PDF processing: {e}")
             self.logger.error(traceback.format_exc())
             raise
+        finally:
+            # Clean up temp blobs from Azure after use
+            for blob_name in temp_blobs_to_cleanup:
+                try:
+                    blob_storage.delete_blob(blob_name)
+                    self.logger.debug(f"Deleted temp blob from Azure: {blob_name}")
+                except Exception as e:
+                    self.logger.warning(f"Failed to delete temp blob from Azure: {e}")
 
     def add_toc_to_json(self, json_path: str, toc_page: Optional[dict]):
         """Add TOC page information and content to the JSON file with error handling"""

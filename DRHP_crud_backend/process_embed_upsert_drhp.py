@@ -22,6 +22,7 @@ import hashlib
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from qdrant_client import QdrantClient
 import pytz
+from azure_blob_utils import get_blob_storage
 
 
 # Setup logging with IST timestamps
@@ -206,6 +207,22 @@ def main():
     logger.info(f"MongoDB URI: {MONGODB_URI}")
     logger.info(f"MongoDB DB Name: {DB_NAME}")
 
+    # ====== Azure Blob Storage integration ======
+    blob_storage = get_blob_storage()
+    pdf_blob_url = None
+    pdf_blob_name = None
+    try:
+        import uuid
+
+        unique_id = str(uuid.uuid4())
+        pdf_filename = os.path.basename(PDF_PATH)
+        pdf_blob_name = f"pdfs/{unique_id}_{pdf_filename}"
+        pdf_blob_url = blob_storage.upload_file(PDF_PATH, pdf_blob_name)
+        logger.info(f"PDF uploaded to Azure Blob Storage: {pdf_blob_url}")
+    except Exception as e:
+        logger.error(f"Failed to upload input PDF to Azure Blob Storage: {e}")
+        return
+
     # ====== PROCESSING ======
     start_time = time.time()
     try:
@@ -226,9 +243,16 @@ def main():
         logger.error(f"[PROCESSOR INIT ERROR] {e}")
         return
 
+    # Download the PDF from blob storage for processing (if needed)
+    import tempfile
+
+    with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as temp_file:
+        blob_storage.download_file(pdf_blob_name, temp_file.name)
+        temp_pdf_path = temp_file.name
+
     # Step 1: Process PDF (extract pages, TOC, etc.)
     try:
-        json_path = processor.process_pdf_locally(PDF_PATH, "TEMP_COMPANY")
+        json_path = processor.process_pdf_locally(temp_pdf_path, "TEMP_COMPANY")
         logger.info(f"PDF processed and extracted to: {json_path}")
     except Exception as e:
         logger.error(f"[PDF PROCESSING ERROR] {e}")

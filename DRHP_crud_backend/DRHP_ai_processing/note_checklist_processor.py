@@ -35,6 +35,7 @@ sys.path.append(project_root)
 
 from baml_client import b
 from baml_py import Collector
+from azure_blob_utils import get_blob_storage
 
 # ── env & logging ────────────────────────────────────────────────────────────
 load_dotenv()
@@ -98,7 +99,32 @@ class DRHPNoteChecklistProcessor:
         company_id: str = None,
         checklist_name: str = None,
     ):
-        self.excel_path = excel_path
+        # If excel_path is an Azure blob URL, download it to a temp file
+        if (
+            excel_path.startswith("https://")
+            and ".blob.core.windows.net/" in excel_path
+        ):
+            blob_storage = get_blob_storage()
+            import tempfile
+            import uuid
+
+            temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".xlsx")
+            blob_name = excel_path.split(".blob.core.windows.net/")[1]
+            try:
+                blob_storage.download_file(blob_name, temp_file.name)
+                self.excel_path = temp_file.name
+                self._temp_checklist_file = temp_file.name
+                logging.info(
+                    f"Downloaded checklist from Azure Blob Storage: {excel_path} -> {temp_file.name}"
+                )
+            except Exception as e:
+                logging.error(
+                    f"Failed to download checklist from Azure Blob Storage: {e}"
+                )
+                raise
+        else:
+            self.excel_path = excel_path
+            self._temp_checklist_file = None
         self.collection_name = collection_name
         self.qdrant = QdrantClient(url=os.getenv("QDRANT_URL"))
         self.openai_client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
@@ -133,7 +159,18 @@ class DRHPNoteChecklistProcessor:
                 raise ValueError(
                     f"Company '{company_name}' not found in MongoDB. Cannot proceed."
                 )
-        self.checklist_name = checklist_name or os.path.basename(excel_path)
+        self.checklist_name = checklist_name or os.path.basename(self.excel_path)
+
+    def __del__(self):
+        # Clean up temp checklist file if it was downloaded
+        if hasattr(self, "_temp_checklist_file") and self._temp_checklist_file:
+            try:
+                os.remove(self._temp_checklist_file)
+                logging.info(
+                    f"Deleted temp checklist file: {self._temp_checklist_file}"
+                )
+            except Exception as e:
+                logging.warning(f"Failed to delete temp checklist file: {e}")
 
     def _generate_dense_embedding(self, text: str):
         for attempt in range(5):  # Retry up to 5 times
